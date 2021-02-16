@@ -1,4 +1,4 @@
--- TPU Blogpost series by @domipheus
+-- Project Structure from TPU Blogpost series by @domipheus
 -- Author: Quentin Ducasse
 --   mail:   quentin.ducasse@ensta-bretagne.org
 --   github: QDucasse

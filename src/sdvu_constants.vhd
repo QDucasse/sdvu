@@ -1,10 +1,8 @@
--- TPU Blogpost series by @domipheus
 -- Author: Quentin Ducasse
 --   mail:   quentin.ducasse@ensta-bretagne.org
 --   github: QDucasse
 -- =================================
--- All the constants used by the different components (OP_CODES, Conditional
--- Jump Flags, etc.)
+-- All the constants used by the different components (OP_CODES, CFG bitmasks, etc.)
 
 -- =================
 --    Libraries

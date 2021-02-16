@@ -1,4 +1,4 @@
--- TPU Blogpost series by @domipheus
+-- Project Structure from TPU Blogpost series by @domipheus
 -- Author: Quentin Ducasse
 --   mail:   quentin.ducasse@ensta-bretagne.org
 --   github: QDucasse
@@ -42,7 +42,7 @@ end pc;
 architecture arch_pc of pc is
   -- Internal Objects
   -- Internal vector to keep the current PC to work on
-  signal current_pc: std_logic_vector(PC_SIZE-1 downto 0) := X"0000";
+  signal current_pc: STD_LOGIC_VECTOR(PC_SIZE-1 downto 0) := X"0000";
 
 begin
   -- Processes
