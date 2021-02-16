@@ -10,12 +10,13 @@
 
 library IEEE;
 use IEEE.std_logic_1164.all;
+use IEEE.numeric_std.all;
 
 -- =================
 --      Package
 -- =================
 
-package constant_codes is
+package sdvu_constants is
 
   -- Opcodes
   constant OP_ADD:   std_logic_vector(3 downto 0) :=  "0000";
@@ -61,9 +62,9 @@ package constant_codes is
   constant PCU_OP_ASSIGN: std_logic_vector(1 downto 0):= "10";
   constant PCU_OP_RESET:  std_logic_vector(1 downto 0):= "11";
 
-end package constant_codes;
+end package sdvu_constants;
 
 
-package body constant_codes is
+package body sdvu_constants is
   -- Empty body since only constants are used in this package
-end package body constant_codes;
+end package body sdvu_constants;
