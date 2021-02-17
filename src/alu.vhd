@@ -100,20 +100,20 @@ begin
                 -- XOR operation
                 -- =============
                 when OPCODE_XOR =>
-        					s_result(REG_WIDTH-1 downto 0) <= I_dataA xor I_dataB;
-        					s_shouldBranch <= '0';  -- Operation does not need branching
+                  s_result(REG_WIDTH-1 downto 0) <= I_dataA xor I_dataB;
+                  s_shouldBranch <= '0';  -- Operation does not need branching
 
                 -- AND operation
                 -- =============
-        				when OPCODE_AND =>
-        					s_result(REG_WIDTH-1 downto 0) <= I_dataA and I_dataB;
-        					s_shouldBranch <= '0';  -- Operation does not need branching
+                when OPCODE_AND =>
+                  s_result(REG_WIDTH-1 downto 0) <= I_dataA and I_dataB;
+                  s_shouldBranch <= '0';  -- Operation does not need branching
 
                 -- NOT operation
                 -- =============
-        				when OPCODE_NOT =>
-        					s_result(REG_WIDTH-1 downto 0) <= not I_dataA;
-        					s_shouldBranch <= '0';  -- Operation does not need branching
+                when OPCODE_NOT =>
+                  s_result(REG_WIDTH-1 downto 0) <= not I_dataA;
+                  s_shouldBranch <= '0';  -- Operation does not need branching
 
 
                 -- LOAD operation
