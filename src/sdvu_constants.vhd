@@ -57,16 +57,16 @@ package sdvu_constants is
   constant VAL_STATE: STD_LOGIC_VECTOR(1 downto 0) := "11";
 
   -- FSM states
-  constant FSM_DECODE:   STD_LOGIC_VECTOR(3 downto 0) := "00";
-  constant FSM_REGREAD:  STD_LOGIC_VECTOR(3 downto 0) := "01";
-  constant FSM_ALU:      STD_LOGIC_VECTOR(3 downto 0) := "10";
-  constant FSM_REGWRITE: STD_LOGIC_VECTOR(3 downto 0) := "11";
+  constant FSM_DECODE:   STD_LOGIC_VECTOR(1 downto 0) := "00";
+  constant FSM_REGREAD:  STD_LOGIC_VECTOR(1 downto 0) := "01";
+  constant FSM_ALU:      STD_LOGIC_VECTOR(1 downto 0) := "10";
+  constant FSM_REGWRITE: STD_LOGIC_VECTOR(1 downto 0) := "11";
 
   -- PC unit opcodes
-  constant PCU_OP_NOP:    STD_LOGIC_VECTOR(1 downto 0):= "00";
-  constant PCU_OP_INC:    STD_LOGIC_VECTOR(1 downto 0):= "01";
-  constant PCU_OP_ASSIGN: STD_LOGIC_VECTOR(1 downto 0):= "10";
-  constant PCU_OP_RESET:  STD_LOGIC_VECTOR(1 downto 0):= "11";
+  constant PC_OP_NOP:    STD_LOGIC_VECTOR(1 downto 0):= "00";
+  constant PC_OP_INC:    STD_LOGIC_VECTOR(1 downto 0):= "01";
+  constant PC_OP_ASSIGN: STD_LOGIC_VECTOR(1 downto 0):= "10";
+  constant PC_OP_RESET:  STD_LOGIC_VECTOR(1 downto 0):= "11";
 
 end package sdvu_constants;
 

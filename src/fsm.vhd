@@ -4,6 +4,10 @@
 --   github: QDucasse
 -- =================================
 -- Simple control unit with different states
+--    Decode
+--    Reg Read
+--    ALU
+--    Reg Write
 
 -- =================
 --    Libraries

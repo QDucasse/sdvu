@@ -1,4 +1,3 @@
--- TPU Blogpost series by @domipheus
 -- Author: Quentin Ducasse
 --   mail:   quentin.ducasse@ensta-bretagne.org
 --   github: QDucasse
@@ -13,7 +12,7 @@ library IEEE;
 use IEEE.std_logic_1164.all;
 
 library work;
-use work.constant_codes.all;
+use work.sdvu_constants.all;
 
 -- =================
 --      Entity
@@ -77,7 +76,7 @@ begin
       -- TESTING OPERATIONS
 
       -- Test 1: ASSIGN | Assign PC
-      I_PC_OPCode <= PCU_OP_ASSIGN;
+      I_PC_OPCode <= PC_OP_ASSIGN;
       I_PC <= X"FEED";
       wait_cycles(2);
       if (O_PC=X"FEED") then report "Test ASSIGN: Passed" severity NOTE;
@@ -85,21 +84,21 @@ begin
       end if;
 
       -- Test 2: NOP | Do nothing
-      I_PC_OPCode <= PCU_OP_NOP;
+      I_PC_OPCode <= PC_OP_NOP;
       wait_cycles(2);
       if (O_PC=X"FEED") then report "Test NOP: Passed" severity NOTE;
         else report "Test NOP: Failed" severity FAILURE;
       end if;
 
       -- Test 3: INC | Increment the PC
-      I_PC_OPCode <= PCU_OP_INC;
+      I_PC_OPCode <= PC_OP_INC;
       wait_cycles(2);
       if (O_PC=X"FEEE") then report "Test INC: Passed" severity NOTE;
         else report "Test INC: Failed" severity FAILURE;
       end if;
 
       -- Test 4: RESET | Reset the PC
-      I_PC_OPCode <= PCU_OP_RESET;
+      I_PC_OPCode <= PC_OP_RESET;
       wait_cycles(2);
       if (O_PC=X"0000") then report "Test RESET: Passed" severity NOTE;
         else report "Test RESET: Failed" severity FAILURE;

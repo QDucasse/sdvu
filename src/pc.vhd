@@ -18,7 +18,7 @@ use IEEE.std_logic_1164.all;
 use IEEE.numeric_std.all;
 
 library work;
-use work.constant_codes.all;
+use work.sdvu_constants.all;
 
 -- =================
 --      Entity
@@ -48,22 +48,23 @@ begin
   -- Processes
   ProcessOperation: process (I_clk, I_reset)
   begin
-    -- Reset routine
-    if I_reset='0' then
-      current_pc <= X"0000";
-    end if;
     -- Process operation on PC
     if rising_edge(I_clk) then
-      case I_PC_OPCode is
-        when PCU_OP_NOP =>    -- NOP | Nothing to do, keep PC the same / halt
-        when PCU_OP_INC =>    -- INC | Increment the PC
-          current_pc <= std_logic_vector(unsigned(current_pc) + 1);
-        when PCU_OP_ASSIGN => -- ASSIGN | Set the PC from an external input
-          current_pc <= I_PC; -- Input PC to assign
-        when PCU_OP_RESET =>  -- RESET | Set the PC to X"0000"
-          current_pc <= X"0000";
-        when others =>
-      end case;
+      -- Reset routine
+      if I_reset='0' then
+        current_pc <= X"0000";
+      else
+        case I_PC_OPCode is
+          when PC_OP_NOP =>    -- NOP | Nothing to do, keep PC the same / halt
+          when PC_OP_INC =>    -- INC | Increment the PC
+            current_pc <= std_logic_vector(unsigned(current_pc) + 1);
+          when PC_OP_ASSIGN => -- ASSIGN | Set the PC from an external input
+            current_pc <= I_PC; -- Input PC to assign
+          when PC_OP_RESET =>  -- RESET | Set the PC to X"0000"
+            current_pc <= X"0000";
+          when others =>
+        end case;
+      end if;
     end if;
   end process;
 
