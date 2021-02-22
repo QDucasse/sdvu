@@ -19,48 +19,54 @@ use IEEE.numeric_std.all;
 package sdvu_constants is
 
   -- Opcodes
-  constant OP_ADD:   std_logic_vector(3 downto 0) :=  "0000";
-  constant OP_SUB:   std_logic_vector(3 downto 0) :=  "0001";
-  constant OP_MUL:   std_logic_vector(3 downto 0) :=  "0010";
-  constant OP_DIV:   std_logic_vector(3 downto 0) :=  "0011";
-  constant OP_MOD:   std_logic_vector(3 downto 0) :=  "0100";
-  constant OP_AND:   std_logic_vector(3 downto 0) :=  "0101";
-  constant OP_OR:    std_logic_vector(3 downto 0) :=  "0110";
-  constant OP_LT:    std_logic_vector(3 downto 0) :=  "0111";
-  constant OP_GT:    std_logic_vector(3 downto 0) :=  "1000";
-  constant OP_EQ:    std_logic_vector(3 downto 0) :=  "1001";
-  constant OP_NOT:   std_logic_vector(3 downto 0) :=  "1010";
-  constant OP_JMP:   std_logic_vector(3 downto 0) :=  "1011";
-  constant OP_STORE: std_logic_vector(3 downto 0) :=  "1100";
-  constant OP_LOAD:  std_logic_vector(3 downto 0) :=  "1101";
+  constant OP_ADD:   STD_LOGIC_VECTOR(3 downto 0) :=  "0000";
+  constant OP_SUB:   STD_LOGIC_VECTOR(3 downto 0) :=  "0001";
+  constant OP_MUL:   STD_LOGIC_VECTOR(3 downto 0) :=  "0010";
+  constant OP_DIV:   STD_LOGIC_VECTOR(3 downto 0) :=  "0011";
+  constant OP_MOD:   STD_LOGIC_VECTOR(3 downto 0) :=  "0100";
+  constant OP_AND:   STD_LOGIC_VECTOR(3 downto 0) :=  "0101";
+  constant OP_OR:    STD_LOGIC_VECTOR(3 downto 0) :=  "0110";
+  constant OP_LT:    STD_LOGIC_VECTOR(3 downto 0) :=  "0111";
+  constant OP_GT:    STD_LOGIC_VECTOR(3 downto 0) :=  "1000";
+  constant OP_EQ:    STD_LOGIC_VECTOR(3 downto 0) :=  "1001";
+  constant OP_NOT:   STD_LOGIC_VECTOR(3 downto 0) :=  "1010";
+  constant OP_JMP:   STD_LOGIC_VECTOR(3 downto 0) :=  "1011";
+  constant OP_STORE: STD_LOGIC_VECTOR(3 downto 0) :=  "1100";
+  constant OP_LOAD:  STD_LOGIC_VECTOR(3 downto 0) :=  "1101";
 
   -- Config bitmasks for BINARY operations
-  constant CFG_RR: std_logic_vector(1 downto 0) := "00";
-  constant CFG_RI: std_logic_vector(1 downto 0) := "01";
-  constant CFG_IR: std_logic_vector(1 downto 0) := "10";
-  constant CFG_II: std_logic_vector(1 downto 0) := "11";
+  constant CFG_RR: STD_LOGIC_VECTOR(1 downto 0) := "00";
+  constant CFG_RI: STD_LOGIC_VECTOR(1 downto 0) := "01";
+  constant CFG_IR: STD_LOGIC_VECTOR(1 downto 0) := "10";
+  constant CFG_II: STD_LOGIC_VECTOR(1 downto 0) := "11";
 
   -- Config bitmasks for LOAD operations
-  constant LOAD_REG: std_logic_vector(1 downto 0) := "00";
-  constant LOAD_IMM: std_logic_vector(1 downto 0) := "01";
-  constant LOAD_ADR: std_logic_vector(1 downto 0) := "10";
-  constant LOAD_RAA: std_logic_vector(1 downto 0) := "11";
+  constant LOAD_REG: STD_LOGIC_VECTOR(1 downto 0) := "00";
+  constant LOAD_IMM: STD_LOGIC_VECTOR(1 downto 0) := "01";
+  constant LOAD_ADR: STD_LOGIC_VECTOR(1 downto 0) := "10";
+  constant LOAD_RAA: STD_LOGIC_VECTOR(1 downto 0) := "11";
 
   -- Config bitmasks for STORE operations
-  constant STORE_ADR: std_logic_vector(1 downto 0) := "00";
-  constant STORE_RAA: std_logic_vector(1 downto 0) := "01";
+  constant STORE_ADR: STD_LOGIC_VECTOR(1 downto 0) := "00";
+  constant STORE_RAA: STD_LOGIC_VECTOR(1 downto 0) := "01";
 
   -- Types of values
-  constant VAL_BOOL:  std_logic_vector(1 downto 0) := "00";
-  constant VAL_BYTE:  std_logic_vector(1 downto 0) := "01";
-  constant VAL_INT:   std_logic_vector(1 downto 0) := "10";
-  constant VAL_STATE: std_logic_vector(1 downto 0) := "11";
+  constant VAL_BOOL:  STD_LOGIC_VECTOR(1 downto 0) := "00";
+  constant VAL_BYTE:  STD_LOGIC_VECTOR(1 downto 0) := "01";
+  constant VAL_INT:   STD_LOGIC_VECTOR(1 downto 0) := "10";
+  constant VAL_STATE: STD_LOGIC_VECTOR(1 downto 0) := "11";
+
+  -- FSM states
+  constant FSM_DECODE:   STD_LOGIC_VECTOR(3 downto 0) := "00";
+  constant FSM_REGREAD:  STD_LOGIC_VECTOR(3 downto 0) := "01";
+  constant FSM_ALU:      STD_LOGIC_VECTOR(3 downto 0) := "10";
+  constant FSM_REGWRITE: STD_LOGIC_VECTOR(3 downto 0) := "11";
 
   -- PC unit opcodes
-  constant PCU_OP_NOP:    std_logic_vector(1 downto 0):= "00";
-  constant PCU_OP_INC:    std_logic_vector(1 downto 0):= "01";
-  constant PCU_OP_ASSIGN: std_logic_vector(1 downto 0):= "10";
-  constant PCU_OP_RESET:  std_logic_vector(1 downto 0):= "11";
+  constant PCU_OP_NOP:    STD_LOGIC_VECTOR(1 downto 0):= "00";
+  constant PCU_OP_INC:    STD_LOGIC_VECTOR(1 downto 0):= "01";
+  constant PCU_OP_ASSIGN: STD_LOGIC_VECTOR(1 downto 0):= "10";
+  constant PCU_OP_RESET:  STD_LOGIC_VECTOR(1 downto 0):= "11";
 
 end package sdvu_constants;
 

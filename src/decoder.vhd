@@ -13,6 +13,7 @@
 library IEEE;
 use IEEE.std_logic_1164.all;
 use IEEE.numeric_std.all;
+
 library work;
 use work.sdvu_constants.all;
 
@@ -50,51 +51,46 @@ begin
     -- Processes
     DecodeInstr: process(I_clk) -- I_clk added to the sensitivity list of the process
     begin
-        if rising_edge(I_clk) and I_en='1' then  -- If new cycle and enable
-            O_aluop <= I_dataInst(31 downto 28);  -- Decode ALU operation
-
-            case I_dataInst(31 downto 28) is
-
-              when OP_NOT => -- NOT OPERATION
-                O_rD      <= I_dataInst(27 downto 24); -- 0000 1111 0000 0000 0000 0000 0000 0000
-                O_rA      <= I_dataInst(3  downto  0); -- 0000 0000 0000 0000 0000 0000 0000 1111
-
-              when OP_LOAD => --LOAD OPERATION
-                O_cfgMask <= I_dataInst(27 downto 26);          -- 0000 1100 0000 0000 0000 0000 0000 0000
-                O_type    <= I_dataInst(25 downto 24);          -- 0000 0011 0000 0000 0000 0000 0000 0000
-                O_rD      <= I_dataInst(23 downto 20);          -- 0000 0000 1111 0000 0000 0000 0000 0000
-                O_rA      <= I_dataInst(3  downto  0);          -- 0000 0000 0000 0000 0000 0000 0000 1111
-                O_immA    <= I_dataInst(10 downto  0);          -- 0000 0000 0000 0000 0000 0111 1111 1111
-                O_address <= "0000" & I_dataInst(19 downto  0); -- 0000 0000 0000 1111 1111 1111 1111 1111
-
-              when OP_STORE => -- STORE OPERATION
-                O_cfgMask <= I_dataInst(27 downto 26);          -- 0000 1100 0000 0000 0000 0000 0000 0000
-                O_type    <= I_dataInst(25 downto 24);          -- 0000 0011 0000 0000 0000 0000 0000 0000
-                O_rD      <= I_dataInst(23 downto 20);          -- 0000 0000 1111 0000 0000 0000 0000 0000
-                O_rA      <= I_dataInst(3  downto  0);          -- 0000 0000 0000 0000 0000 0000 0000 1111
-                O_address <= "0000" & I_dataInst(19 downto  0); -- 0000 0000 0000 1111 1111 1111 1111 1111
-
-              when OP_JMP => -- JUMP OPERATION
-                O_rD      <= I_dataInst(27 downto 24); -- 0000 1111 0000 0000 0000 0000 0000 0000
-                O_address <= I_dataInst(23 downto  0); -- 0000 0000 1111 1111 1111 1111 1111 1111
-
-              when others => -- BINARY OPERATION
-                O_cfgMask <= I_dataInst(27 downto 26); -- 0000 1100 0000 0000 0000 0000 0000 0000
-                O_rD      <= I_dataInst(25 downto 22); -- 0000 0011 1100 0000 0000 0000 0000 0000
-                O_rA      <= I_dataInst(14 downto 11); -- 0000 0000 0000 0000 0111 1000 0000 0000
-                O_rB      <= I_dataInst(3  downto  0); -- 0000 0000 0000 0000 0000 0000 0000 1111
-                O_immA    <= I_dataInst(21 downto 11); -- 0000 0000 0011 1111 1111 1000 0000 0000
-                O_immB    <= I_dataInst(10 downto  0); -- 0000 0000 0000 0000 0000 0111 1111 1111
-
-            end case;
-
-            -- Write enable set to NO in case of LOAD, STORE and JMP
-            case I_dataInst(31 downto 28) is
-                when OP_STORE | OP_JMP =>
-                  O_regDwe <= '0';
-                when others =>
-                  O_regDwe <= '1';
-            end case;
+        if rising_edge(I_clk) then  -- If new cycle and enable
+            if I_en='1' then        -- If enable
+                O_aluop <= I_dataInst(31 downto 28);  -- Decode ALU operation
+                -- Switch on the opcode
+                case I_dataInst(31 downto 28) is
+                  when OP_NOT => -- NOT OPERATION
+                    O_rD      <= I_dataInst(27 downto 24); -- 0000 1111 0000 0000 0000 0000 0000 0000
+                    O_rA      <= I_dataInst(3  downto  0); -- 0000 0000 0000 0000 0000 0000 0000 1111
+                  when OP_LOAD => --LOAD OPERATION
+                    O_cfgMask <= I_dataInst(27 downto 26);          -- 0000 1100 0000 0000 0000 0000 0000 0000
+                    O_type    <= I_dataInst(25 downto 24);          -- 0000 0011 0000 0000 0000 0000 0000 0000
+                    O_rD      <= I_dataInst(23 downto 20);          -- 0000 0000 1111 0000 0000 0000 0000 0000
+                    O_rA      <= I_dataInst(3  downto  0);          -- 0000 0000 0000 0000 0000 0000 0000 1111
+                    O_immA    <= I_dataInst(10 downto  0);          -- 0000 0000 0000 0000 0000 0111 1111 1111
+                    O_address <= "0000" & I_dataInst(19 downto  0); -- 0000 0000 0000 1111 1111 1111 1111 1111
+                  when OP_STORE => -- STORE OPERATION
+                    O_cfgMask <= I_dataInst(27 downto 26);          -- 0000 1100 0000 0000 0000 0000 0000 0000
+                    O_type    <= I_dataInst(25 downto 24);          -- 0000 0011 0000 0000 0000 0000 0000 0000
+                    O_rD      <= I_dataInst(23 downto 20);          -- 0000 0000 1111 0000 0000 0000 0000 0000
+                    O_rA      <= I_dataInst(3  downto  0);          -- 0000 0000 0000 0000 0000 0000 0000 1111
+                    O_address <= "0000" & I_dataInst(19 downto  0); -- 0000 0000 0000 1111 1111 1111 1111 1111
+                  when OP_JMP => -- JUMP OPERATION
+                    O_rD      <= I_dataInst(27 downto 24); -- 0000 1111 0000 0000 0000 0000 0000 0000
+                    O_address <= I_dataInst(23 downto  0); -- 0000 0000 1111 1111 1111 1111 1111 1111
+                  when others => -- BINARY OPERATION
+                    O_cfgMask <= I_dataInst(27 downto 26); -- 0000 1100 0000 0000 0000 0000 0000 0000
+                    O_rD      <= I_dataInst(25 downto 22); -- 0000 0011 1100 0000 0000 0000 0000 0000
+                    O_rA      <= I_dataInst(14 downto 11); -- 0000 0000 0000 0000 0111 1000 0000 0000
+                    O_rB      <= I_dataInst(3  downto  0); -- 0000 0000 0000 0000 0000 0000 0000 1111
+                    O_immA    <= I_dataInst(21 downto 11); -- 0000 0000 0011 1111 1111 1000 0000 0000
+                    O_immB    <= I_dataInst(10 downto  0); -- 0000 0000 0000 0000 0000 0111 1111 1111
+                end case;
+                -- Write enable set to NO in case of LOAD, STORE and JMP
+                case I_dataInst(31 downto 28) is
+                    when OP_STORE | OP_JMP =>
+                      O_regDwe <= '0';
+                    when others =>
+                      O_regDwe <= '1';
+                end case;
+            end if;
         end if;
     end process;
 end arch_decoder;

@@ -19,8 +19,9 @@ use IEEE.numeric_std.all;
 -- =================
 
 entity ram_memory is
-    generic(MEM_SIZE   : natural := 8;
-            INSTR_SIZE : natural := 16);
+    generic (MEM_SIZE   : natural := 8;
+             INSTR_SIZE : natural := 16
+             );
     port (I_clk   : in STD_LOGIC; -- Clock signal
           I_reset : in STD_LOGIC; -- Reset signal
           I_we    : in STD_LOGIC; -- Write Enable
@@ -43,11 +44,10 @@ begin
   -- Processes
   TransferData: process(I_clk) -- I_clk added to the sensitivity list of the process
   begin
-      if I_reset='0' then
-        memory_bank <= (others => X"0000");
-      end if;
       if rising_edge(I_clk) then  -- If new cycle
-        if (I_we = '1') then      -- If write-enable propagate the data
+        if I_reset = '0' then     -- Reset
+          memory_bank <= (others => X"0000");
+        elsif (I_we = '1') then   -- If write-enable propagate the data
           -- Write the input to RAM address
           memory_bank(to_integer(unsigned(I_addr))) <= I_data;
         else

@@ -19,7 +19,8 @@ use IEEE.numeric_std.all;
 
 entity reg is
     generic (REG_WIDTH : natural := 16;
-             SIZE      : natural := 4); -- 2 to the power of SIZE
+             SIZE      : natural := 4
+             ); -- 2 to the power of SIZE
     port (I_clk  : in STD_LOGIC; -- Clock signal
           I_reset: in STD_LOGIC; -- Reset signal
           I_en   : in STD_LOGIC; -- Enable

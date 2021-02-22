@@ -23,8 +23,9 @@ use work.constant_codes.all;
 -- =================
 
 entity alu is
-    generic(REG_WIDTH : natural := 16;
-            OP_SIZE   : natural := 4);
+    generic (REG_WIDTH : natural := 16;
+             OP_SIZE   : natural := 4
+             );
     port (I_clk        : in STD_LOGIC; -- Clock signal
           I_en         : in STD_LOGIC; -- Enable
           I_reset      : in STD_LOGIC; -- Reset
@@ -66,7 +67,8 @@ begin
         end if;
 
         -- Operations routine
-        if rising_edge(I_clk) and I_en='1' then  -- If new cycle and enable
+        if rising_edge(I_clk) and I_en='1' then  -- If enable
+
             O_dataWriteReg <= I_dataDwe;         -- Propagate write enable
             cmp_op <= I_aluop(4 downto 1);
             case cmp_op is
