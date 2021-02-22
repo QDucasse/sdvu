@@ -61,7 +61,7 @@ begin
     PerformOperation: process(I_clk, I_en, I_reset) -- I_clk and I_en added to the sensitivity list of the process
     begin
         -- Reset routine
-        if I_reset='0' then
+        if I_reset = '1' then
           s_result <= (others => '0');
           s_shouldBranch <= '0';
         end if;

@@ -45,7 +45,7 @@ begin
   TransferData: process(I_clk) -- I_clk added to the sensitivity list of the process
   begin
       if rising_edge(I_clk) then  -- If new cycle
-        if I_reset = '0' then     -- Reset
+        if I_reset = '1' then     -- Reset
           memory_bank <= (others => X"0000");
         elsif (I_we = '1') then   -- If write-enable propagate the data
           -- Write the input to RAM address

@@ -61,7 +61,7 @@ architecture arch_alu_tb of alu_tb is
 
     begin
     -- Clock, reset and enable signals
-    reset <= '0', '1' after 10 ns;
+    reset   <= '1', '0' after 10 ns;
     enable  <= '0', '1' after 50 ns;
     clk <= not(clk) after HALF_PERIOD when running else clk;
     -- DUT
@@ -89,8 +89,8 @@ architecture arch_alu_tb of alu_tb is
     StimulusProcess: process
       variable cmp : boolean := false;
     begin
-      wait until reset='1';
-      wait until enable='1';
+      wait until reset = '0';
+      wait until enable = '1';
       wait_cycles(10);
       report "ALU: Running testbench";
       -- TESTING OPERATIONS

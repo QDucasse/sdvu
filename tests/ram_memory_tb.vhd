@@ -51,7 +51,7 @@ architecture arch_ram_memory_tb of ram_memory_tb is
 
     begin
     -- Clock, reset and enable signals
-    reset <= '0', '1' after 10 ns;
+    reset <= '1', '0' after 10 ns;
     clk <= not(clk) after HALF_PERIOD when running else clk;
 
     -- DUT
@@ -73,7 +73,7 @@ architecture arch_ram_memory_tb of ram_memory_tb is
     -- Stimulus process
     StimulusProcess: process
     begin
-      wait until reset='1';
+      wait until reset = '0';
       wait_cycles(1);
       report "RAM: Running testbench";
 

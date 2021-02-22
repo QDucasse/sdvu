@@ -43,7 +43,7 @@ begin
     StateIncrement: process(I_clk) -- I_clk added to the sensitivity list of the process
     begin
         if rising_edge(I_clk) then
-          if I_reset = '0' then
+          if I_reset = '1' then
             current_state <= FSM_DECODE;
           else
             -- Pipeline: Decode - Reg Read - ALU - Reg Write - Decode - ...

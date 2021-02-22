@@ -52,7 +52,7 @@ architecture arch_pc_tb of pc_tb is
 
 begin
     -- Clock, reset and enable signals
-    reset <= '0', '1' after 10 ns;
+    reset <= '1', '0' after 10 ns;
     clk <= not(clk) after HALF_PERIOD when running else clk;
     -- DUT
     dut: entity work.pc(arch_pc)
@@ -70,7 +70,7 @@ begin
     -- Stimulus process
     StimulusProcess: process
     begin
-      wait until reset='1';
+      wait until reset = '0';
       wait_cycles(10);
       report "PC: Running testbench";
       -- TESTING OPERATIONS

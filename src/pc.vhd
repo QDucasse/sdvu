@@ -51,7 +51,7 @@ begin
     -- Process operation on PC
     if rising_edge(I_clk) then
       -- Reset routine
-      if I_reset = '0' then
+      if I_reset = '1' then
         current_pc <= X"0000";
       else
         case I_PC_OPCode is

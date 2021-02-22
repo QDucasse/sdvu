@@ -46,17 +46,17 @@ begin
     -- Processes
     TransferData: process(I_clk) -- I_clk added to the sensitivity list of the process
     begin
-        -- Reset initialization
-        if I_reset='0' then
-          reg_bank <= (others => X"0000");
-        end if;
         -- Rising edge data transfer IA=>OA, IB=>OB and DATA=>RD if WE
         if rising_edge(I_clk) and I_en='1' then -- If new cycle and enable
+          if I_reset = '1' then
+            reg_bank <= (others => X"0000");
+          elsif I_en = '1' then
             O_dataA <= reg_bank(to_integer(unsigned(I_selA)));     -- Propagate the input to the output (A)
             O_dataB <= reg_bank(to_integer(unsigned(I_selB)));     -- Propagate the input to the output (B)
             if (I_we = '1') then                                   -- If write-enable propagate the data
-                reg_bank(to_integer(unsigned(I_selD))) <= I_dataD; -- Write dataD to the selD register
+              reg_bank(to_integer(unsigned(I_selD))) <= I_dataD; -- Write dataD to the selD register
             end if;
+          end if;
         end if;
     end process;
 end arch_reg;

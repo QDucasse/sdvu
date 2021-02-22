@@ -50,7 +50,7 @@ architecture arch_fsm_tb of fsm_tb is
 
 begin
     -- Clock, reset and enable signals
-    reset <= '0', '1' after 10 ns;
+    reset <= '1', '0' after 10 ns;
     clk <= not(clk) after HALF_PERIOD when running else clk;
     -- DUT
     dut: entity work.fsm(arch_fsm)
@@ -63,7 +63,7 @@ begin
     -- Stimulus process
     StimulusProcess: process
     begin
-      wait until reset='1';
+      wait until reset = '0';
       report "FSM: Running testbench";
       -- TESTING OPERATIONS
 

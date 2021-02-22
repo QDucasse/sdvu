@@ -55,7 +55,7 @@ architecture arch_reg_tb of reg_tb is
 
 begin
    -- Clock, reset and enable signals
-   reset <= '0', '1' after 10 ns;
+   reset <= '1', '0' after 10 ns;
    enable  <= '0', '1' after 50 ns;
    clk <= not(clk) after HALF_PERIOD when running else clk;
 
@@ -83,7 +83,7 @@ begin
    -- Stimulus process
    StimulusProcess: process
    begin
-      wait until reset = '1';
+      wait until reset = '0';
       wait until enable  = '1';
       wait_cycles(1);
       report "REGISTER: Running testbench";
