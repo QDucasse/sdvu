@@ -32,11 +32,11 @@ entity decoder is
           O_rD      : out STD_LOGIC_VECTOR (3  downto 0);  -- Destination register
           O_rA      : out STD_LOGIC_VECTOR (3  downto 0);  -- Register A from instruction
           O_rB      : out STD_LOGIC_VECTOR (3  downto 0);  -- Register B from instruction
-          O_immA    : out STD_LOGIC_VECTOR (10   downto 0);  -- Immediate value A from instruction
+          O_immA    : out STD_LOGIC_VECTOR (10 downto 0);  -- Immediate value A from instruction
           O_immB    : out STD_LOGIC_VECTOR (10 downto 0);  -- Immediate value A from instruction
           O_address : out STD_LOGIC_VECTOR (23 downto 0);  -- Address for JMP, STORE and LOAD
           O_type    : out STD_LOGIC_VECTOR (1  downto 0);  -- Type of the value loaded or stored
-          O_regDwe  : out STD_LOGIC                        -- Write Enabled
+          O_WE      : out STD_LOGIC                        -- Write Enabled
           );
 end decoder;
 
@@ -73,7 +73,7 @@ begin
                     O_rA      <= I_dataInst(3  downto  0);          -- 0000 0000 0000 0000 0000 0000 0000 1111
                     O_address <= "0000" & I_dataInst(19 downto  0); -- 0000 0000 0000 1111 1111 1111 1111 1111
                   when OP_JMP => -- JUMP OPERATION
-                    O_rD      <= I_dataInst(27 downto 24); -- 0000 1111 0000 0000 0000 0000 0000 0000
+                    O_rA      <= I_dataInst(27 downto 24); -- 0000 1111 0000 0000 0000 0000 0000 0000
                     O_address <= I_dataInst(23 downto  0); -- 0000 0000 1111 1111 1111 1111 1111 1111
                   when others => -- BINARY OPERATION
                     O_cfgMask <= I_dataInst(27 downto 26); -- 0000 1100 0000 0000 0000 0000 0000 0000
@@ -86,9 +86,9 @@ begin
                 -- Write enable set to NO in case of LOAD, STORE and JMP
                 case I_dataInst(31 downto 28) is
                     when OP_STORE | OP_JMP =>
-                      O_regDwe <= '0';
+                      O_WE <= '0';
                     when others =>
-                      O_regDwe <= '1';
+                      O_WE <= '1';
                 end case;
             end if;
         end if;
