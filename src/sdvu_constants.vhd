@@ -56,11 +56,17 @@ package sdvu_constants is
   constant VAL_INT:   STD_LOGIC_VECTOR(1 downto 0) := "10";
   constant VAL_STATE: STD_LOGIC_VECTOR(1 downto 0) := "11";
 
-  -- FSM states
-  constant FSM_DECODE:   STD_LOGIC_VECTOR(1 downto 0) := "00";
-  constant FSM_REGREAD:  STD_LOGIC_VECTOR(1 downto 0) := "01";
-  constant FSM_ALU:      STD_LOGIC_VECTOR(1 downto 0) := "10";
-  constant FSM_REGWRITE: STD_LOGIC_VECTOR(1 downto 0) := "11";
+  -- Sizes of the types
+  constant TYPE_BOOL:  natural := 8;
+  constant TYPE_BYTE:  natural := 8;
+  constant TYPE_INT:   natural := 32;
+  constant TYPE_STATE: natural := 16;
+
+  -- CONTROL_UNIT states
+  constant CONTROL_UNIT_DECODE:   STD_LOGIC_VECTOR(1 downto 0) := "00";
+  constant CONTROL_UNIT_REGREAD:  STD_LOGIC_VECTOR(1 downto 0) := "01";
+  constant CONTROL_UNIT_ALU:      STD_LOGIC_VECTOR(1 downto 0) := "10";
+  constant CONTROL_UNIT_REGWRITE: STD_LOGIC_VECTOR(1 downto 0) := "11";
 
   -- PC unit opcodes
   constant PC_OP_NOP:    STD_LOGIC_VECTOR(1 downto 0):= "00";

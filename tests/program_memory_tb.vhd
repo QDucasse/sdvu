@@ -16,14 +16,14 @@ use IEEE.std_logic_1164.all;
 --      Entity
 -- =================
 
-entity ram_memory_tb is
-end ram_memory_tb;
+entity program_memory_tb is
+end program_memory_tb;
 
 -- =================
 --   Architecture
 -- =================
 
-architecture arch_ram_memory_tb of ram_memory_tb is
+architecture arch_program_memory_tb of program_memory_tb is
     -- Clock, Reset and Enable signals
     constant HALF_PERIOD : time := 5 ns; -- Clock half period
     signal clk     : std_logic  := '0';  -- Clock signal
@@ -55,7 +55,7 @@ architecture arch_ram_memory_tb of ram_memory_tb is
     clk <= not(clk) after HALF_PERIOD when running else clk;
 
     -- DUT
-    dut: entity work.ram_memory(arch_ram_memory)
+    dut: entity work.program_memory(arch_program_memory)
         generic map (
           MEM_SIZE   => MEM_SIZE,
           INSTR_SIZE => INSTR_SIZE
@@ -105,4 +105,4 @@ architecture arch_ram_memory_tb of ram_memory_tb is
       report "RAM: Testbench complete";
     end process;
 
-end arch_ram_memory_tb;
+end arch_program_memory_tb;

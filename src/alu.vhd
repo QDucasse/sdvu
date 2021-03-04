@@ -40,7 +40,7 @@ entity alu is
           I_type     : in STD_LOGIC_VECTOR (1  downto 0);          -- Type of the value loaded or stored
           I_WE       : in STD_LOGIC                                -- Write Enable
 
-          O_dataResult : out STD_LOGIC_VECTOR (23 downto 0); --Result of the operation
+          O_dataResult : out STD_LOGIC_VECTOR (23 downto 0);       -- Result of the operation
           O_WE : out STD_LOGIC -- Pass over the write enable
           );
 end alu;
@@ -135,13 +135,13 @@ begin
               when OP_MOD =>
                 case I_cfgMask is
                   when CFG_RR then
-                    s_result(REG_WIDTH-1 downto 0) <= std_logic_vector(unsigned(I_dataA) % unsigned(I_dataB));
+                    s_result(REG_WIDTH-1 downto 0) <= std_logic_vector(unsigned(I_dataA) mod unsigned(I_dataB));
                   when CFG_RI then
-                    s_result(REG_WIDTH-1 downto 0) <= std_logic_vector(unsigned(I_dataA) % unsigned(I_dataImmB));
+                    s_result(REG_WIDTH-1 downto 0) <= std_logic_vector(unsigned(I_dataA) mod unsigned(I_dataImmB));
                   when CFG_IR then
-                    s_result(REG_WIDTH-1 downto 0) <= std_logic_vector(unsigned(I_dataImmA) % unsigned(I_dataB));
+                    s_result(REG_WIDTH-1 downto 0) <= std_logic_vector(unsigned(I_dataImmA) mod unsigned(I_dataB));
                   when CFG_II then
-                    s_result(REG_WIDTH-1 downto 0) <= std_logic_vector(unsigned(I_dataImmA) % unsigned(I_dataImmB));
+                    s_result(REG_WIDTH-1 downto 0) <= std_logic_vector(unsigned(I_dataImmA) mod unsigned(I_dataImmB));
                 end case;
                 s_shouldBranch <= '0'; -- No need for branching.
 

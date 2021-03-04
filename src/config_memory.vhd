@@ -4,7 +4,7 @@
 --   github: QDucasse
 -- =================================
 -- Random Access Memory consisting of an array of 32 16-bits addresses
--- with writes and reads.
+-- with writes and reads for the global variables configuration.
 
 -- =================
 --    Libraries
@@ -18,26 +18,26 @@ use IEEE.numeric_std.all;
 --      Entity
 -- =================
 
-entity ram_memory is
-    generic (MEM_SIZE   : natural := 8;
-             INSTR_SIZE : natural := 16
-             );
+entity config_memory is
+    generic (MEM_SIZE  : natural := 8,
+             TYPE_SIZE : natural := 32);
     port (I_clk   : in STD_LOGIC; -- Clock signal
           I_reset : in STD_LOGIC; -- Reset signal
           I_we    : in STD_LOGIC; -- Write Enable
-          I_addr  : in STD_LOGIC_VECTOR (MEM_SIZE-1 downto 0);    -- Address in the RAM
-          I_data  : in STD_LOGIC_VECTOR (INSTR_SIZE-1 downto 0);  -- Data to write to address in memory
-          O_data  : out STD_LOGIC_VECTOR (INSTR_SIZE-1 downto 0)  -- Read address from memory
+          I_type  : in STD_LOGIC_VECTOR(1 downto 0);            -- Indication on the type of the value
+          I_addr  : in STD_LOGIC_VECTOR (MEM_SIZE-1 downto 0);  -- Address in the RAM
+          I_data  : in STD_LOGIC_VECTOR (TYPE_SIZE-1 downto 0); -- Data to write to address in memory
+          O_data  : out STD_LOGIC_VECTOR (TYPE_SIZE-1 downto 0) -- Read address from memory
           );
-end ram_memory;
+end config_memory;
 
 -- =================
 --   Architecture
 -- =================
 
-architecture arch_ram_memory of ram_memory is
+architecture arch_config_memory of config_memory is
     -- Internal Objects
-    type memory_file is array (0 to 2**MEM_SIZE-1) of STD_LOGIC_VECTOR(INSTR_SIZE-1 downto 0);  -- 128 16-bit addresses
+    type memory_file is array (0 to 2**MEM_SIZE-1);  -- 128
     signal memory_bank: memory_file := (others => X"0000"); -- Affectation of the array and initialization at 0
 
 begin
@@ -56,4 +56,4 @@ begin
         end if;
     end if;
   end process;
-end arch_ram_memory;
+end arch_config_memory;
