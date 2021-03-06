@@ -25,7 +25,7 @@ entity program_memory is
     port (I_clk   : in STD_LOGIC; -- Clock signal
           I_reset : in STD_LOGIC; -- Reset signal
           I_addr  : in STD_LOGIC_VECTOR (MEM_SIZE-1 downto 0);    -- Address in the RAM
-          O_data  : out STD_LOGIC_VECTOR (INSTR_SIZE-1 downto 0)  -- Read address from memory
+          O_data  : out STD_LOGIC_VECTOR (INSTR_SIZE-1 downto 0)  -- Data at address
           );
 end program_memory;
 
@@ -35,7 +35,7 @@ end program_memory;
 
 architecture arch_program_memory of program_memory is
     -- Internal Objects
-    type memory_file is array (0 to 2**MEM_SIZE-1) of STD_LOGIC_VECTOR(INSTR_SIZE-1 downto 0);  -- 128 16-bit addresses
+    type memory_file is array (0 to 2**MEM_SIZE-1) of STD_LOGIC_VECTOR(INSTR_SIZE-1 downto 0);  -- 128 32-bit addresses
     signal memory_bank: memory_file := (others => X"0000"); -- Affectation of the array and initialization at 0
 
 begin

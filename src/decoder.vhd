@@ -27,16 +27,13 @@ entity decoder is
           -- Base instruction
           I_dataInst: in STD_LOGIC_VECTOR (31 downto 0);   -- 32-bit Instruction
           -- Selectors to extract from the instruction
-          O_aluop   : out STD_LOGIC_VECTOR (3  downto 0);  -- ALU operation to perform
-          O_cfgMask : out STD_LOGIC_VECTOR (1  downto 0);  -- Configuration mask for the instruction
-          O_rD      : out STD_LOGIC_VECTOR (3  downto 0);  -- Destination register
-          O_rA      : out STD_LOGIC_VECTOR (3  downto 0);  -- Register A from instruction
-          O_rB      : out STD_LOGIC_VECTOR (3  downto 0);  -- Register B from instruction
-          O_immA    : out STD_LOGIC_VECTOR (10 downto 0);  -- Immediate value A from instruction
-          O_immB    : out STD_LOGIC_VECTOR (10 downto 0);  -- Immediate value A from instruction
-          O_address : out STD_LOGIC_VECTOR (23 downto 0);  -- Address for JMP, STORE and LOAD
-          O_type    : out STD_LOGIC_VECTOR (1  downto 0);  -- Type of the value loaded or stored
-          O_WE      : out STD_LOGIC                        -- Write Enabled
+          O_aluop   : out STD_LOGIC_VECTOR (3  downto 0);         -- ALU operation to perform
+          O_cfgMask : out STD_LOGIC_VECTOR (1  downto 0);         -- Configuration mask for the instruction
+          O_rD, O_rA, O_rB : out STD_LOGIC_VECTOR (3  downto 0);  -- Registers (rd, ra and rb)
+          O_immA, O_immB   : out STD_LOGIC_VECTOR (10 downto 0);  -- Immediate value A and B from instruction
+          O_address : out STD_LOGIC_VECTOR (23 downto 0);         -- Address for JMP, STORE and LOAD
+          O_type    : out STD_LOGIC_VECTOR (1  downto 0);         -- Type of the value loaded or stored
+          O_WE      : out STD_LOGIC                               -- Write Enabled
           );
 end decoder;
 
@@ -54,6 +51,13 @@ begin
         if rising_edge(I_clk) then  -- If new cycle and enable
             if I_en='1' then        -- If enable
                 O_aluop <= I_dataInst(31 downto 28);  -- Decode ALU operation
+                -- Zero out all outputs to avoid latch creation
+                O_cfgMask <= (others <= "0");
+                O_rB      <= (others <= "0");
+                O_immA    <= (others <= "0");
+                O_immB    <= (others <= "0");
+                O_type    <= (others <= "0");
+                O_address <= (others <= "0");
                 -- Switch on the opcode
                 case I_dataInst(31 downto 28) is
                   when OP_NOT => -- NOT OPERATION
@@ -83,7 +87,7 @@ begin
                     O_immA    <= I_dataInst(21 downto 11); -- 0000 0000 0011 1111 1111 1000 0000 0000
                     O_immB    <= I_dataInst(10 downto  0); -- 0000 0000 0000 0000 0000 0111 1111 1111
                 end case;
-                -- Write enable set to NO in case of LOAD, STORE and JMP
+                -- Write enable set to NO in case of STORE and JMP
                 case I_dataInst(31 downto 28) is
                     when OP_STORE | OP_JMP =>
                       O_WE <= '0';

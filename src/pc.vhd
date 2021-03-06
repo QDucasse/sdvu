@@ -28,7 +28,7 @@ entity pc is
     generic (PC_SIZE    : natural := 16); -- Size of the PC register
     port (I_clk       : in  STD_LOGIC; -- Clock
           I_reset     : in  STD_LOGIC; -- Reset
-          I_PC        : in  STD_LOGIC_VECTOR (PC_SIZE-1 downto 0); -- Incoming Program Counter to assign
+          I_PC_toSet  : in  STD_LOGIC_VECTOR (PC_SIZE-1 downto 0); -- Incoming Program Counter to assign
           I_PC_OPCode : in  STD_LOGIC_VECTOR (1 downto 0);         -- Type of operation that needs to be performed
           O_PC        : out STD_LOGIC_VECTOR (PC_SIZE-1 downto 0)  -- Output Program Counter
           );
@@ -59,7 +59,7 @@ begin
           when PC_OP_INC =>    -- INC | Increment the PC
             current_pc <= std_logic_vector(unsigned(current_pc) + 1);
           when PC_OP_ASSIGN => -- ASSIGN | Set the PC from an external input
-            current_pc <= I_PC; -- Input PC to assign
+            current_pc <= I_PC_toSet; -- Input PC to assign
           when PC_OP_RESET =>  -- RESET | Set the PC to X"0000"
             current_pc <= X"0000";
           when others =>
