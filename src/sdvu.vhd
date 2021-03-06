@@ -23,10 +23,10 @@ use work.constant_codes.all;
 
 -- Entity
 entity sdvu is
-generic(INSTR_SIZE : natural := 16; -- Instruction size
+generic(INSTR_SIZE : natural := 32; -- Instruction size
         SIZE       : natural := 16; -- Adress width
         REG_NB     : natural := 4;  -- log2 number of registers. Dependency with adress width
-        REG_SIZE   : natural := 16  -- Size of a single register
+        REG_SIZE   : natural := 32  -- Size of a single register
        );
 port(clk_in         : in  std_logic;
      instruction_in : in  std_logic_vector(INSTR_SIZE-1 downto 0);
@@ -43,7 +43,7 @@ architecture arch_sdvu of sdvu is
   -- ALU
   component alu
     generic (
-      REG_WIDTH : natural := 16;
+      REG_WIDTH : natural := 32;
       OP_SIZE   : natural := 4
     );
     port (
@@ -104,7 +104,7 @@ architecture arch_sdvu of sdvu is
   -- Register File
   component reg
     generic (
-      REG_WIDTH : natural := 16;
+      REG_WIDTH : natural := 32;
       SIZE      : natural := 4
     );
     port (
