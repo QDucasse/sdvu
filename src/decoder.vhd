@@ -33,6 +33,7 @@ entity decoder is
           O_immA, O_immB   : out STD_LOGIC_VECTOR (10 downto 0);  -- Immediate value A and B from instruction
           O_address : out STD_LOGIC_VECTOR (23 downto 0);         -- Address for JMP, STORE and LOAD
           O_type    : out STD_LOGIC_VECTOR (1  downto 0);         -- Type of the value loaded or stored
+          -- TODO: Remove?
           O_WE      : out STD_LOGIC                               -- Write Enabled
           );
 end decoder;

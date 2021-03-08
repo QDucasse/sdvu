@@ -38,7 +38,7 @@ end entity sdvu;
 architecture arch_sdvu of sdvu is
   -- Internal Objects
   -- Signals
-  -- TODO: ÅDD SIGNALS
+  -- TODO: ADD SIGNALS
   -- Components
   -- ALU
   component alu

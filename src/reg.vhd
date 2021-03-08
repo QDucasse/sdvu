@@ -27,6 +27,8 @@ entity reg is
 
           I_dataD: in STD_LOGIC_VECTOR (REG_WIDTH-1 downto 0);  -- Input Data
           I_selD : in STD_LOGIC_VECTOR (SIZE-1 downto 0);       -- Input - select destination
+          O_dataD: out STD_LOGIC_VECTOR (REG_WIDTH-1 downto 0);  -- Output Data (in case of STORE/LOAD/JMP)
+
           I_selA : in STD_LOGIC_VECTOR (SIZE-1 downto 0);       -- Input - select source A
           O_dataA: out STD_LOGIC_VECTOR (REG_WIDTH-1 downto 0); -- Output A
           I_selB : in STD_LOGIC_VECTOR (SIZE-1 downto 0);       -- Input - select source B

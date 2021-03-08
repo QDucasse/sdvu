@@ -23,24 +23,25 @@ use work.constant_codes.all;
 -- =================
 
 entity alu is
-    generic (REG_WIDTH : natural := 16;
-             OP_SIZE   : natural := 4
+    generic (REG_NB    : natural := 16;
+             OP_SIZE   : natural := 4;
+             ADDR_SIZE : natural := 24
              );
     port (I_clk        : in STD_LOGIC; -- Clock signal
           I_en         : in STD_LOGIC; -- Enable
           I_reset      : in STD_LOGIC; -- Reset
           -- Instruction selectors
-          I_aluop    : in STD_LOGIC_VECTOR (3  downto 0);          -- ALU operation to perform
+          I_aluop    : in STD_LOGIC_VECTOR (OP_SIZE-1 downto 0);   -- ALU operation to perform
           I_cfgMask  : in STD_LOGIC_VECTOR (1  downto 0);          -- Configuration mask for the instruction
-          I_dataA    : in STD_LOGIC_VECTOR (REG_WIDTH-1 downto 0); -- Input data A
-          I_dataB    : in STD_LOGIC_VECTOR (REG_WIDTH-1 downto 0); -- Input data B
-          I_dataImmA : in STD_LOGIC_VECTOR (REG_WIDTH-1 downto 0); -- Immediate value A
-          I_dataImmB : in STD_LOGIC_VECTOR (REG_WIDTH-1 downto 0); -- Immediate value B
-          I_address  : in STD_LOGIC_VECTOR (23 downto 0);          -- Address for JMP, STORE and LOAD
+          I_dataA    : in STD_LOGIC_VECTOR (REG_NB-1 downto 0);    -- Input data A
+          I_dataB    : in STD_LOGIC_VECTOR (REG_NB-1 downto 0);    -- Input data B
+          I_dataImmA : in STD_LOGIC_VECTOR (REG_NB-1 downto 0);    -- Immediate value A
+          I_dataImmB : in STD_LOGIC_VECTOR (REG_NB-1 downto 0);    -- Immediate value B
+          I_address  : in STD_LOGIC_VECTOR (ADDR_SIZE-1 downto 0); -- Address for JMP, STORE and LOAD
           I_type     : in STD_LOGIC_VECTOR (1  downto 0);          -- Type of the value loaded or stored
           I_WE       : in STD_LOGIC                                -- Write Enable
-
-          O_dataResult : out STD_LOGIC_VECTOR (23 downto 0);       -- Result of the operation
+          -- Outputs
+          O_dataResult : out STD_LOGIC_VECTOR (ADDR_SIZE-1 downto 0); -- Result of the operation
           O_WE : out STD_LOGIC -- Pass over the write enable
           );
 end alu;
@@ -118,31 +119,31 @@ begin
               -- DIV operation
               -- =============
               when OP_DIV =>
-                case I_cfgMask is
-                  when CFG_RR then
-                    s_result(REG_WIDTH-1 downto 0) <= std_logic_vector(unsigned(I_dataA) / unsigned(I_dataB));
-                  when CFG_RI then
-                    s_result(REG_WIDTH-1 downto 0) <= std_logic_vector(unsigned(I_dataA) / unsigned(I_dataImmB));
-                  when CFG_IR then
-                    s_result(REG_WIDTH-1 downto 0) <= std_logic_vector(unsigned(I_dataImmA) / unsigned(I_dataB));
-                  when CFG_II then
-                    s_result(REG_WIDTH-1 downto 0) <= std_logic_vector(unsigned(I_dataImmA) / unsigned(I_dataImmB));
-                end case;
+                -- case I_cfgMask is
+                --   when CFG_RR then
+                --     s_result(REG_WIDTH-1 downto 0) <= std_logic_vector(unsigned(I_dataA) / unsigned(I_dataB));
+                --   when CFG_RI then
+                --     s_result(REG_WIDTH-1 downto 0) <= std_logic_vector(unsigned(I_dataA) / unsigned(I_dataImmB));
+                --   when CFG_IR then
+                --     s_result(REG_WIDTH-1 downto 0) <= std_logic_vector(unsigned(I_dataImmA) / unsigned(I_dataB));
+                --   when CFG_II then
+                --     s_result(REG_WIDTH-1 downto 0) <= std_logic_vector(unsigned(I_dataImmA) / unsigned(I_dataImmB));
+                -- end case;
                 s_shouldBranch <= '0'; -- No need for branching.
 
               -- MOD operation
               -- =============
               when OP_MOD =>
-                case I_cfgMask is
-                  when CFG_RR then
-                    s_result(REG_WIDTH-1 downto 0) <= std_logic_vector(unsigned(I_dataA) mod unsigned(I_dataB));
-                  when CFG_RI then
-                    s_result(REG_WIDTH-1 downto 0) <= std_logic_vector(unsigned(I_dataA) mod unsigned(I_dataImmB));
-                  when CFG_IR then
-                    s_result(REG_WIDTH-1 downto 0) <= std_logic_vector(unsigned(I_dataImmA) mod unsigned(I_dataB));
-                  when CFG_II then
-                    s_result(REG_WIDTH-1 downto 0) <= std_logic_vector(unsigned(I_dataImmA) mod unsigned(I_dataImmB));
-                end case;
+                -- case I_cfgMask is
+                --   when CFG_RR then
+                --     s_result(REG_WIDTH-1 downto 0) <= std_logic_vector(unsigned(I_dataA) mod unsigned(I_dataB));
+                --   when CFG_RI then
+                --     s_result(REG_WIDTH-1 downto 0) <= std_logic_vector(unsigned(I_dataA) mod unsigned(I_dataImmB));
+                --   when CFG_IR then
+                --     s_result(REG_WIDTH-1 downto 0) <= std_logic_vector(unsigned(I_dataImmA) mod unsigned(I_dataB));
+                --   when CFG_II then
+                --     s_result(REG_WIDTH-1 downto 0) <= std_logic_vector(unsigned(I_dataImmA) mod unsigned(I_dataImmB));
+                -- end case;
                 s_shouldBranch <= '0'; -- No need for branching.
 
               -- AND operation
@@ -228,27 +229,27 @@ begin
                 s_result(REG_WIDTH-1 downto 0) <= not I_dataA;
                 s_shouldBranch <= '0'; -- No need for branching.
 
-              -- JMP operation
-              -- ================
-              when OP_JMP =>
-                -- Set target anyway
-                s_result(23 downto 0) <= I_address;
-                -- If condition verified, shouldBranch set to true
-                if I_dataA then
-                  s_shouldBranch = '1';
-                else
-                  s_shouldBranch = '0';
-                end if;
-
-              -- STORE operation
-              -- ==============
-              when OP_STORE =>
-                s_shouldBranch <= '0';
-
-              -- LOAD operation
-              -- ==============
-              when OP_LOAD =>
-                s_shouldBranch <= '0';
+              -- -- JMP operation
+              -- -- ================
+              -- when OP_JMP =>
+              --   -- Set target anyway
+              --   s_result(23 downto 0) <= I_address;
+              --   -- If condition verified, shouldBranch set to true
+              --   if I_dataA then
+              --     s_shouldBranch = '1';
+              --   else
+              --     s_shouldBranch = '0';
+              --   end if;
+              --
+              -- -- STORE operation
+              -- -- ==============
+              -- when OP_STORE =>
+              --   s_shouldBranch <= '0';
+              --
+              -- -- LOAD operation
+              -- -- ==============
+              -- when OP_LOAD =>
+              --   s_shouldBranch <= '0';
 
               -- Other operations
               -- ================
