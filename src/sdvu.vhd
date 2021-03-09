@@ -102,9 +102,6 @@ architecture arch_sdvu of sdvu is
     );
   end component decoder;
 
-  -- Signals
-  -- TODO: ADD SIGNALS
-  signal s_state_
 
   -- PC
   component pc
@@ -144,6 +141,31 @@ architecture arch_sdvu of sdvu is
     );
   end component reg;
 
+  -- Signals
+
+  -- Signals to/from alu
+  signal s_aluop      : STD_LOGIC_VECTOR (OP_SIZE-1 downto 0);
+  signal s_cfgMask    : STD_LOGIC_VECTOR (1 downto 0);
+  signal s_dataA      : STD_LOGIC_VECTOR (REG_NB-1 downto 0);
+  signal s_dataB      : STD_LOGIC_VECTOR (REG_NB-1 downto 0);
+  signal s_dataImmA   : STD_LOGIC_VECTOR (REG_NB-1 downto 0);
+  signal s_dataImmB   : STD_LOGIC_VECTOR (REG_NB-1 downto 0);
+  signal s_address    : STD_LOGIC_VECTOR (ADDR_SIZE-1 downto 0);
+  signal s_type       : STD_LOGIC_VECTOR (1 downto 0);
+  signal s_dataResult : STD_LOGIC_VECTOR (ADDR_SIZE-1 downto 0);
+  signal s_rd_WE      : STD_LOGIC;
+
+  -- Signals to/from control unit
+  signal s_instruction : STD_LOGIC_VECTOR(INSTR_SIZE-1 down to 0);
+  signal s_state : STD_LOGIC_VECTOR(STATE_NUMBER-1 downto 0);
+
+  -- Signals to/from registers
+
+  -- Signals to/from pc
+  signal s_PC_to_set : STD_LOGIC_VECTOR(PC_WIDTH-1 downto 0);
+  signal s_PC_to_set : STD_LOGIC_VECTOR(PC_OP_WIDTH-1 downto 0);
+
+  end package;
 
 
 -- Components mapping
@@ -157,7 +179,7 @@ begin
     )
     port map (
       I_clock      => I_clock,
-      I_enable     => I_enable,
+      I_enable     => I_enable, -- TODO
       I_reset      => I_reset,
       I_aluop      => I_aluop,
       I_cfgMask    => I_cfgMask,

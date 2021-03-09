@@ -23,9 +23,8 @@ use work.constant_codes.all;
 -- =================
 
 entity alu is
-    generic (REG_NB    : natural := 16;
-             OP_SIZE   : natural := 4;
-             ADDR_SIZE : natural := 24
+    generic (REG_WIDTH : natural := 32;
+             OP_SIZE   : natural := 4
              );
     port (I_clock  : in STD_LOGIC; -- Clock
           I_enable : in STD_LOGIC; -- Enable
@@ -33,15 +32,15 @@ entity alu is
           -- Inputs
           I_aluop    : in STD_LOGIC_VECTOR (OP_SIZE-1 downto 0);   -- ALU operation to perform
           I_cfgMask  : in STD_LOGIC_VECTOR (1 downto 0);           -- Configuration mask for the instruction
-          I_dataA    : in STD_LOGIC_VECTOR (REG_NB-1 downto 0);    -- Input data A
-          I_dataB    : in STD_LOGIC_VECTOR (REG_NB-1 downto 0);    -- Input data B
-          I_dataImmA : in STD_LOGIC_VECTOR (REG_NB-1 downto 0);    -- Immediate value A
-          I_dataImmB : in STD_LOGIC_VECTOR (REG_NB-1 downto 0);    -- Immediate value B
-          I_address  : in STD_LOGIC_VECTOR (ADDR_SIZE-1 downto 0); -- Address for JMP, STORE and LOAD
+          I_dataA    : in STD_LOGIC_VECTOR (REG_WIDTH-1 downto 0);    -- Input data A
+          I_dataB    : in STD_LOGIC_VECTOR (REG_WIDTH-1 downto 0);    -- Input data B
+          I_dataImmA : in STD_LOGIC_VECTOR (REG_WIDTH-1 downto 0);    -- Immediate value A
+          I_dataImmB : in STD_LOGIC_VECTOR (REG_WIDTH-1 downto 0);    -- Immediate value B
+          I_address  : in STD_LOGIC_VECTOR (REG_WIDTH-1 downto 0); -- Address for JMP, STORE and LOAD
           I_type     : in STD_LOGIC_VECTOR (1 downto 0);           -- Type of the value loaded or stored
           I_WE       : in STD_LOGIC;                               -- Write Enable
           -- Outputs
-          O_dataResult : out STD_LOGIC_VECTOR (ADDR_SIZE-1 downto 0); -- Result of the operation
+          O_dataResult : out STD_LOGIC_VECTOR (REG_WIDTH-1 downto 0); -- Result of the operation
           O_WE : out STD_LOGIC -- Pass over the write enable
           );
 end alu;
