@@ -3,8 +3,7 @@
 --   mail:   quentin.ducasse@ensta-bretagne.org
 --   github: QDucasse
 -- =================================
--- Random Access Memory consisting of an array of 32 16-bits addresses
--- with writes and reads.
+-- Read-only memory where program instructions are stored.
 
 -- =================
 --    Libraries
@@ -22,10 +21,12 @@ entity program_memory is
     generic (MEM_SIZE   : natural := 8;
              INSTR_SIZE : natural := 32
              );
-    port (I_clk   : in STD_LOGIC; -- Clock signal
-          I_reset : in STD_LOGIC; -- Reset signal
-          I_addr  : in STD_LOGIC_VECTOR (MEM_SIZE-1 downto 0);    -- Address in the RAM
-          O_data  : out STD_LOGIC_VECTOR (INSTR_SIZE-1 downto 0)  -- Data at address
+    port (I_clock   : in STD_LOGIC; -- Clock
+          I_reset   : in STD_LOGIC; -- Reset
+          I_enable  : in STD_LOGIC; -- Enable
+
+          I_address : in STD_LOGIC_VECTOR (MEM_SIZE-1 downto 0); -- Address of the new instruction
+          O_data  : out STD_LOGIC_VECTOR (INSTR_SIZE-1 downto 0) -- Data at address
           );
 end program_memory;
 
@@ -40,9 +41,9 @@ architecture arch_program_memory of program_memory is
 
 begin
   -- Processes
-  TransferData: process(I_clk) -- I_clk added to the sensitivity list of the process
+  TransferData: process(I_clock) -- I_clock added to the sensitivity list of the process
   begin
-      if rising_edge(I_clk) then  -- If new cycle
+      if rising_edge(I_clock) then  -- If new cycle
         if I_reset = '1' then     -- Reset
           memory_bank <= (others => X"0000");
         else

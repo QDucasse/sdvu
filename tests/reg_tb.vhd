@@ -27,7 +27,7 @@ architecture arch_reg_tb of reg_tb is
 
     -- Clock and Reset signals
     constant HALF_PERIOD : time := 5 ns; -- Clock half period
-    signal clk     : std_logic  := '0';  -- Clock signal
+    signal clock     : std_logic  := '0';  -- Clock signal
     signal reset   : std_logic  := '0';  -- Reset signal
     signal enable  : std_logic  := '0';  -- Enable signal
     signal running : boolean    := true; -- Running flag, Simulation continues while true
@@ -36,7 +36,7 @@ architecture arch_reg_tb of reg_tb is
     procedure wait_cycles(n : natural) is
      begin
        for i in 1 to n loop
-         wait until rising_edge(clk);
+         wait until rising_edge(clock);
        end loop;
      end procedure;
 
@@ -57,7 +57,7 @@ begin
    -- Clock, reset and enable signals
    reset <= '1', '0' after 10 ns;
    enable  <= '0', '1' after 50 ns;
-   clk <= not(clk) after HALF_PERIOD when running else clk;
+   clock <= not(clock) after HALF_PERIOD when running else clock;
 
    -- Design Under Test (DUT)
    dut: entity work.reg(arch_reg)
@@ -66,9 +66,9 @@ begin
           SIZE      => SIZE
         )
         port map (
-          I_clk   => clk,
+          I_clock   => clock,
           I_reset => reset,
-          I_en    => enable,
+          I_enable   => enable,
 
           I_dataD => I_dataD,
           I_selD  => I_selD,

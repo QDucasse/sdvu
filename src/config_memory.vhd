@@ -21,7 +21,7 @@ use IEEE.numeric_std.all;
 entity config_memory is
     generic (MEM_SIZE  : natural := 8,
              TYPE_SIZE : natural := 32);
-    port (I_clk    : in STD_LOGIC; -- Clock signal
+    port (I_clock    : in STD_LOGIC; -- Clock signal
           I_enable : in STD_LOGIC; -- Unit enable
           I_reset  : in STD_LOGIC; -- Reset signal
           I_we     : in STD_LOGIC; -- Write Enable
@@ -38,14 +38,13 @@ end config_memory;
 
 architecture arch_config_memory of config_memory is
     -- Internal Objects
-    type memory_file is array (0 to 2**MEM_SIZE-1);  -- 128
-    signal memory_bank: memory_file := (others => X"0000"); -- Affectation of the array and initialization at 0
+    signal memory_bank := (others => '0');
 
 begin
   -- Processes
-  TransferData: process(I_clk) -- I_clk added to the sensitivity list of the process
+  TransferData: process(I_clock) -- I_clock added to the sensitivity list of the process
   begin
-      if rising_edge(I_clk) then  -- If new cycle
+      if rising_edge(I_clock) then  -- If new cycle
         if I_reset = '1' then     -- Reset
           memory_bank <= (others => X"0000");
         elsif (I_enable = '1') and (I_we = '1') then   -- If write-enable propagate the data

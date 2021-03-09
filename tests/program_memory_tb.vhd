@@ -26,7 +26,7 @@ end program_memory_tb;
 architecture arch_program_memory_tb of program_memory_tb is
     -- Clock, Reset and Enable signals
     constant HALF_PERIOD : time := 5 ns; -- Clock half period
-    signal clk     : std_logic  := '0';  -- Clock signal
+    signal clock     : std_logic  := '0';  -- Clock signal
     signal reset   : std_logic  := '0';  -- Reset signal
     signal running : boolean    := true; -- Running flag, Simulation continues while true
 
@@ -34,7 +34,7 @@ architecture arch_program_memory_tb of program_memory_tb is
     procedure wait_cycles(n : natural) is
      begin
        for i in 1 to n loop
-         wait until rising_edge(clk);
+         wait until rising_edge(clock);
        end loop;
      end procedure;
 
@@ -52,7 +52,7 @@ architecture arch_program_memory_tb of program_memory_tb is
     begin
     -- Clock, reset and enable signals
     reset <= '1', '0' after 10 ns;
-    clk <= not(clk) after HALF_PERIOD when running else clk;
+    clock <= not(clock) after HALF_PERIOD when running else clock;
 
     -- DUT
     dut: entity work.program_memory(arch_program_memory)
@@ -61,7 +61,7 @@ architecture arch_program_memory_tb of program_memory_tb is
           INSTR_SIZE => INSTR_SIZE
         )
         port map (
-          I_clk   => clk,
+          I_clock   => clock,
           I_reset => reset,
           I_we    => I_we,
           I_addr  => I_addr,

@@ -29,7 +29,7 @@ architecture arch_decoder_tb of decoder_tb is
     -- Internal Objects
     -- Clock and Enable signals
     constant HALF_PERIOD : time := 5 ns; -- Clock half period
-    signal clk     : std_logic  := '0';  -- Clock signal
+    signal clock     : std_logic  := '0';  -- Clock signal
     signal enable  : std_logic  := '0';  -- Enable signal
     signal running : boolean    := true; -- Running flag, Simulation continues while true
 
@@ -37,7 +37,7 @@ architecture arch_decoder_tb of decoder_tb is
     procedure wait_cycles(n : natural) is
      begin
        for i in 1 to n loop
-         wait until rising_edge(clk);
+         wait until rising_edge(clock);
        end loop;
      end procedure;
 
@@ -59,12 +59,12 @@ architecture arch_decoder_tb of decoder_tb is
 begin
     -- Clock and enable signals
     enable  <= '0', '1' after 50 ns;
-    clk <= not(clk) after HALF_PERIOD when running else clk;
+    clock <= not(clock) after HALF_PERIOD when running else clock;
     -- DUT
       dut : entity work.decoder(arch_decoder)
       port map (
-      I_clk      => clk,
-      I_en       => enable,
+      I_clock      => clock,
+      I_enable      => enable,
         I_dataInst => I_dataInst,
         O_aluop    => O_aluop,
         O_cfgMask  => O_cfgMask,

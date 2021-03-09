@@ -22,8 +22,11 @@ use work.sdvu_constants.all;
 -- =================
 
 entity decoder is
-    port (I_clk     : in STD_LOGIC; -- Clock signal
-          I_en      : in STD_LOGIC; -- Enable signal
+    generic (OP_SIZE : natural := 4;   -- Size of op-code (4-bits)
+             REG_SIZE  : natural :=  4 -- Register selector on 4 bits (16 regs)
+             );
+    port (I_clock   : in STD_LOGIC; -- Clock
+          I_enable  : in STD_LOGIC; -- Enable
           -- Base instruction
           I_dataInst: in STD_LOGIC_VECTOR (31 downto 0);   -- 32-bit Instruction
           -- Selectors to extract from the instruction
@@ -47,9 +50,9 @@ architecture arch_decoder of decoder is
     -- None
 begin
     -- Processes
-    DecodeInstr: process(I_clk) -- I_clk added to the sensitivity list of the process
+    DecodeInstr: process(I_clock) -- I_clock added to the sensitivity list of the process
     begin
-        if rising_edge(I_clk) then  -- If new cycle and enable
+        if rising_edge(I_clock) then  -- If new cycle and enable
             if I_en='1' then        -- If enable
                 O_aluop <= I_dataInst(31 downto 28);  -- Decode ALU operation
                 -- Zero out all outputs to avoid latch creation

@@ -25,12 +25,16 @@ use work.sdvu_constants.all;
 -- =================
 
 entity pc is
-    generic (PC_SIZE    : natural := 16); -- Size of the PC register
-    port (I_clk       : in  STD_LOGIC; -- Clock
+    generic (PC_WIDTH    : natural := 16; -- Width of the PC selector (16-bits here)
+             PC_OP_WIDTH : natural := 2); -- Width of the PC OP code (2 bits here)
+    port (I_clock     : in  STD_LOGIC; -- Clock
           I_reset     : in  STD_LOGIC; -- Reset
-          I_PC_toSet  : in  STD_LOGIC_VECTOR (PC_SIZE-1 downto 0); -- Incoming Program Counter to assign
-          I_PC_OPCode : in  STD_LOGIC_VECTOR (1 downto 0);         -- Type of operation that needs to be performed
-          O_PC        : out STD_LOGIC_VECTOR (PC_SIZE-1 downto 0)  -- Output Program Counter
+          I_enable    : in  STD_LOGIC; -- Unit
+          -- Inputs
+          I_PC_toSet  : in  STD_LOGIC_VECTOR (PC_WIDTH-1 downto 0);    -- Incoming Program Counter to assign
+          I_PC_OPCode : in  STD_LOGIC_VECTOR (PC_OP_WIDTH-1 downto 0); -- Type of operation that needs to be performed
+          -- Outputs
+          O_PC        : out STD_LOGIC_VECTOR (PC_WIDTH-1 downto 0)  -- Output Program Counter
           );
 end pc;
 
@@ -42,14 +46,14 @@ end pc;
 architecture arch_pc of pc is
   -- Internal Objects
   -- Internal vector to keep the current PC to work on
-  signal current_pc: STD_LOGIC_VECTOR(PC_SIZE-1 downto 0) := X"0000";
+  signal current_pc: STD_LOGIC_VECTOR(PC_WIDTH-1 downto 0) := X"00000000";
 
 begin
   -- Processes
-  ProcessOperation: process (I_clk, I_reset)
+  ProcessOperation: process (I_clock, I_reset)
   begin
     -- Process operation on PC
-    if rising_edge(I_clk) then
+    if rising_edge(I_clock) then
       -- Reset routine
       if I_reset = '1' then
         current_pc <= X"0000";

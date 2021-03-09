@@ -25,10 +25,12 @@ use work.sdvu_constants.all;
 -- =================
 
 entity control_unit is
-    port (I_clk   : in  STD_LOGIC;                    -- Clock signal
-          I_reset : in  STD_LOGIC;                    -- Reset signal
-          I_op    : in STD_LOGIC_VECTOR(3 downto 0)   -- Instruction Op Code
-          O_state : out STD_LOGIC_VECTOR (1 downto 0) -- State of the control unit
+    generic (OP_SIZE      : natural := 4;
+             STATE_NUMBER : natural := 12);
+    port (I_clock   : in  STD_LOGIC;                               -- Clock signal
+          I_reset : in  STD_LOGIC;                                 -- Reset signal
+          I_op    : in STD_LOGIC_VECTOR(OP_SIZE-1 downto 0);       -- Instruction Op Code
+          O_state : out STD_LOGIC_VECTOR (STATE_NUMBER-1 downto 0) -- State of the control unit
           );
 end control_unit;
 
@@ -41,9 +43,9 @@ architecture arch_control_unit of control_unit is
     signal current_state : STD_LOGIC_VECTOR(1 downto 0) := CONTROL_UNIT_DECODE;
 begin
     -- Processes
-    NextState: process(I_clk) -- I_clk added to the sensitivity list of the process
+    NextState: process(I_clock) -- I_clock added to the sensitivity list of the process
     begin
-        if rising_edge(I_clk) then
+        if rising_edge(I_clock) then
           if I_reset = '1' then
             current_state <= CONTROL_UNIT_DECODE;
           else
