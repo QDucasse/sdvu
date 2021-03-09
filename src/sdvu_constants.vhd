@@ -51,16 +51,16 @@ package sdvu_constants is
   constant STORE_RAA: STD_LOGIC_VECTOR(1 downto 0) := "01";
 
   -- Types of values
-  constant VAL_BOOL:  STD_LOGIC_VECTOR(1 downto 0) := "00";
-  constant VAL_BYTE:  STD_LOGIC_VECTOR(1 downto 0) := "01";
-  constant VAL_INT:   STD_LOGIC_VECTOR(1 downto 0) := "10";
-  constant VAL_STATE: STD_LOGIC_VECTOR(1 downto 0) := "11";
+  constant TYPE_BOOL:  STD_LOGIC_VECTOR(1 downto 0) := "00";
+  constant TYPE_BYTE:  STD_LOGIC_VECTOR(1 downto 0) := "01";
+  constant TYPE_INT:   STD_LOGIC_VECTOR(1 downto 0) := "10";
+  constant TYPE_STATE: STD_LOGIC_VECTOR(1 downto 0) := "11";
 
   -- Sizes of the types
-  constant TYPE_BOOL:  natural := 8;
-  constant TYPE_BYTE:  natural := 8;
-  constant TYPE_INT:   natural := 32;
-  constant TYPE_STATE: natural := 16;
+  constant SIZE_BOOL:  natural := 8;
+  constant SIZE_BYTE:  natural := 8;
+  constant SIZE_INT:   natural := 32;
+  constant SIZE_STATE: natural := 16;
 
   -- CONTROL_UNIT states
   constant STATE_FETCH1    : STD_LOGIC_VECTOR(11 downto 0) := "100000000000";
