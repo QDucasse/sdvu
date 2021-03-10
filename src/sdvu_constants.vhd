@@ -84,8 +84,3 @@ package sdvu_constants is
   constant PC_OP_RESET:  STD_LOGIC_VECTOR(1 downto 0):= "11";
 
 end package sdvu_constants;
-
-
-package body sdvu_constants is
-  -- Empty body since only constants are used in this package
-end package body sdvu_constants;

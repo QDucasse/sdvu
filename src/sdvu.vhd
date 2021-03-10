@@ -62,7 +62,7 @@ architecture arch_sdvu of sdvu is
       I_enable     : in  STD_LOGIC;
       I_reset      : in  STD_LOGIC;
       -- Inputs
-      I_op_code      : in  STD_LOGIC_VECTOR (OP_SIZE-1 downto 0);
+      I_op_code    : in  STD_LOGIC_VECTOR (OP_SIZE-1 downto 0);
       I_cfgMask    : in  STD_LOGIC_VECTOR (1 downto 0);
       I_dataA      : in  STD_LOGIC_VECTOR (REG_SIZE-1 downto 0);
       I_dataB      : in  STD_LOGIC_VECTOR (REG_SIZE-1 downto 0);
