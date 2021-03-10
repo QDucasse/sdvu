@@ -30,7 +30,7 @@ generic(-- Instruction constants
         -- CFG_MEM_SIZE : natural := 8;  -- log2
         -- TYPE_SIZE    : natural := 32;
         -- Control Unit constants
-        STATE_NUMBER : natural := 12;
+        STATE_NUMBER : natural := 13;
         -- PC constants
         PC_SIZE      : natural := 16; -- log2
         PC_OP_SIZE   : natural := 2;
@@ -180,7 +180,6 @@ architecture arch_sdvu of sdvu is
 
   -- Signals to/from pc
   signal s_PC         : STD_LOGIC_VECTOR (PC_SIZE-1 downto 0);
-  signal s_newPC      : STD_LOGIC_VECTOR (PC_SIZE-1 downto 0);
   signal s_PC_op_code : STD_LOGIC_VECTOR (PC_OP_SIZE-1 downto 0);
 
   -- Signals to/from registers
