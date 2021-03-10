@@ -26,7 +26,7 @@ use work.sdvu_constants.all;
 
 entity control_unit is
     generic (OP_SIZE      : natural := 4;
-             STATE_NUMBER : natural := 13);
+             STATE_NUMBER : natural := 14);
     port (I_clock   : in  STD_LOGIC;                                 -- Clock signal
           I_reset   : in  STD_LOGIC;                                 -- Reset signal
           -- Inputs
@@ -70,7 +70,7 @@ begin
                   when OP_LOAD =>
                     current_state <= STATE_LOAD;
                   when OP_JMP =>
-                    current_state <= STATE_JMP;
+                    current_state <= STATE_JUMP;
                   when others =>
                     current_state <= STATE_BIN;
                 end case;
@@ -85,11 +85,11 @@ begin
               when STATE_LOAD =>
                 current_state <= STATE_READ_MEM;
               when STATE_READ_MEM =>
-                current_state <= STATE_REG_WRITE;
+                current_state <= STATE_WRITE_REG;
 
               -- PROCESS JMP TRANSITIONS
-              when STATE_JMP =>
-                current_state <= FETCH1;
+              when STATE_JUMP =>
+                current_state <= STATE_FETCH1;
 
               -- PROCESS BIN/NOT TRANSITIONS
               when STATE_BIN =>

@@ -30,7 +30,7 @@ generic(-- Instruction constants
         -- CFG_MEM_SIZE : natural := 8;  -- log2
         -- TYPE_SIZE    : natural := 32;
         -- Control Unit constants
-        STATE_NUMBER : natural := 13;
+        STATE_NUMBER : natural := 14;
         -- PC constants
         PC_SIZE      : natural := 16; -- log2
         PC_OP_SIZE   : natural := 2;

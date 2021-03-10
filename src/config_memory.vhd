@@ -15,14 +15,14 @@ use IEEE.std_logic_1164.all;
 use IEEE.numeric_std.all;
 
 library work;
-use work.constant_codes.all;
+use work.sdvu_constants.all;
 
 -- =================
 --      Entity
 -- =================
 
 entity config_memory is
-    generic (CFG_MEM_SIZE : natural := 8,
+    generic (CFG_MEM_SIZE : natural := 8;
              TYPE_SIZE    : natural := 32);
     port (I_clock    : in STD_LOGIC; -- Clock signal
           I_enable : in STD_LOGIC; -- Unit enable
@@ -62,7 +62,7 @@ begin
             when TYPE_STATE =>
               memory_bank(to_integer(unsigned(I_addr))+STATE_SIZE-1 downto to_integer(unsigned(I_addr))) <= I_data(STATE_SIZE-1 downto 0);
           end case;
-        elsif (I_enable = '1')
+        elsif (I_enable = '1') then
           -- Read from the address to the output
           case I_type is
             when TYPE_BOOL =>
@@ -74,7 +74,6 @@ begin
             when TYPE_BOOL =>
               O_data <= X"0000" & memory_bank(to_integer(unsigned(I_addr))+SIZE_STATE-1 downto to_integer(unsigned(I_addr)));
           end case;
-
         end if;
     end if;
   end process;

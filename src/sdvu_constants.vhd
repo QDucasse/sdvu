@@ -63,19 +63,20 @@ package sdvu_constants is
   constant SIZE_STATE: natural := 16;
 
   -- CONTROL_UNIT states
-  constant STATE_RESET     : STD_LOGIC_VECTOR(12 downto 0) := "1000000000000";
-  constant STATE_FETCH1    : STD_LOGIC_VECTOR(12 downto 0) := "0100000000000";
-  constant STATE_FETCH2    : STD_LOGIC_VECTOR(12 downto 0) := "0010000000000";
-  constant STATE_DECODE    : STD_LOGIC_VECTOR(12 downto 0) := "0001000000000";
-  constant STATE_STORE     : STD_LOGIC_VECTOR(12 downto 0) := "0000100000000";
-  constant STATE_LOAD      : STD_LOGIC_VECTOR(12 downto 0) := "0000010000000";
-  constant STATE_JUMP      : STD_LOGIC_VECTOR(12 downto 0) := "0000001000000";
-  constant STATE_BIN       : STD_LOGIC_VECTOR(12 downto 0) := "0000000100000";
-  constant STATE_NOT       : STD_LOGIC_VECTOR(12 downto 0) := "0000000010000";
-  constant STATE_READ_REG  : STD_LOGIC_VECTOR(12 downto 0) := "0000000001000";
-  constant STATE_WRITE_REG : STD_LOGIC_VECTOR(12 downto 0) := "0000000000100";
-  constant STATE_READ_MEM  : STD_LOGIC_VECTOR(12 downto 0) := "0000000000010";
-  constant STATE_WRITE_MEM : STD_LOGIC_VECTOR(12 downto 0) := "0000000000001";
+  constant STATE_RESET          : STD_LOGIC_VECTOR(13 downto 0) := "10000000000000";
+  constant STATE_FETCH1         : STD_LOGIC_VECTOR(13 downto 0) := "01000000000000";
+  constant STATE_FETCH2         : STD_LOGIC_VECTOR(13 downto 0) := "00100000000000";
+  constant STATE_DECODE         : STD_LOGIC_VECTOR(13 downto 0) := "00010000000000";
+  constant STATE_STORE          : STD_LOGIC_VECTOR(13 downto 0) := "00001000000000";
+  constant STATE_LOAD           : STD_LOGIC_VECTOR(13 downto 0) := "00000100000000";
+  constant STATE_JUMP           : STD_LOGIC_VECTOR(13 downto 0) := "00000010000000";
+  constant STATE_BIN            : STD_LOGIC_VECTOR(13 downto 0) := "00000001000000";
+  constant STATE_NOT            : STD_LOGIC_VECTOR(13 downto 0) := "00000000100000";
+  constant STATE_READ_REG_STORE : STD_LOGIC_VECTOR(13 downto 0) := "00000000010000";
+  constant STATE_READ_REG_BIN   : STD_LOGIC_VECTOR(13 downto 0) := "00000000001000";
+  constant STATE_WRITE_REG      : STD_LOGIC_VECTOR(13 downto 0) := "00000000000100";
+  constant STATE_READ_MEM       : STD_LOGIC_VECTOR(13 downto 0) := "00000000000010";
+  constant STATE_WRITE_MEM      : STD_LOGIC_VECTOR(13 downto 0) := "00000000000001";
 
   -- PC unit opcodes
   constant PC_OP_NOP:    STD_LOGIC_VECTOR(1 downto 0):= "00";
