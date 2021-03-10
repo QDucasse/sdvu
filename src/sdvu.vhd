@@ -23,14 +23,26 @@ use work.constant_codes.all;
 
 -- Entity
 entity sdvu is
-generic(INSTR_SIZE : natural := 32; -- Instruction size
-        SIZE       : natural := 16; -- Adress width
-        REG_NB     : natural := 4;  -- log2 number of registers. Dependency with adress width
-        REG_SIZE   : natural := 32  -- Size of a single register
+generic(-- Instruction constants
+        INSTR_SIZE   : natural := 32;
+        OP_SIZE      : natural := 4;
+        -- -- Config Memory constants
+        -- CFG_MEM_SIZE : natural := 8;  -- log2
+        -- TYPE_SIZE    : natural := 32;
+        -- Control Unit constants
+        STATE_NUMBER : natural := 12;
+        -- PC constants
+        PC_SIZE      : natural := 16; -- log2
+        PC_OP_SIZE   : natural := 2;
+        -- -- Program Memory constants
+        -- PROG_MEM_SIZE : natural := 8; -- log2
+        -- Registers constants
+        REG_SIZE      : natural := 32;
+        REG_SEL_SIZE  : natural := 4
        );
-port(clock_in         : in  std_logic;
-     instruction_in : in  std_logic_vector(INSTR_SIZE-1 downto 0);
-     addr_out       : out std_logic_vector(SIZE-1 downto 0)
+port(I_clock : in  std_logic;
+     I_instr : in  std_logic_vector(INSTR_SIZE-1 downto 0);
+     O_addr  : out std_logic_vector(SIZE-1 downto 0)
     );
 end entity sdvu;
 
@@ -42,27 +54,24 @@ architecture arch_sdvu of sdvu is
   -- ALU
   component alu
     generic (
-      REG_NB    : natural := 16;
-      OP_SIZE   : natural := 4;
-      ADDR_SIZE : natural := 24
+      REG_SIZE : natural := 32;
+      OP_SIZE  : natural := 4
     );
     port (
-      I_clock    : in  STD_LOGIC;
-      I_enable   : in  STD_LOGIC;
-      I_reset    : in  STD_LOGIC;
+      I_clock      : in  STD_LOGIC;
+      I_enable     : in  STD_LOGIC;
+      I_reset      : in  STD_LOGIC;
       -- Inputs
-      I_aluop    : in  STD_LOGIC_VECTOR (OP_SIZE-1 downto 0);
-      I_cfgMask  : in  STD_LOGIC_VECTOR (1 downto 0);
-      I_dataA    : in  STD_LOGIC_VECTOR (REG_NB-1 downto 0);
-      I_dataB    : in  STD_LOGIC_VECTOR (REG_NB-1 downto 0);
-      I_dataImmA : in  STD_LOGIC_VECTOR (REG_NB-1 downto 0);
-      I_dataImmB : in  STD_LOGIC_VECTOR (REG_NB-1 downto 0);
-      I_address  : in  STD_LOGIC_VECTOR (ADDR_SIZE-1 downto 0);
-      I_type     : in  STD_LOGIC_VECTOR (1 downto 0);
-      I_WE       : in  STD_LOGIC;
+      I_op_code      : in  STD_LOGIC_VECTOR (OP_SIZE-1 downto 0);
+      I_cfgMask    : in  STD_LOGIC_VECTOR (1 downto 0);
+      I_dataA      : in  STD_LOGIC_VECTOR (REG_SIZE-1 downto 0);
+      I_dataB      : in  STD_LOGIC_VECTOR (REG_SIZE-1 downto 0);
+      I_immA       : in  STD_LOGIC_VECTOR (REG_SIZE-1 downto 0);
+      I_immB       : in  STD_LOGIC_VECTOR (REG_SIZE-1 downto 0);
+      I_address    : in  STD_LOGIC_VECTOR (REG_SIZE-1 downto 0);
+      I_type       : in  STD_LOGIC_VECTOR (1 downto 0);
       -- Outputs
-      O_dataResult : out STD_LOGIC_VECTOR (ADDR_SIZE-1 downto 0);
-      O_WE       : out STD_LOGIC
+      O_dataResult : out STD_LOGIC_VECTOR (REG_SIZE-1 downto 0)
     );
   end component alu;
 
@@ -76,7 +85,7 @@ architecture arch_sdvu of sdvu is
     port (
       I_clock : in  STD_LOGIC;
       I_reset : in  STD_LOGIC;
-      I_op    : in  STD_LOGIC_VECTOR(OP_SIZE-1 downto 0);
+      I_op_code   : in  STD_LOGIC_VECTOR(OP_SIZE-1 downto 0);
       O_state : out STD_LOGIC_VECTOR (STATE_NUMBER-1 downto 0)
     );
   end component control_unit;
@@ -85,16 +94,16 @@ architecture arch_sdvu of sdvu is
   -- Decoder
   component decoder
     generic (
-      OP_SIZE  : natural := 4;
-      REG_SIZE : natural := 4
+      OP_SIZE      : natural := 4;
+      REG_SEL_SIZE : natural := 4
     );
     port (
       I_clock    : in  STD_LOGIC;
       I_enable   : in  STD_LOGIC;
-      I_dataInst : in  STD_LOGIC_VECTOR (31 downto 0);
-      O_aluop    : out STD_LOGIC_VECTOR (3  downto 0);
+      I_instruction : in  STD_LOGIC_VECTOR (31 downto 0);
+      O_op_code    : out STD_LOGIC_VECTOR (OP_SIZE-1 downto 0);
       O_cfgMask  : out STD_LOGIC_VECTOR (1  downto 0);
-      O_rB       : out STD_LOGIC_VECTOR (3  downto 0);
+      O_rB       : out STD_LOGIC_VECTOR (REG_SEL_SIZE-1  downto 0);
       O_immB     : out STD_LOGIC_VECTOR (10 downto 0);
       O_address  : out STD_LOGIC_VECTOR (23 downto 0);
       O_type     : out STD_LOGIC_VECTOR (1  downto 0);
@@ -106,66 +115,78 @@ architecture arch_sdvu of sdvu is
   -- PC
   component pc
     generic (
-      PC_WIDTH    : natural := 16;
-      PC_OP_WIDTH : natural := 2
+      PC_SIZE    : natural := 16;
+      PC_OP_SIZE : natural := 2
     );
     port (
       I_clock     : in  STD_LOGIC;
       I_reset     : in  STD_LOGIC;
       I_enable    : in  STD_LOGIC;
-      I_PC_toSet  : in  STD_LOGIC_VECTOR (PC_WIDTH-1 downto 0);
-      I_PC_OPCode : in  STD_LOGIC_VECTOR (PC_OP_WIDTH-1 downto 0);
-      O_PC        : out STD_LOGIC_VECTOR (PC_WIDTH-1 downto 0)
+      I_newPC  : in  STD_LOGIC_VECTOR (PC_SIZE-1 downto 0);
+      I_PC_OPCode : in  STD_LOGIC_VECTOR (PC_OP_SIZE-1 downto 0);
+      O_PC        : out STD_LOGIC_VECTOR (PC_SIZE-1 downto 0)
     );
   end component pc;
+
 
 
   -- Register File
   component reg
     generic (
-      REG_WIDTH : natural := 32;
-      REG_SIZE  : natural := 4
+      REG_SIZE     : natural := 32;
+      REG_SEL_SIZE : natural := 4
     );
     port (
       I_clock  : in  STD_LOGIC;
       I_reset  : in  STD_LOGIC;
       I_enable : in  STD_LOGIC;
       I_we     : in  STD_LOGIC;
-      I_selD   : in  STD_LOGIC_VECTOR (REG_SIZE-1 downto 0);
-      I_selA   : in  STD_LOGIC_VECTOR (REG_SIZE-1 downto 0);
-      I_selB   : in  STD_LOGIC_VECTOR (REG_SIZE-1 downto 0);
-      I_dataD  : in  STD_LOGIC_VECTOR (REG_WIDTH-1 downto 0);
-      O_dataB  : out STD_LOGIC_VECTOR (REG_WIDTH-1 downto 0);
-      O_dataA  : out STD_LOGIC_VECTOR (REG_WIDTH-1 downto 0);
-      O_dataD  : out STD_LOGIC_VECTOR (REG_WIDTH-1 downto 0
+      I_selD   : in  STD_LOGIC_VECTOR (REG_SEL_SIZE-1 downto 0);
+      I_selA   : in  STD_LOGIC_VECTOR (REG_SEL_SIZE-1 downto 0);
+      I_selB   : in  STD_LOGIC_VECTOR (REG_SEL_SIZE-1 downto 0);
+      I_dataD  : in  STD_LOGIC_VECTOR (REG_SIZE-1 downto 0);
+      O_dataB  : out STD_LOGIC_VECTOR (REG_SIZE-1 downto 0);
+      O_dataA  : out STD_LOGIC_VECTOR (REG_SIZE-1 downto 0);
+      O_dataD  : out STD_LOGIC_VECTOR (REG_SIZE-1 downto 0
     );
   end component reg;
 
+
   -- Signals
 
-  -- Signals to/from alu
-  signal s_aluop      : STD_LOGIC_VECTOR (OP_SIZE-1 downto 0);
-  signal s_cfgMask    : STD_LOGIC_VECTOR (1 downto 0);
-  signal s_dataA      : STD_LOGIC_VECTOR (REG_NB-1 downto 0);
-  signal s_dataB      : STD_LOGIC_VECTOR (REG_NB-1 downto 0);
-  signal s_dataImmA   : STD_LOGIC_VECTOR (REG_NB-1 downto 0);
-  signal s_dataImmB   : STD_LOGIC_VECTOR (REG_NB-1 downto 0);
-  signal s_address    : STD_LOGIC_VECTOR (ADDR_SIZE-1 downto 0);
-  signal s_type       : STD_LOGIC_VECTOR (1 downto 0);
-  signal s_dataResult : STD_LOGIC_VECTOR (ADDR_SIZE-1 downto 0);
-  signal s_rd_WE      : STD_LOGIC;
-
   -- Signals to/from control unit
-  signal s_instruction : STD_LOGIC_VECTOR(INSTR_SIZE-1 down to 0);
-  signal s_state : STD_LOGIC_VECTOR(STATE_NUMBER-1 downto 0);
+  signal s_op_code : STD_LOGIC_VECTOR (OP_SIZE-1 downto 0);
+  signal s_state   : STD_LOGIC_VECTOR (STATE_NUMBER-1 downto 0);
 
-  -- Signals to/from registers
+  -- Signals to/from decoder
+  signal s_instruction : STD_LOGIC_VECTOR (INSTR_SIZE-1 downto 0);
+  signal s_cfgMask     : STD_LOGIC_VECTOR (1 downto 0);
+  signal s_sel_rA      : STD_LOGIC_VECTOR (REG_SEL_SIZE-1  downto 0);
+  signal s_sel_rB      : STD_LOGIC_VECTOR (REG_SEL_SIZE-1  downto 0);
+  signal s_sel_rD      : STD_LOGIC_VECTOR (REG_SEL_SIZE-1  downto 0);
+  signal s_immA        : STD_LOGIC_VECTOR (REG_SIZE-1 downto 0);
+  signal s_immB        : STD_LOGIC_VECTOR (REG_SIZE-1 downto 0);
+  signal s_address     : STD_LOGIC_VECTOR (REG_SIZE-1 downto 0);
+  signal s_type        : STD_LOGIC_VECTOR (1 downto 0);
+  signal s_WE          : STD_LOGIC;
+
+  -- Signals to/from alu
+  signal s_cfgMask    : STD_LOGIC_VECTOR (1 downto 0);
+  signal s_dataA      : STD_LOGIC_VECTOR (REG_SIZE-1 downto 0);
+  signal s_dataB      : STD_LOGIC_VECTOR (REG_SIZE-1 downto 0);
+  signal s_address    : STD_LOGIC_VECTOR (REG_SIZE-1 downto 0);
+  signal s_type       : STD_LOGIC_VECTOR (1 downto 0);
+  signal s_dataResult : STD_LOGIC_VECTOR (REG_SIZE-1 downto 0);
 
   -- Signals to/from pc
-  signal s_PC_to_set : STD_LOGIC_VECTOR(PC_WIDTH-1 downto 0);
-  signal s_PC_to_set : STD_LOGIC_VECTOR(PC_OP_WIDTH-1 downto 0);
+  signal s_PC         : STD_LOGIC_VECTOR (PC_SIZE-1 downto 0);
+  signal s_newPC      : STD_LOGIC_VECTOR (PC_SIZE-1 downto 0);
+  signal s_PC_op_code : STD_LOGIC_VECTOR (PC_OP_SIZE-1 downto 0);
 
-  end package;
+  -- Signals to/from registers
+  signal s_dataB  : STD_LOGIC_VECTOR (REG_SIZE-1 downto 0);
+  signal s_dataA  : STD_LOGIC_VECTOR (REG_SIZE-1 downto 0);
+  signal s_dataD  : STD_LOGIC_VECTOR (REG_SIZE-1 downto 0);
 
 
 -- Components mapping
@@ -173,25 +194,24 @@ begin
   -- Mapping ALU
   sdvu_alu : alu
     generic map (
-      REG_NB    => REG_NB,
-      OP_SIZE   => OP_SIZE,
-      ADDR_SIZE => ADDR_SIZE
+      REG_SIZE => REG_SIZE,
+      OP_SIZE  => OP_SIZE
     )
     port map (
       I_clock      => I_clock,
-      I_enable     => I_enable, -- TODO
-      I_reset      => I_reset,
-      I_aluop      => I_aluop,
-      I_cfgMask    => I_cfgMask,
-      I_dataA      => I_dataA,
-      I_dataB      => I_dataB,
-      I_dataImmA   => I_dataImmA,
-      I_dataImmB   => I_dataImmB,
-      I_address    => I_address,
-      I_type       => I_type,
-      I_WE         => I_WE,
-      O_dataResult => O_dataResult,
-      O_WE         => O_WE
+      I_enable     => I_enable, -- based on the state of the control unit
+      I_reset      => I_reset,  -- based on the state of the control unit
+      -- Inputs
+      I_op_code    => s_op_code,
+      I_cfgMask    => s_cfgMask,
+      I_dataA      => s_dataA,
+      I_dataB      => s_dataB,
+      I_immA       => s_immA,
+      I_immB       => s_immB,
+      I_address    => s_address,
+      I_type       => s_type,
+      -- Outputs
+      O_dataResult => s_dataResult,
     );
 
 
@@ -202,11 +222,14 @@ begin
       STATE_NUMBER => STATE_NUMBER
     )
     port map (
-      I_clock => I_clock,
-      I_reset => I_reset,
-      I_op    => I_op,
-      O_state => O_state
+      I_clock   => I_clock,
+      I_reset   => I_reset, -- based on the state of the control unit
+      -- Inputs
+      I_op_code => s_op_code,
+      -- Outputs
+      O_state   => s_state
     );
+
 
   -- Mapping Decoder
   sdvu_decoder : decoder
@@ -215,16 +238,21 @@ begin
       REG_SIZE => REG_SIZE
     )
     port map (
-      I_clock    => I_clock,
-      I_enable   => I_enable,
-      I_dataInst => I_dataInst,
-      O_aluop    => O_aluop,
-      O_cfgMask  => O_cfgMask,
-      O_rB       => O_rB,
-      O_immB     => O_immB,
-      O_address  => O_address,
-      O_type     => O_type,
-      O_WE       => O_WE
+      I_clock       => I_clock,
+      I_enable      => I_enable, -- based on the state of the control unit
+      -- Inputs
+      I_instruction => s_instruction,
+      -- Outputs
+      O_op_code     => s_op_code,
+      O_cfgMask     => s_cfgMask,
+      O_rA          => s_sel_rA,
+      O_rB          => s_sel_rB,
+      O_rD          => s_sel_rD,
+      O_immA        => s_immA,
+      O_immB        => s_immB,
+      O_address     => s_address,
+      O_type        => s_type,
+      O_WE          => s_WE
     );
 
 
@@ -236,11 +264,13 @@ begin
     )
     port map (
       I_clock     => I_clock,
-      I_reset     => I_reset,
-      I_enable    => I_enable,
-      I_PC_toSet  => I_PC_toSet,
-      I_PC_OPCode => I_PC_OPCode,
-      O_PC        => O_PC
+      I_reset     => I_reset,  -- based on the state of the control unit
+      I_enable    => I_enable, -- based on the state of the control unit
+      -- Inputs
+      I_newPC     => s_newPC,
+      I_PC_OPCode => s_PC_op_code,
+      -- Outputs
+      O_PC        => s_PC
     );
 
 
@@ -252,16 +282,18 @@ begin
     )
     port map (
       I_clock  => I_clock,
-      I_reset  => I_reset,
-      I_enable => I_enable,
-      I_we     => I_we,
-      I_selD   => I_selD,
-      I_selA   => I_selA,
-      I_selB   => I_selB,
-      I_dataD  => I_dataD,
-      O_dataB  => O_dataB,
-      O_dataA  => O_dataA,
-      O_dataD  => O_dataD
+      I_reset  => I_reset,  -- based on the state of the control unit
+      I_enable => I_enable, -- based on the state of the control unit
+      -- Inputs
+      I_we     => s_WE,
+      I_selA   => s_sel_rA,
+      I_selB   => s_sel_rB,
+      I_selD   => s_sel_rD,
+      I_dataD  => s_dataD,
+      -- Outputs
+      O_dataB  => s_dataB,
+      O_dataA  => s_dataA,
+      O_dataD  => s_dataD
     );
 
 end architecture arch_sdvu;

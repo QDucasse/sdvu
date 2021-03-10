@@ -42,8 +42,8 @@ architecture arch_decoder_tb of decoder_tb is
      end procedure;
 
      -- Signals for decode
-     signal I_dataInst : STD_LOGIC_VECTOR (31 downto 0);
-     signal O_aluop    : STD_LOGIC_VECTOR (3  downto 0);
+     signal I_instruction : STD_LOGIC_VECTOR (31 downto 0);
+     signal O_op_code    : STD_LOGIC_VECTOR (3  downto 0);
      signal O_cfgMask  : STD_LOGIC_VECTOR (1  downto 0);
      signal O_rD       : STD_LOGIC_VECTOR (3  downto 0);
      signal O_rA       : STD_LOGIC_VECTOR (3  downto 0);
@@ -65,8 +65,8 @@ begin
       port map (
       I_clock      => clock,
       I_enable      => enable,
-        I_dataInst => I_dataInst,
-        O_aluop    => O_aluop,
+        I_instruction => I_instruction,
+        O_op_code    => O_op_code,
         O_cfgMask  => O_cfgMask,
         O_rD       => O_rD,
         O_rA       => O_rA,
@@ -91,10 +91,10 @@ begin
       -- TESTING OPERATIONS
 
       -- Test 1: Binary - RR Instruction type
-      I_dataInst <= OP_SUB & "00" & "1111" & "00000000000" & "00000000001";
+      I_instruction <= OP_SUB & "00" & "1111" & "00000000000" & "00000000001";
       -- OP_SUB(0001) | CFG_RR(00) | RD = 15(1111) | RA = 0 (0000000 0000) | RB = 1 (0000000 0001)
       wait_cycles(2);
-      res1 := ((O_aluop = OP_SUB)   and
+      res1 := ((O_op_code = OP_SUB)   and
                (O_cfgMask = CFG_RR) and
                (O_rD = "1111")      and
                (O_rA = "0000")      and
@@ -105,10 +105,10 @@ begin
       end if;
 
       -- Test 2: Binary - RI Instruction type
-      I_dataInst <= OP_MUL & "01" & "1110" & "00000000000" & "11111111111";
+      I_instruction <= OP_MUL & "01" & "1110" & "00000000000" & "11111111111";
       -- OP_MUL(0010) | CFG_RI(01) | RD = 14 (1110) | RA = 0 (0000000 0000) | ImmB = 2047 (11111111111)
       wait_cycles(2);
-      res2 := ((O_aluop = OP_MUL)       and
+      res2 := ((O_op_code = OP_MUL)       and
                (O_cfgMask = CFG_RI)     and
                (O_rD = "1110")          and
                (O_rA = "0000")          and
@@ -119,10 +119,10 @@ begin
       end if;
 
       -- Test 3: Binary - IR Instruction type
-      I_dataInst <= OP_DIV & "10" & "1101" & "11111111111" & "00000000010";
+      I_instruction <= OP_DIV & "10" & "1101" & "11111111111" & "00000000010";
       -- OP_DIV(0011) | CFG_IR(10) | RD = 13 (1101) | ImmA = 2047 (11111111111) | RB = 2 (0000000 0010)
       wait_cycles(2);
-      res3 := ((O_aluop = OP_DIV)       and
+      res3 := ((O_op_code = OP_DIV)       and
                (O_cfgMask = CFG_IR)     and
                (O_rD = "1101")          and
                (O_immA = "11111111111") and
@@ -133,10 +133,10 @@ begin
       end if;
 
       -- Test 4: Binary - II Instruction type
-      I_dataInst <= OP_ADD & "11" & "1111" & "11111111111" & "11111111111";
+      I_instruction <= OP_ADD & "11" & "1111" & "11111111111" & "11111111111";
       -- OP_ADD (0000) | CFG_II(11) | RD = 15 (1111) | ImmA = 2047 (11111111111) | ImmB = 2 (11111111111)
       wait_cycles(2);
-      res4 := ((O_aluop = OP_ADD)       and
+      res4 := ((O_op_code = OP_ADD)       and
                (O_cfgMask = CFG_II)     and
                (O_rD = "1111")          and
                (O_immA = "11111111111") and
@@ -147,10 +147,10 @@ begin
       end if;
 
       -- Test 5: NOT
-      I_dataInst <= OP_NOT & "1111" & "000000000000000000000001";
+      I_instruction <= OP_NOT & "1111" & "000000000000000000000001";
       -- OP_NOT (1010) | RD = 15 (1111) | RA = 1 (00000000000000000000 0001)
       wait_cycles(2);
-      res5 := ((O_aluop = OP_NOT) and
+      res5 := ((O_op_code = OP_NOT) and
                (O_rD = "1111")    and
                (O_rA = "0001")    and
                (O_regDwe = '1'));
@@ -159,10 +159,10 @@ begin
       end if;
 
       -- Test 6: LOAD - REG
-      I_dataInst <= OP_LOAD & "00" & "00" & "1111" & "00000000000000000001";
+      I_instruction <= OP_LOAD & "00" & "00" & "1111" & "00000000000000000001";
       -- OP_LOAD(1101) | LOAD_REG(00) | VAL_BOOL (00) | RD = 15 (1111) | RA = 1 (0000000000000000 0001)
       wait_cycles(2);
-      res6 := ((O_aluop = OP_LOAD)    and
+      res6 := ((O_op_code = OP_LOAD)    and
                (O_cfgMask = LOAD_REG) and
                (O_type = VAL_BOOL)    and
                (O_rD = "1111")        and
@@ -173,10 +173,10 @@ begin
       end if;
 
       -- Test 7: LOAD - IMM
-      I_dataInst <= OP_LOAD & "01" & "01" & "1111" & "00000000011111111111";
+      I_instruction <= OP_LOAD & "01" & "01" & "1111" & "00000000011111111111";
       -- OP_LOAD(1101) | LOAD_IMM(01) | VAL_BYTE (01) | RD = 15 (1111) | ImmA = 2047 (000000000 11111111111)
       wait_cycles(2);
-      res7 := ((O_aluop = OP_LOAD)      and
+      res7 := ((O_op_code = OP_LOAD)      and
                (O_cfgMask = LOAD_IMM)   and
                (O_type = VAL_BYTE)      and
                (O_rD = "1111")          and
@@ -187,10 +187,10 @@ begin
       end if;
 
       -- Test 8: LOAD - ADR
-      I_dataInst <= OP_LOAD & "10" & "10" & "1111" & "11111111111111111111";
+      I_instruction <= OP_LOAD & "10" & "10" & "1111" & "11111111111111111111";
       -- OP_LOAD(1101) | LOAD_ADR(10) | VAL_INT (10) | RD = 15 (1111) | address = 1048575 (11111111111111111111)
       wait_cycles(2);
-      res8 := ((O_aluop = OP_LOAD)                      and
+      res8 := ((O_op_code = OP_LOAD)                      and
                (O_cfgMask = LOAD_ADR)                   and
                (O_type = VAL_INT)                       and
                (O_rD = "1111")                          and
@@ -201,10 +201,10 @@ begin
       end if;
 
       -- Test 9: LOAD - RAA
-      I_dataInst <= OP_LOAD & "11" & "11" & "1111" & "00000000000000000001";
+      I_instruction <= OP_LOAD & "11" & "11" & "1111" & "00000000000000000001";
       -- OP_LOAD(1101) | LOAD_RAA(11) | VAL_STATE (11) | RD = 15 (1111) | RA = 1 (0000000000000000 0001)
       wait_cycles(2);
-      res9 := ((O_aluop = OP_LOAD)    and
+      res9 := ((O_op_code = OP_LOAD)    and
                (O_cfgMask = LOAD_RAA) and
                (O_type = VAL_STATE)   and
                (O_rD = "1111")        and
@@ -215,10 +215,10 @@ begin
       end if;
 
       -- Test 10: STORE - ADR
-      I_dataInst <= OP_STORE & "00" & "00" & "1111" & "11111111111111111111";
+      I_instruction <= OP_STORE & "00" & "00" & "1111" & "11111111111111111111";
       -- OP_STORE(1100) | STORE_ADR(00) | VAL_BOOL (00) | RD = 15 (1111) | address = 1048575 (11111111111111111111)
       wait_cycles(2);
-      res10 := ((O_aluop = OP_STORE)                     and
+      res10 := ((O_op_code = OP_STORE)                     and
                 (O_cfgMask = STORE_ADR)                  and
                 (O_type = VAL_BOOL)                      and
                 (O_rD = "1111")                          and
@@ -229,10 +229,10 @@ begin
       end if;
 
       -- Test 11: STORE - RAA
-      I_dataInst <= OP_STORE & "01" & "01" & "1111" & "00000000000000000001";
+      I_instruction <= OP_STORE & "01" & "01" & "1111" & "00000000000000000001";
       -- OP_STORE(1100) | STORE_RAA(01) | VAL_BYTE (01) | RD = 15 (1111) | RA = 1 (0000000000000000 0001)
       wait_cycles(2);
-      res11 := ((O_aluop = OP_STORE)    and
+      res11 := ((O_op_code = OP_STORE)    and
                 (O_cfgMask = STORE_RAA) and
                 (O_type = VAL_BYTE)     and
                 (O_rD = "1111")         and
@@ -243,10 +243,10 @@ begin
       end if;
 
       -- Test 12: JMP
-      I_dataInst <= OP_JMP & "1111" & "111111111111111111111111";
+      I_instruction <= OP_JMP & "1111" & "111111111111111111111111";
       -- OP_JMP(1011) | RD = 15 (1111) | RA = 1 ( )
       wait_cycles(2);
-      res12 := ((O_aluop = OP_JMP)                       and
+      res12 := ((O_op_code = OP_JMP)                       and
                 (O_rD = "1111")                          and
                 (O_address = "111111111111111111111111") and
                 (O_regDwe = '0'));

@@ -14,19 +14,22 @@ library IEEE;
 use IEEE.std_logic_1164.all;
 use IEEE.numeric_std.all;
 
+library work;
+use work.constant_codes.all;
+
 -- =================
 --      Entity
 -- =================
 
 entity config_memory is
-    generic (MEM_SIZE  : natural := 8,
-             TYPE_SIZE : natural := 32);
+    generic (CFG_MEM_SIZE : natural := 8,
+             TYPE_SIZE    : natural := 32);
     port (I_clock    : in STD_LOGIC; -- Clock signal
           I_enable : in STD_LOGIC; -- Unit enable
           I_reset  : in STD_LOGIC; -- Reset signal
           I_we     : in STD_LOGIC; -- Write Enable
           I_type   : in STD_LOGIC_VECTOR(1 downto 0);            -- Indication on the type of the value
-          I_addr   : in STD_LOGIC_VECTOR (MEM_SIZE-1 downto 0);  -- Address in the RAM
+          I_addr   : in STD_LOGIC_VECTOR (CFG_MEM_SIZE-1 downto 0);  -- Address in the RAM
           I_data   : in STD_LOGIC_VECTOR (TYPE_SIZE-1 downto 0); -- Data to write to address in memory
           O_data   : out STD_LOGIC_VECTOR (TYPE_SIZE-1 downto 0) -- Read address from memory
           );
@@ -38,7 +41,7 @@ end config_memory;
 
 architecture arch_config_memory of config_memory is
     -- Internal Objects
-    signal memory_bank := (others => '0');
+    signal memory_bank : STD_LOGIC_VECTOR(2**CFG_MEM_SIZE-1 downto 0) := (others => '0');
 
 begin
   -- Processes

@@ -18,14 +18,14 @@ use IEEE.numeric_std.all;
 -- =================
 
 entity program_memory is
-    generic (MEM_SIZE   : natural := 8;
-             INSTR_SIZE : natural := 32
+    generic (PROG_MEM_SIZE : natural := 8;
+             INSTR_SIZE    : natural := 32
              );
     port (I_clock   : in STD_LOGIC; -- Clock
           I_reset   : in STD_LOGIC; -- Reset
           I_enable  : in STD_LOGIC; -- Enable
 
-          I_address : in STD_LOGIC_VECTOR (MEM_SIZE-1 downto 0); -- Address of the new instruction
+          I_address : in STD_LOGIC_VECTOR (PROG_MEM_SIZE-1 downto 0); -- Address of the new instruction
           O_data  : out STD_LOGIC_VECTOR (INSTR_SIZE-1 downto 0) -- Data at address
           );
 end program_memory;
@@ -36,7 +36,7 @@ end program_memory;
 
 architecture arch_program_memory of program_memory is
     -- Internal Objects
-    type memory_file is array (0 to 2**MEM_SIZE-1) of STD_LOGIC_VECTOR(INSTR_SIZE-1 downto 0);  -- 128 32-bit addresses
+    type memory_file is array (0 to 2**PROG_MEM_SIZE-1) of STD_LOGIC_VECTOR(INSTR_SIZE-1 downto 0);  -- 128 32-bit addresses
     signal memory_bank: memory_file := (others => X"0000"); -- Affectation of the array and initialization at 0
 
 begin

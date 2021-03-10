@@ -27,10 +27,12 @@ use work.sdvu_constants.all;
 entity control_unit is
     generic (OP_SIZE      : natural := 4;
              STATE_NUMBER : natural := 12);
-    port (I_clock   : in  STD_LOGIC;                               -- Clock signal
-          I_reset : in  STD_LOGIC;                                 -- Reset signal
-          I_op    : in STD_LOGIC_VECTOR(OP_SIZE-1 downto 0);       -- Instruction Op Code
-          O_state : out STD_LOGIC_VECTOR (STATE_NUMBER-1 downto 0) -- State of the control unit
+    port (I_clock   : in  STD_LOGIC;                                 -- Clock signal
+          I_reset   : in  STD_LOGIC;                                 -- Reset signal
+          -- Inputs
+          I_op_code : in STD_LOGIC_VECTOR(OP_SIZE-1 downto 0);       -- Instruction Op Code
+          -- Outputs
+          O_state   : out STD_LOGIC_VECTOR (STATE_NUMBER-1 downto 0) -- State of the control unit
           );
 end control_unit;
 

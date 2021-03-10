@@ -23,25 +23,23 @@ use work.constant_codes.all;
 -- =================
 
 entity alu is
-    generic (REG_WIDTH : natural := 32;
+    generic (REG_SIZE : natural := 32;
              OP_SIZE   : natural := 4
              );
     port (I_clock  : in STD_LOGIC; -- Clock
           I_enable : in STD_LOGIC; -- Enable
           I_reset  : in STD_LOGIC; -- Reset
           -- Inputs
-          I_aluop    : in STD_LOGIC_VECTOR (OP_SIZE-1 downto 0);   -- ALU operation to perform
-          I_cfgMask  : in STD_LOGIC_VECTOR (1 downto 0);           -- Configuration mask for the instruction
-          I_dataA    : in STD_LOGIC_VECTOR (REG_WIDTH-1 downto 0);    -- Input data A
-          I_dataB    : in STD_LOGIC_VECTOR (REG_WIDTH-1 downto 0);    -- Input data B
-          I_dataImmA : in STD_LOGIC_VECTOR (REG_WIDTH-1 downto 0);    -- Immediate value A
-          I_dataImmB : in STD_LOGIC_VECTOR (REG_WIDTH-1 downto 0);    -- Immediate value B
-          I_address  : in STD_LOGIC_VECTOR (REG_WIDTH-1 downto 0); -- Address for JMP, STORE and LOAD
-          I_type     : in STD_LOGIC_VECTOR (1 downto 0);           -- Type of the value loaded or stored
-          I_WE       : in STD_LOGIC;                               -- Write Enable
+          I_op_code    : in STD_LOGIC_VECTOR (OP_SIZE-1 downto 0);  -- ALU operation to perform
+          I_cfgMask  : in STD_LOGIC_VECTOR (1 downto 0);            -- Configuration mask for the instruction
+          I_dataA    : in STD_LOGIC_VECTOR (REG_SIZE-1 downto 0);   -- Input data A
+          I_dataB    : in STD_LOGIC_VECTOR (REG_SIZE-1 downto 0);   -- Input data B
+          I_immA : in STD_LOGIC_VECTOR (REG_SIZE-1 downto 0);       -- Immediate value A
+          I_immB : in STD_LOGIC_VECTOR (REG_SIZE-1 downto 0);       -- Immediate value B
+          I_address  : in STD_LOGIC_VECTOR (REG_SIZE-1 downto 0);   -- Address for JMP, STORE and LOAD
+          I_type     : in STD_LOGIC_VECTOR (1 downto 0);            -- Type of the value loaded or stored
           -- Outputs
-          O_dataResult : out STD_LOGIC_VECTOR (REG_WIDTH-1 downto 0); -- Result of the operation
-          O_WE : out STD_LOGIC -- Pass over the write enable
+          O_dataResult : out STD_LOGIC_VECTOR (REG_SIZE-1 downto 0) -- Result of the operation
           );
 end alu;
 
@@ -66,8 +64,7 @@ begin
         if I_reset = '1' then -- Reset routine
           s_result <= (others => '0');
         elsif I_enable= '1':  -- Enable
-          O_WE <= I_WE;       -- Propagate write enable
-          cmp_op <= I_aluop(3 downto 0);
+          cmp_op <= I_op_code(3 downto 0);
           case cmp_op is
 
               -- ADD operation
@@ -75,13 +72,13 @@ begin
               when OP_ADD =>
                 case I_cfgMask is
                   when CFG_RR then
-                    s_result(REG_WIDTH-1 downto 0) <= std_logic_vector(unsigned(I_dataA) + unsigned(I_dataB));
+                    s_result(REG_SIZE-1 downto 0) <= std_logic_vector(unsigned(I_dataA) + unsigned(I_dataB));
                   when CFG_RI then
-                    s_result(REG_WIDTH-1 downto 0) <= std_logic_vector(unsigned(I_dataA) + unsigned(I_dataImmB));
+                    s_result(REG_SIZE-1 downto 0) <= std_logic_vector(unsigned(I_dataA) + unsigned(I_immB));
                   when CFG_IR then
-                    s_result(REG_WIDTH-1 downto 0) <= std_logic_vector(unsigned(I_dataImmA) + unsigned(I_dataB));
+                    s_result(REG_SIZE-1 downto 0) <= std_logic_vector(unsigned(I_immA) + unsigned(I_dataB));
                   when CFG_II then
-                    s_result(REG_WIDTH-1 downto 0) <= std_logic_vector(unsigned(I_dataImmA) + unsigned(I_dataImmB));
+                    s_result(REG_SIZE-1 downto 0) <= std_logic_vector(unsigned(I_immA) + unsigned(I_immB));
                 end case;
 
               -- SUB operation
@@ -89,13 +86,13 @@ begin
               when OP_SUB =>
                 case I_cfgMask is
                   when CFG_RR then
-                    s_result(REG_WIDTH-1 downto 0) <= std_logic_vector(unsigned(I_dataA) - unsigned(I_dataB));
+                    s_result(REG_SIZE-1 downto 0) <= std_logic_vector(unsigned(I_dataA) - unsigned(I_dataB));
                   when CFG_RI then
-                    s_result(REG_WIDTH-1 downto 0) <= std_logic_vector(unsigned(I_dataA) - unsigned(I_dataImmB));
+                    s_result(REG_SIZE-1 downto 0) <= std_logic_vector(unsigned(I_dataA) - unsigned(I_immB));
                   when CFG_IR then
-                    s_result(REG_WIDTH-1 downto 0) <= std_logic_vector(unsigned(I_dataImmA) - unsigned(I_dataB));
+                    s_result(REG_SIZE-1 downto 0) <= std_logic_vector(unsigned(I_immA) - unsigned(I_dataB));
                   when CFG_II then
-                    s_result(REG_WIDTH-1 downto 0) <= std_logic_vector(unsigned(I_dataImmA) - unsigned(I_dataImmB));
+                    s_result(REG_SIZE-1 downto 0) <= std_logic_vector(unsigned(I_immA) - unsigned(I_immB));
                 end case;
 
               -- MUL operation
@@ -103,27 +100,27 @@ begin
               when OP_MUL =>
                 case I_cfgMask is
                   when CFG_RR then
-                    s_result(REG_WIDTH-1 downto 0) <= std_logic_vector(unsigned(I_dataA) * unsigned(I_dataB));
+                    s_result(REG_SIZE-1 downto 0) <= std_logic_vector(unsigned(I_dataA) * unsigned(I_dataB));
                   when CFG_RI then
-                    s_result(REG_WIDTH-1 downto 0) <= std_logic_vector(unsigned(I_dataA) * unsigned(I_dataImmB));
+                    s_result(REG_SIZE-1 downto 0) <= std_logic_vector(unsigned(I_dataA) * unsigned(I_immB));
                   when CFG_IR then
-                    s_result(REG_WIDTH-1 downto 0) <= std_logic_vector(unsigned(I_dataImmA) * unsigned(I_dataB));
+                    s_result(REG_SIZE-1 downto 0) <= std_logic_vector(unsigned(I_immA) * unsigned(I_dataB));
                   when CFG_II then
-                    s_result(REG_WIDTH-1 downto 0) <= std_logic_vector(unsigned(I_dataImmA) * unsigned(I_dataImmB));
-                end case;
+                    s_result(REG_SIZE-1 downto 0) <= std_logic_vector(unsigned(I_immA) * unsigned(I_immB));
+                end case;REG_SIZE
 
               -- DIV operation
               -- =============
               -- when OP_DIV =>
                 -- case I_cfgMask is
                 --   when CFG_RR then
-                --     s_result(REG_WIDTH-1 downto 0) <= std_logic_vector(unsigned(I_dataA) / unsigned(I_dataB));
+                --     s_result(REG_SIZE-1 downto 0) <= std_logic_vector(unsigned(I_dataA) / unsigned(I_dataB));
                 --   when CFG_RI then
-                --     s_result(REG_WIDTH-1 downto 0) <= std_logic_vector(unsigned(I_dataA) / unsigned(I_dataImmB));
+                --     s_result(REG_SIZE-1 downto 0) <= std_logic_vector(unsigned(I_dataA) / unsigned(I_immB));
                 --   when CFG_IR then
-                --     s_result(REG_WIDTH-1 downto 0) <= std_logic_vector(unsigned(I_dataImmA) / unsigned(I_dataB));
+                --     s_result(REG_SIZE-1 downto 0) <= std_logic_vector(unsigned(I_immA) / unsigned(I_dataB));
                 --   when CFG_II then
-                --     s_result(REG_WIDTH-1 downto 0) <= std_logic_vector(unsigned(I_dataImmA) / unsigned(I_dataImmB));
+                --     s_result(REG_SIZE-1 downto 0) <= std_logic_vector(unsigned(I_immA) / unsigned(I_immB));
                 -- end case;
 
               -- MOD operation
@@ -131,13 +128,13 @@ begin
               -- when OP_MOD =>
                 -- case I_cfgMask is
                 --   when CFG_RR then
-                --     s_result(REG_WIDTH-1 downto 0) <= std_logic_vector(unsigned(I_dataA) mod unsigned(I_dataB));
+                --     s_result(REG_SIZE-1 downto 0) <= std_logic_vector(unsigned(I_dataA) mod unsigned(I_dataB));
                 --   when CFG_RI then
-                --     s_result(REG_WIDTH-1 downto 0) <= std_logic_vector(unsigned(I_dataA) mod unsigned(I_dataImmB));
+                --     s_result(REG_SIZE-1 downto 0) <= std_logic_vector(unsigned(I_dataA) mod unsigned(I_immB));
                 --   when CFG_IR then
-                --     s_result(REG_WIDTH-1 downto 0) <= std_logic_vector(unsigned(I_dataImmA) mod unsigned(I_dataB));
+                --     s_result(REG_SIZE-1 downto 0) <= std_logic_vector(unsigned(I_immA) mod unsigned(I_dataB));
                 --   when CFG_II then
-                --     s_result(REG_WIDTH-1 downto 0) <= std_logic_vector(unsigned(I_dataImmA) mod unsigned(I_dataImmB));
+                --     s_result(REG_SIZE-1 downto 0) <= std_logic_vector(unsigned(I_immA) mod unsigned(I_immB));
                 -- end case;
 
               -- AND operation
@@ -145,13 +142,13 @@ begin
               when OP_AND =>
                 case I_cfgMask is
                   when CFG_RR then
-                    s_result(REG_WIDTH-1 downto 0) <= I_dataA and I_dataB;
+                    s_result(REG_SIZE-1 downto 0) <= I_dataA and I_dataB;
                   when CFG_RI then
-                    s_result(REG_WIDTH-1 downto 0) <= I_dataA and I_dataImmB;
+                    s_result(REG_SIZE-1 downto 0) <= I_dataA and I_immB;
                   when CFG_IR then
-                    s_result(REG_WIDTH-1 downto 0) <= I_dataImmA and I_dataB;
+                    s_result(REG_SIZE-1 downto 0) <= I_immA and I_dataB;
                   when CFG_II then
-                    s_result(REG_WIDTH-1 downto 0) <= I_dataImmA and I_dataImmB;
+                    s_result(REG_SIZE-1 downto 0) <= I_immA and I_immB;
                 end case;
 
               -- OR operation
@@ -159,13 +156,13 @@ begin
               when OP_OR =>
                 case I_cfgMask is
                   when CFG_RR then
-                    s_result(REG_WIDTH-1 downto 0) <= I_dataA or I_dataB;
+                    s_result(REG_SIZE-1 downto 0) <= I_dataA or I_dataB;
                   when CFG_RI then
-                    s_result(REG_WIDTH-1 downto 0) <= I_dataA or I_dataImmB;
+                    s_result(REG_SIZE-1 downto 0) <= I_dataA or I_immB;
                   when CFG_IR then
-                    s_result(REG_WIDTH-1 downto 0) <= I_dataImmA or I_dataB;
+                    s_result(REG_SIZE-1 downto 0) <= I_immA or I_dataB;
                   when CFG_II then
-                    s_result(REG_WIDTH-1 downto 0) <= I_dataImmA or I_dataImmB;
+                    s_result(REG_SIZE-1 downto 0) <= I_immA or I_immB;
                 end case;
 
 
@@ -174,13 +171,13 @@ begin
               when OP_LT =>
                 case I_cfgMask is
                   when CFG_RR then
-                    s_result(REG_WIDTH-1 downto 0) <= unsigned(I_dataA) < unsigned(I_dataB);
+                    s_result(REG_SIZE-1 downto 0) <= unsigned(I_dataA) < unsigned(I_dataB);
                   when CFG_RI then
-                    s_result(REG_WIDTH-1 downto 0) <= unsigned(I_dataA) < unsigned(I_dataImmB);
+                    s_result(REG_SIZE-1 downto 0) <= unsigned(I_dataA) < unsigned(I_immB);
                   when CFG_IR then
-                    s_result(REG_WIDTH-1 downto 0) <= unsigned(I_dataImmA) < unsigned(I_dataB);
+                    s_result(REG_SIZE-1 downto 0) <= unsigned(I_immA) < unsigned(I_dataB);
                   when CFG_II then
-                    s_result(REG_WIDTH-1 downto 0) <= unsigned(I_dataImmA) < unsigned(I_dataImmB);
+                    s_result(REG_SIZE-1 downto 0) <= unsigned(I_immA) < unsigned(I_immB);
                 end case;
 
               -- GT operation
@@ -190,11 +187,11 @@ begin
                   when CFG_RR then
                     s_result(1 downto 0) <= unsigned(I_dataA) > unsigned(I_dataB);
                   when CFG_RI then
-                    s_result(1 downto 0) <= unsigned(I_dataA) > unsigned(I_dataImmB);
+                    s_result(1 downto 0) <= unsigned(I_dataA) > unsigned(I_immB);
                   when CFG_IR then
-                    s_result(1 downto 0) <= unsigned(I_dataImmA) > unsigned(I_dataB);
+                    s_result(1 downto 0) <= unsigned(I_immA) > unsigned(I_dataB);
                   when CFG_II then
-                    s_result(1 downto 0) <= unsigned(I_dataImmA) > unsigned(I_dataImmB);
+                    s_result(1 downto 0) <= unsigned(I_immA) > unsigned(I_immB);
                 end case;
 
 
@@ -205,17 +202,17 @@ begin
                   when CFG_RR then
                     s_result(1 downto 0) <= unsigned(I_dataA) = unsigned(I_dataB);
                   when CFG_RI then
-                    s_result(1 downto 0) <= unsigned(I_dataA) = unsigned(I_dataImmB);
+                    s_result(1 downto 0) <= unsigned(I_dataA) = unsigned(I_immB);
                   when CFG_IR then
-                    s_result(1 downto 0) <= unsigned(I_dataImmA) = unsigned(I_dataB);
+                    s_result(1 downto 0) <= unsigned(I_immA) = unsigned(I_dataB);
                   when CFG_II then
-                    s_result(1 downto 0) <= unsigned(I_dataImmA) = unsigned(I_dataImmB);
+                    s_result(1 downto 0) <= unsigned(I_immA) = unsigned(I_immB);
                 end case;
 
               -- NOT operation
               -- =============
               when OP_NOT =>
-                s_result(REG_WIDTH-1 downto 0) <= not I_dataA;
+                s_result(REG_SIZE-1 downto 0) <= not I_dataA;
 
               -- -- JMP operation
               -- -- ================

@@ -25,16 +25,16 @@ use work.sdvu_constants.all;
 -- =================
 
 entity pc is
-    generic (PC_WIDTH    : natural := 16; -- Width of the PC selector (16-bits here)
-             PC_OP_WIDTH : natural := 2); -- Width of the PC OP code (2 bits here)
+    generic (PC_SIZE    : natural := 16; -- Width of the PC selector (16-bits here)
+             PC_OP_SIZE : natural := 2); -- Width of the PC OP code (2 bits here)
     port (I_clock     : in  STD_LOGIC; -- Clock
           I_reset     : in  STD_LOGIC; -- Reset
           I_enable    : in  STD_LOGIC; -- Unit
           -- Inputs
-          I_PC_toSet  : in  STD_LOGIC_VECTOR (PC_WIDTH-1 downto 0);    -- Incoming Program Counter to assign
-          I_PC_OPCode : in  STD_LOGIC_VECTOR (PC_OP_WIDTH-1 downto 0); -- Type of operation that needs to be performed
+          I_newPC  :-- Incoming Program Counter to assign
+          I_PC_OPCode : in  STD_LOGIC_VECTOR (PC_OP_SIZE-1 downto 0); -- Type of operation that needs to be performed
           -- Outputs
-          O_PC        : out STD_LOGIC_VECTOR (PC_WIDTH-1 downto 0)  -- Output Program Counter
+          O_PC        : out STD_LOGIC_VECTOR (PC_SIZE-1 downto 0)  -- Output Program Counter
           );
 end pc;
 
@@ -46,7 +46,7 @@ end pc;
 architecture arch_pc of pc is
   -- Internal Objects
   -- Internal vector to keep the current PC to work on
-  signal current_pc: STD_LOGIC_VECTOR(PC_WIDTH-1 downto 0) := X"00000000";
+  signal current_pc: STD_LOGIC_VECTOR(2**PC_SIZE-1 downto 0) := (others := '0');
 
 begin
   -- Processes
@@ -63,7 +63,7 @@ begin
           when PC_OP_INC =>    -- INC | Increment the PC
             current_pc <= std_logic_vector(unsigned(current_pc) + 1);
           when PC_OP_ASSIGN => -- ASSIGN | Set the PC from an external input
-            current_pc <= I_PC_toSet; -- Input PC to assign
+            current_pc <= I_newPC; -- Input PC to assign
           when PC_OP_RESET =>  -- RESET | Set the PC to X"0000"
             current_pc <= X"0000";
           when others =>
