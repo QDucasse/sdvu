@@ -25,8 +25,6 @@ use work.sdvu_constants.all;
 -- =================
 
 entity control_unit is
-    generic (OP_SIZE      : natural := 4;
-             STATE_NUMBER : natural := 14);
     port (I_clock   : in  STD_LOGIC;                                 -- Clock signal
           I_reset   : in  STD_LOGIC;                                 -- Reset signal
           -- Inputs

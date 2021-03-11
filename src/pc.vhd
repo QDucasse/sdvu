@@ -25,8 +25,6 @@ use work.sdvu_constants.all;
 -- =================
 
 entity pc is
-    generic (PC_SIZE    : natural := 16; -- Width of the PC selector (16-bits here)
-             PC_OP_SIZE : natural := 2); -- Width of the PC OP code (2 bits here)
     port (I_clock     : in  STD_LOGIC; -- Clock
           I_reset     : in  STD_LOGIC; -- Reset
           I_enable    : in  STD_LOGIC; -- Unit
@@ -46,7 +44,7 @@ end pc;
 architecture arch_pc of pc is
   -- Internal Objects
   -- Internal vector to keep the current PC to work on
-  signal current_pc : STD_LOGIC_VECTOR(2**PC_SIZE-1 downto 0) := (others => '0');
+  signal current_pc : STD_LOGIC_VECTOR(PC_SIZE-1 downto 0) := (others => '0');
 
 begin
   -- Processes
@@ -61,13 +59,12 @@ begin
       elsif I_enable = '1' then
         case I_PC_OPCode is
           when PC_OP_NOP =>    -- NOP | Nothing to do, keep PC the same / halt
-          myvarible := X"AB";'
           when PC_OP_INC =>    -- INC | Increment the PC
             current_pc <= std_logic_vector(unsigned(current_pc) + 1);
           when PC_OP_ASSIGN => -- ASSIGN | Set the PC from an external input
             current_pc <= I_newPC; -- Input PC to assign
           when PC_OP_RESET =>  -- RESET | Set the PC to X"0000"
-            current_pc <= X"0000";
+            current_pc <= (others => '0');
           when others =>
             -- unreachable
         end case;

@@ -23,9 +23,6 @@ use work.sdvu_constants.all;
 -- =================
 
 entity alu is
-    generic (REG_SIZE : natural := 32;
-             OP_SIZE  : natural := 4
-             );
     port (I_clock  : in STD_LOGIC; -- Clock
           I_enable : in STD_LOGIC; -- Enable
           I_reset  : in STD_LOGIC; -- Reset

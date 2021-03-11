@@ -79,9 +79,28 @@ package sdvu_constants is
   constant STATE_WRITE_MEM      : STD_LOGIC_VECTOR(13 downto 0) := "00000000000001";
 
   -- PC unit opcodes
-  constant PC_OP_NOP:    STD_LOGIC_VECTOR(1 downto 0):= "00";
-  constant PC_OP_INC:    STD_LOGIC_VECTOR(1 downto 0):= "01";
-  constant PC_OP_ASSIGN: STD_LOGIC_VECTOR(1 downto 0):= "10";
-  constant PC_OP_RESET:  STD_LOGIC_VECTOR(1 downto 0):= "11";
+  constant PC_OP_NOP    : STD_LOGIC_VECTOR(1 downto 0) := "00";
+  constant PC_OP_INC    : STD_LOGIC_VECTOR(1 downto 0) := "01";
+  constant PC_OP_ASSIGN : STD_LOGIC_VECTOR(1 downto 0) := "10";
+  constant PC_OP_RESET  : STD_LOGIC_VECTOR(1 downto 0) := "11";
+
+  -- Design constants
+  
+  -- Instruction related
+  constant INSTR_SIZE    : natural := 32;
+  constant OP_SIZE       : natural := 4;
+  -- Register related
+  constant REG_SIZE      : natural := 32;
+  constant REG_SEL_SIZE  : natural := 4;
+  -- Control unit related
+  constant STATE_NUMBER  : natural := 14;
+  -- PC related
+  constant PC_SIZE       : natural := 16;
+  constant PC_OP_SIZE    : natural := 2;
+  -- Memory related
+  constant PROG_MEM_SIZE : natural := 8;
+  constant CFG_MEM_SIZE  : natural := 8;
+  constant TYPE_SIZE     : natural := 32;
+
 
 end package sdvu_constants;

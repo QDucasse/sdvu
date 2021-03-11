@@ -22,8 +22,6 @@ use work.sdvu_constants.all;
 -- =================
 
 entity config_memory is
-    generic (CFG_MEM_SIZE : natural := 8;
-             TYPE_SIZE    : natural := 32);
     port (I_clock    : in STD_LOGIC; -- Clock signal
           I_enable : in STD_LOGIC;   -- Unit enable
           I_reset  : in STD_LOGIC;   -- Reset signal

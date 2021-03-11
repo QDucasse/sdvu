@@ -14,6 +14,11 @@ use IEEE.numeric_std.all;
 
 library work;
 use work.sdvu_constants.all;
+use work.alu.all;
+use work.control_unit.all;
+use work.decoder.all;
+use work.pc.all;
+use work.reg.all;
 
 
 -- =================
@@ -23,23 +28,6 @@ use work.sdvu_constants.all;
 
 -- Entity
 entity sdvu is
-generic(-- Instruction constants
-        INSTR_SIZE   : natural := 32;
-        OP_SIZE      : natural := 4;
-        -- -- Config Memory constants
-        -- CFG_MEM_SIZE : natural := 8;  -- log2
-        -- TYPE_SIZE    : natural := 32;
-        -- Control Unit constants
-        STATE_NUMBER : natural := 14;
-        -- PC constants
-        PC_SIZE      : natural := 16; -- log2
-        PC_OP_SIZE   : natural := 2;
-        -- -- Program Memory constants
-        -- PROG_MEM_SIZE : natural := 8; -- log2
-        -- Registers constants
-        REG_SIZE      : natural := 32;
-        REG_SEL_SIZE  : natural := 4
-       );
 port(I_clock : in  std_logic;
      I_instr : in  std_logic_vector(INSTR_SIZE-1 downto 0);
      O_addr  : out std_logic_vector(REG_SIZE-1 downto 0)
@@ -52,28 +40,28 @@ architecture arch_sdvu of sdvu is
 
   -- Components
   -- ALU
-  component alu
-    generic (
-      REG_SIZE : natural := 32;
-      OP_SIZE  : natural := 4
-    );
-    port (
-      I_clock      : in  STD_LOGIC;
-      I_enable     : in  STD_LOGIC;
-      I_reset      : in  STD_LOGIC;
-      -- Inputs
-      I_op_code    : in  STD_LOGIC_VECTOR (OP_SIZE-1 downto 0);
-      I_cfgMask    : in  STD_LOGIC_VECTOR (1 downto 0);
-      I_dataA      : in  STD_LOGIC_VECTOR (REG_SIZE-1 downto 0);
-      I_dataB      : in  STD_LOGIC_VECTOR (REG_SIZE-1 downto 0);
-      I_immA       : in  STD_LOGIC_VECTOR (REG_SIZE-1 downto 0);
-      I_immB       : in  STD_LOGIC_VECTOR (REG_SIZE-1 downto 0);
-      I_address    : in  STD_LOGIC_VECTOR (REG_SIZE-1 downto 0);
-      I_type       : in  STD_LOGIC_VECTOR (1 downto 0);
-      -- Outputs
-      O_dataResult : out STD_LOGIC_VECTOR (REG_SIZE-1 downto 0)
-    );
-  end component alu;
+  -- component alu
+  --   generic (
+  --     REG_SIZE : natural := 32;
+  --     OP_SIZE  : natural := 4
+  --   );
+  --   port (
+  --     I_clock      : in  STD_LOGIC;
+  --     I_enable     : in  STD_LOGIC;
+  --     I_reset      : in  STD_LOGIC;
+  --     -- Inputs
+  --     I_op_code    : in  STD_LOGIC_VECTOR (OP_SIZE-1 downto 0);
+  --     I_cfgMask    : in  STD_LOGIC_VECTOR (1 downto 0);
+  --     I_dataA      : in  STD_LOGIC_VECTOR (REG_SIZE-1 downto 0);
+  --     I_dataB      : in  STD_LOGIC_VECTOR (REG_SIZE-1 downto 0);
+  --     I_immA       : in  STD_LOGIC_VECTOR (REG_SIZE-1 downto 0);
+  --     I_immB       : in  STD_LOGIC_VECTOR (REG_SIZE-1 downto 0);
+  --     I_address    : in  STD_LOGIC_VECTOR (REG_SIZE-1 downto 0);
+  --     I_type       : in  STD_LOGIC_VECTOR (1 downto 0);
+  --     -- Outputs
+  --     O_dataResult : out STD_LOGIC_VECTOR (REG_SIZE-1 downto 0)
+  --   );
+  -- end component alu;
 
 
   -- Control Unit
@@ -167,14 +155,11 @@ architecture arch_sdvu of sdvu is
   signal s_immA        : STD_LOGIC_VECTOR (REG_SIZE-1 downto 0);
   signal s_immB        : STD_LOGIC_VECTOR (REG_SIZE-1 downto 0);
   signal s_address     : STD_LOGIC_VECTOR (REG_SIZE-1 downto 0);
-  signal s_type        : STD_LOGIC_VECTOR (1 downto 0);
   signal s_WE          : STD_LOGIC;
 
   -- Signals to/from alu
-  signal s_cfgMask    : STD_LOGIC_VECTOR (1 downto 0);
   signal s_dataA      : STD_LOGIC_VECTOR (REG_SIZE-1 downto 0);
   signal s_dataB      : STD_LOGIC_VECTOR (REG_SIZE-1 downto 0);
-  signal s_address    : STD_LOGIC_VECTOR (REG_SIZE-1 downto 0);
   signal s_type       : STD_LOGIC_VECTOR (1 downto 0);
   signal s_dataResult : STD_LOGIC_VECTOR (REG_SIZE-1 downto 0);
 
@@ -183,8 +168,6 @@ architecture arch_sdvu of sdvu is
   signal s_PC_op_code : STD_LOGIC_VECTOR (PC_OP_SIZE-1 downto 0);
 
   -- Signals to/from registers
-  signal s_dataB  : STD_LOGIC_VECTOR (REG_SIZE-1 downto 0);
-  signal s_dataA  : STD_LOGIC_VECTOR (REG_SIZE-1 downto 0);
   signal s_dataD  : STD_LOGIC_VECTOR (REG_SIZE-1 downto 0);
 
 
@@ -192,10 +175,6 @@ architecture arch_sdvu of sdvu is
 begin
   -- Mapping ALU
   sdvu_alu : entity work.alu(arch_alu)
-    generic map (
-      REG_SIZE => REG_SIZE,
-      OP_SIZE  => OP_SIZE
-    )
     port map (
       I_clock      => I_clock,
       I_enable     => I_enable, -- based on the state of the control unit
@@ -216,10 +195,6 @@ begin
 
   -- Mapping Control Unit
   sdvu_control_unit : control_unit
-    generic map (
-      OP_SIZE      => OP_SIZE,
-      STATE_NUMBER => STATE_NUMBER
-    )
     port map (
       I_clock   => I_clock,
       I_reset   => I_reset, -- based on the state of the control unit
@@ -232,10 +207,6 @@ begin
 
   -- Mapping Decoder
   sdvu_decoder : decoder
-    generic map (
-      OP_SIZE  => OP_SIZE,
-      REG_SIZE => REG_SIZE
-    )
     port map (
       I_clock       => I_clock,
       I_enable      => I_enable, -- based on the state of the control unit
@@ -257,10 +228,6 @@ begin
 
   -- Mapping Program Counter
   sdvu_pc : pc
-    generic map (
-      PC_WIDTH    => PC_WIDTH,
-      PC_OP_WIDTH => PC_OP_WIDTH
-    )
     port map (
       I_clock     => I_clock,
       I_reset     => I_reset,  -- based on the state of the control unit
@@ -275,10 +242,6 @@ begin
 
   -- Mapping Register File
   sdvu_reg : reg
-    generic map (
-      REG_WIDTH => REG_WIDTH,
-      REG_SIZE  => REG_SIZE
-    )
     port map (
       I_clock  => I_clock,
       I_reset  => I_reset,  -- based on the state of the control unit
