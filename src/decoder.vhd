@@ -30,7 +30,7 @@ entity decoder is
     port (I_clock   : in STD_LOGIC; -- Clock
           I_enable  : in STD_LOGIC; -- Enable
           -- Base instruction
-          I_instruction: in STD_LOGIC_VECTOR (INSTR_SIZE downto 0);   -- 32-bit Instruction
+          I_instruction: in STD_LOGIC_VECTOR (INSTR_SIZE-1 downto 0);   -- 32-bit Instruction
           -- Selectors to extract from the instruction
           O_op_code        : out STD_LOGIC_VECTOR (OP_SIZE-1 downto 0);         -- ALU operation to perform
           O_cfgMask        : out STD_LOGIC_VECTOR (1  downto 0);         -- Configuration mask for the instruction
@@ -49,23 +49,25 @@ end decoder;
 
 architecture arch_decoder of decoder is
     -- Internal Objects
+    signal cmp_op : std_logic_vector(3 downto 0);
     -- None
 begin
     -- Processes
     DecodeInstr: process(I_clock) -- I_clock added to the sensitivity list of the process
     begin
         if rising_edge(I_clock) then  -- If new cycle and enable
-            if I_en='1' then        -- If enable
-                O_op_code <= I_instruction(31 downto 28);  -- Decode ALU operation
+            if I_enable = '1' then        -- If enable
+                cmp_op <= I_instruction(31 downto 28); -- Decode ALU operation
+                O_op_code <= cmp_op;
                 -- Zero out all outputs to avoid latch creation
-                O_cfgMask <= (others <= "0");
-                O_rB      <= (others <= "0");
-                O_immA    <= (others <= "0");
-                O_immB    <= (others <= "0");
-                O_type    <= (others <= "0");
-                O_address <= (others <= "0");
+                O_cfgMask <= (others => '0');
+                O_rB      <= (others => '0');
+                O_immA    <= (others => '0');
+                O_immB    <= (others => '0');
+                O_type    <= (others => '0');
+                O_address <= (others => '0');
                 -- Switch on the opcode
-                case I_instruction(31 downto 28) is
+                case cmp_op is
                   when OP_NOT => -- NOT OPERATION
                     O_rD      <= I_instruction(27 downto 24); -- 0000 1111 0000 0000 0000 0000 0000 0000
                     O_rA      <= I_instruction(3  downto  0); -- 0000 0000 0000 0000 0000 0000 0000 1111
@@ -94,7 +96,7 @@ begin
                     O_immB    <= I_instruction(10 downto  0); -- 0000 0000 0000 0000 0000 0111 1111 1111
                 end case;
                 -- Write enable set to NO in case of STORE and JMP
-                case I_instruction(31 downto 28) is
+                case cmp_op is
                     when OP_STORE | OP_JMP =>
                       O_WE <= '0';
                     when others =>

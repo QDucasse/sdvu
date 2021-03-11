@@ -84,8 +84,6 @@ architecture arch_alu of alu is
     -- Internal Objects
     -- Internal register for operation result. (able to hold the 24-bits address in case of JMP)
     signal s_result : STD_LOGIC_VECTOR(REG_SIZE-1 downto 0) := (others => '0');
-    -- Internal bit to signal the need for branching
-    signal s_shouldBranch : STD_LOGIC := '0';
     -- Comparators to bring locally static choices
     signal cmp_op : std_logic_vector(3 downto 0);
 begin

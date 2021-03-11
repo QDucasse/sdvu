@@ -31,10 +31,10 @@ entity pc is
           I_reset     : in  STD_LOGIC; -- Reset
           I_enable    : in  STD_LOGIC; -- Unit
           -- Inputs
-          I_newPC  :-- Incoming Program Counter to assign
+          I_newPC     : in STD_LOGIC_VECTOR (PC_SIZE-1 downto 0);     -- Incoming Program Counter to assign
           I_PC_OPCode : in  STD_LOGIC_VECTOR (PC_OP_SIZE-1 downto 0); -- Type of operation that needs to be performed
           -- Outputs
-          O_PC        : out STD_LOGIC_VECTOR (PC_SIZE-1 downto 0)  -- Output Program Counter
+          O_PC        : out STD_LOGIC_VECTOR (PC_SIZE-1 downto 0)     -- Output Program Counter
           );
 end pc;
 
@@ -46,7 +46,8 @@ end pc;
 architecture arch_pc of pc is
   -- Internal Objects
   -- Internal vector to keep the current PC to work on
-  signal current_pc: STD_LOGIC_VECTOR(2**PC_SIZE-1 downto 0) := (others := '0');
+  signal current_pc : STD_LOGIC_VECTOR(2**PC_SIZE-1 downto 0) := (others => '0');
+  signal cmp_pc_op_code : STD_LOGIC_VECTOR(PC_OP_SIZE-1 downto 0) := (others => '0');
 
 begin
   -- Processes
@@ -58,7 +59,8 @@ begin
       if I_reset = '1' then
         current_pc <= X"0000";
       else
-        case I_PC_OPCode is
+        cmp_pc_op_code <= I_PC_OPCode;
+        case cmp_pc_op_code is
           when PC_OP_NOP =>    -- NOP | Nothing to do, keep PC the same / halt
           when PC_OP_INC =>    -- INC | Increment the PC
             current_pc <= std_logic_vector(unsigned(current_pc) + 1);

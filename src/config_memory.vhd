@@ -49,30 +49,34 @@ begin
   begin
       if rising_edge(I_clock) then  -- If new cycle
         if I_reset = '1' then     -- Reset
-          memory_bank <= (others => X"0000");
+          memory_bank <= (others => '0');
         elsif (I_enable = '1') and (I_we = '1') then   -- If write-enable propagate the data
           -- Write the input to RAM address
           case I_type is
             when TYPE_BOOL =>
-              memory_bank(to_integer(unsigned(I_addr))+BOOL_SIZE-1  downto to_integer(unsigned(I_addr))) <= I_data(BOOL_SIZE-1 downto 0);
+              memory_bank(to_integer(unsigned(I_addr))+SIZE_BOOL-1  downto to_integer(unsigned(I_addr))) <= I_data(SIZE_BOOL-1 downto 0);
             when TYPE_BYTE =>
-              memory_bank(to_integer(unsigned(I_addr))+BYTE_SIZE-1  downto to_integer(unsigned(I_addr))) <= I_data(BYTE_SIZE-1 downto 0);
+              memory_bank(to_integer(unsigned(I_addr))+SIZE_BYTE-1  downto to_integer(unsigned(I_addr))) <= I_data(SIZE_BYTE-1 downto 0);
             when TYPE_INT =>
-              memory_bank(to_integer(unsigned(I_addr))+INT_SIZE-1   downto to_integer(unsigned(I_addr))) <= I_data(INT_SIZE-1 downto 0);
+              memory_bank(to_integer(unsigned(I_addr))+SIZE_INT-1   downto to_integer(unsigned(I_addr))) <= I_data(SIZE_INT-1 downto 0);
             when TYPE_STATE =>
-              memory_bank(to_integer(unsigned(I_addr))+STATE_SIZE-1 downto to_integer(unsigned(I_addr))) <= I_data(STATE_SIZE-1 downto 0);
+              memory_bank(to_integer(unsigned(I_addr))+SIZE_STATE-1 downto to_integer(unsigned(I_addr))) <= I_data(SIZE_STATE-1 downto 0);
+            when others =>
+              -- unreachable
           end case;
         elsif (I_enable = '1') then
           -- Read from the address to the output
           case I_type is
             when TYPE_BOOL =>
               O_data <= X"000000" & memory_bank(to_integer(unsigned(I_addr))+SIZE_BOOL-1 downto to_integer(unsigned(I_addr)));
-            when TYPE_BOOL =>
+            when TYPE_BYTE =>
               O_data <= X"000000" & memory_bank(to_integer(unsigned(I_addr))+SIZE_BYTE-1 downto to_integer(unsigned(I_addr)));
-            when TYPE_BOOL =>
+            when TYPE_INT =>
               O_data <= memory_bank(to_integer(unsigned(I_addr))+SIZE_INT-1 downto to_integer(unsigned(I_addr)));
-            when TYPE_BOOL =>
+            when TYPE_STATE =>
               O_data <= X"0000" & memory_bank(to_integer(unsigned(I_addr))+SIZE_STATE-1 downto to_integer(unsigned(I_addr)));
+            when others =>
+              -- Unreachable
           end case;
         end if;
     end if;
