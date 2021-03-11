@@ -23,13 +23,13 @@ use work.sdvu_constants.all;
 
 entity config_memory is
     port (I_clock    : in STD_LOGIC; -- Clock signal
-          I_enable : in STD_LOGIC;   -- Unit enable
-          I_reset  : in STD_LOGIC;   -- Reset signal
-          I_we     : in STD_LOGIC;   -- Write Enable
-          I_type   : in STD_LOGIC_VECTOR(1 downto 0);               -- Indication on the type of the value
-          I_addr   : in STD_LOGIC_VECTOR (CFG_MEM_SIZE-1 downto 0); -- Address in the RAM
-          I_data   : in STD_LOGIC_VECTOR (TYPE_SIZE-1 downto 0);    -- Data to write to address in memory
-          O_data   : out STD_LOGIC_VECTOR (TYPE_SIZE-1 downto 0)    -- Read address from memory
+          I_enable  : in STD_LOGIC;   -- Unit enable
+          I_reset   : in STD_LOGIC;   -- Reset signal
+          I_we      : in STD_LOGIC;   -- Write Enable
+          I_type    : in STD_LOGIC_VECTOR(1 downto 0);               -- Indication on the type of the value
+          I_address : in STD_LOGIC_VECTOR (CFG_MEM_SIZE-1 downto 0); -- Address in the RAM
+          I_data    : in STD_LOGIC_VECTOR (TYPE_SIZE-1 downto 0);    -- Data to write to address in memory
+          O_data    : out STD_LOGIC_VECTOR (TYPE_SIZE-1 downto 0)    -- Read address from memory
           );
 end config_memory;
 
@@ -52,13 +52,13 @@ begin
           -- Write the input to RAM address
           case I_type is
             when TYPE_BOOL =>
-              memory_bank(to_integer(unsigned(I_addr))+SIZE_BOOL-1  downto to_integer(unsigned(I_addr))) <= I_data(SIZE_BOOL-1 downto 0);
+              memory_bank(to_integer(unsigned(I_address))+SIZE_BOOL-1  downto to_integer(unsigned(I_address))) <= I_data(SIZE_BOOL-1 downto 0);
             when TYPE_BYTE =>
-              memory_bank(to_integer(unsigned(I_addr))+SIZE_BYTE-1  downto to_integer(unsigned(I_addr))) <= I_data(SIZE_BYTE-1 downto 0);
+              memory_bank(to_integer(unsigned(I_address))+SIZE_BYTE-1  downto to_integer(unsigned(I_address))) <= I_data(SIZE_BYTE-1 downto 0);
             when TYPE_INT =>
-              memory_bank(to_integer(unsigned(I_addr))+SIZE_INT-1   downto to_integer(unsigned(I_addr))) <= I_data(SIZE_INT-1 downto 0);
+              memory_bank(to_integer(unsigned(I_address))+SIZE_INT-1   downto to_integer(unsigned(I_address))) <= I_data(SIZE_INT-1 downto 0);
             when TYPE_STATE =>
-              memory_bank(to_integer(unsigned(I_addr))+SIZE_STATE-1 downto to_integer(unsigned(I_addr))) <= I_data(SIZE_STATE-1 downto 0);
+              memory_bank(to_integer(unsigned(I_address))+SIZE_STATE-1 downto to_integer(unsigned(I_address))) <= I_data(SIZE_STATE-1 downto 0);
             when others =>
               -- unreachable
           end case;
@@ -66,13 +66,13 @@ begin
           -- Read from the address to the output
           case I_type is
             when TYPE_BOOL =>
-              O_data <= X"000000" & memory_bank(to_integer(unsigned(I_addr))+SIZE_BOOL-1 downto to_integer(unsigned(I_addr)));
+              O_data <= X"000000" & memory_bank(to_integer(unsigned(I_address))+SIZE_BOOL-1 downto to_integer(unsigned(I_address)));
             when TYPE_BYTE =>
-              O_data <= X"000000" & memory_bank(to_integer(unsigned(I_addr))+SIZE_BYTE-1 downto to_integer(unsigned(I_addr)));
+              O_data <= X"000000" & memory_bank(to_integer(unsigned(I_address))+SIZE_BYTE-1 downto to_integer(unsigned(I_address)));
             when TYPE_INT =>
-              O_data <= memory_bank(to_integer(unsigned(I_addr))+SIZE_INT-1 downto to_integer(unsigned(I_addr)));
+              O_data <= memory_bank(to_integer(unsigned(I_address))+SIZE_INT-1 downto to_integer(unsigned(I_address)));
             when TYPE_STATE =>
-              O_data <= X"0000" & memory_bank(to_integer(unsigned(I_addr))+SIZE_STATE-1 downto to_integer(unsigned(I_addr)));
+              O_data <= X"0000" & memory_bank(to_integer(unsigned(I_address))+SIZE_STATE-1 downto to_integer(unsigned(I_address)));
             when others =>
               -- Unreachable
           end case;

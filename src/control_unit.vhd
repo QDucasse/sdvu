@@ -31,6 +31,23 @@ entity control_unit is
           I_op_code : in STD_LOGIC_VECTOR(OP_SIZE-1 downto 0);       -- Instruction Op Code
           -- Outputs
           O_state   : out STD_LOGIC_VECTOR (STATE_NUMBER-1 downto 0) -- State of the control unit
+
+          -- -- Enable signals based on the state
+          -- O_enable_ALU     : STD_LOGIC;
+          -- O_enable_CFG_MEM : STD_LOGIC;
+          -- O_enable_DECODER : STD_LOGIC;
+          -- O_enable_PC      : STD_LOGIC;
+          -- O_enable_PRG_MEM : STD_LOGIC;
+          -- O_enable_REG     : STD_LOGIC;
+          -- -- Config Memory signals
+          -- O_CFG_MEM_type    :
+          -- O_CFG_MEM_we      :
+          -- O_CFG_MEM_address :
+          -- O_CFG_MEM_data    :
+          -- I_CFG_MEM_data    :
+          -- -- Program Memory signals
+          -- O_PRG_MEM_address :
+          -- I_PRG_MEM_data    :
           );
 end control_unit;
 
@@ -40,10 +57,24 @@ end control_unit;
 
 architecture arch_control_unit of control_unit is
     -- Internal Objects
-    signal current_state : STD_LOGIC_VECTOR(STATE_NUMBER-1 downto 0) := STATE_RESET;
+    -- type state is (
+    --   STATE_RESET,
+    --   STATE_FETCH1,
+    --   STATE_FETCH2,
+    --   STATE_DECODE,
+    --   STATE_STORE,
+    --   STATE_LOAD,
+    --   STATE_JUMP,
+    --   STATE_BIN,
+    --   STATE_NOT,
+    --   STATE_READ_REG_STORE,
+    --   STATE_READ_REG_BIN,
+    --   STATE_WRITE_REG,
+    --   STATE_READ_MEM,
+    --   STATE_WRITE_MEM
+    -- );
+    signal current_state : state := STATE_RESET;
 begin
-    -- Combinational Logic
-
 
     -- Processes
     NextState: process(I_clock) -- I_clock added to the sensitivity list of the process
