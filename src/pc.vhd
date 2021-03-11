@@ -47,21 +47,21 @@ architecture arch_pc of pc is
   -- Internal Objects
   -- Internal vector to keep the current PC to work on
   signal current_pc : STD_LOGIC_VECTOR(2**PC_SIZE-1 downto 0) := (others => '0');
-  signal cmp_pc_op_code : STD_LOGIC_VECTOR(PC_OP_SIZE-1 downto 0) := (others => '0');
 
 begin
   -- Processes
   ProcessOperation: process (I_clock, I_reset)
+
   begin
     -- Process operation on PC
     if rising_edge(I_clock) then
       -- Reset routine
       if I_reset = '1' then
-        current_pc <= X"0000";
-      else
-        cmp_pc_op_code <= I_PC_OPCode;
-        case cmp_pc_op_code is
+        current_pc <= (others => '0');
+      elsif I_enable = '1' then
+        case I_PC_OPCode is
           when PC_OP_NOP =>    -- NOP | Nothing to do, keep PC the same / halt
+          myvarible := X"AB";'
           when PC_OP_INC =>    -- INC | Increment the PC
             current_pc <= std_logic_vector(unsigned(current_pc) + 1);
           when PC_OP_ASSIGN => -- ASSIGN | Set the PC from an external input
@@ -69,6 +69,7 @@ begin
           when PC_OP_RESET =>  -- RESET | Set the PC to X"0000"
             current_pc <= X"0000";
           when others =>
+            -- unreachable
         end case;
       end if;
     end if;

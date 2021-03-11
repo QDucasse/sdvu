@@ -13,7 +13,7 @@ use IEEE.std_logic_1164.all;
 use IEEE.numeric_std.all;
 
 library work;
-use work.constant_codes.all;
+use work.sdvu_constants.all;
 
 
 -- =================
@@ -42,7 +42,7 @@ generic(-- Instruction constants
        );
 port(I_clock : in  std_logic;
      I_instr : in  std_logic_vector(INSTR_SIZE-1 downto 0);
-     O_addr  : out std_logic_vector(SIZE-1 downto 0)
+     O_addr  : out std_logic_vector(REG_SIZE-1 downto 0)
     );
 end entity sdvu;
 
@@ -147,7 +147,7 @@ architecture arch_sdvu of sdvu is
       I_dataD  : in  STD_LOGIC_VECTOR (REG_SIZE-1 downto 0);
       O_dataB  : out STD_LOGIC_VECTOR (REG_SIZE-1 downto 0);
       O_dataA  : out STD_LOGIC_VECTOR (REG_SIZE-1 downto 0);
-      O_dataD  : out STD_LOGIC_VECTOR (REG_SIZE-1 downto 0
+      O_dataD  : out STD_LOGIC_VECTOR (REG_SIZE-1 downto 0)
     );
   end component reg;
 
@@ -191,7 +191,7 @@ architecture arch_sdvu of sdvu is
 -- Components mapping
 begin
   -- Mapping ALU
-  sdvu_alu : alu
+  sdvu_alu : entity work.alu(arch_alu)
     generic map (
       REG_SIZE => REG_SIZE,
       OP_SIZE  => OP_SIZE
@@ -210,7 +210,7 @@ begin
       I_address    => s_address,
       I_type       => s_type,
       -- Outputs
-      O_dataResult => s_dataResult,
+      O_dataResult => s_dataResult
     );
 
 

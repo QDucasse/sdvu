@@ -48,7 +48,7 @@ begin
           memory_bank <= (others => X"0000");
         else
           -- Read from the address to the output
-          O_data <= memory_bank(to_integer(unsigned(I_addr)));
+          O_data <= memory_bank(to_integer(unsigned(I_address)));
         end if;
     end if;
   end process;

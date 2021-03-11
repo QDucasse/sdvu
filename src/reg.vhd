@@ -33,8 +33,8 @@ entity reg is
           -- Outputs
           O_dataB: out STD_LOGIC_VECTOR (REG_SIZE-1 downto 0); -- Output B from regB
           O_dataA: out STD_LOGIC_VECTOR (REG_SIZE-1 downto 0); -- Output A from regA
-          O_dataD: out STD_LOGIC_VECTOR (REG_SIZE-1 downto 0); -- Output D from regD (in case of STORE/LOAD/JMP)
-
+          O_dataD: out STD_LOGIC_VECTOR (REG_SIZE-1 downto 0) -- Output D from regD (in case of STORE/LOAD/JMP)
+          );
 end reg;
 
 -- =================
