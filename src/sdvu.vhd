@@ -14,12 +14,6 @@ use IEEE.numeric_std.all;
 
 library work;
 use work.sdvu_constants.all;
-use work.alu.all;
-use work.control_unit.all;
-use work.decoder.all;
-use work.pc.all;
-use work.reg.all;
-
 
 -- =================
 --      Entity
@@ -28,126 +22,22 @@ use work.reg.all;
 
 -- Entity
 entity sdvu is
-port(I_clock : in  std_logic;
-     I_instr : in  std_logic_vector(INSTR_SIZE-1 downto 0);
-     O_addr  : out std_logic_vector(REG_SIZE-1 downto 0)
-    );
-end entity sdvu;
+  port(I_clock : in  std_logic;
+       I_instr : in  std_logic_vector(INSTR_SIZE-1 downto 0);
+       O_addr  : out std_logic_vector(REG_SIZE-1 downto 0)
+      );
+end sdvu;
 
 -- Architecture
 architecture arch_sdvu of sdvu is
   -- Internal Objects
-
-  -- Components
-  -- ALU
-  -- component alu
-  --   generic (
-  --     REG_SIZE : natural := 32;
-  --     OP_SIZE  : natural := 4
-  --   );
-  --   port (
-  --     I_clock      : in  STD_LOGIC;
-  --     I_enable     : in  STD_LOGIC;
-  --     I_reset      : in  STD_LOGIC;
-  --     -- Inputs
-  --     I_op_code    : in  STD_LOGIC_VECTOR (OP_SIZE-1 downto 0);
-  --     I_cfgMask    : in  STD_LOGIC_VECTOR (1 downto 0);
-  --     I_dataA      : in  STD_LOGIC_VECTOR (REG_SIZE-1 downto 0);
-  --     I_dataB      : in  STD_LOGIC_VECTOR (REG_SIZE-1 downto 0);
-  --     I_immA       : in  STD_LOGIC_VECTOR (REG_SIZE-1 downto 0);
-  --     I_immB       : in  STD_LOGIC_VECTOR (REG_SIZE-1 downto 0);
-  --     I_address    : in  STD_LOGIC_VECTOR (REG_SIZE-1 downto 0);
-  --     I_type       : in  STD_LOGIC_VECTOR (1 downto 0);
-  --     -- Outputs
-  --     O_dataResult : out STD_LOGIC_VECTOR (REG_SIZE-1 downto 0)
-  --   );
-  -- end component alu;
-
-
-  -- Control Unit
-  component control_unit
-    generic (
-      OP_SIZE      : natural := 4;
-      STATE_NUMBER : natural := 12
-    );
-    port (
-      I_clock : in  STD_LOGIC;
-      I_reset : in  STD_LOGIC;
-      I_op_code   : in  STD_LOGIC_VECTOR(OP_SIZE-1 downto 0);
-      O_state : out STD_LOGIC_VECTOR (STATE_NUMBER-1 downto 0)
-    );
-  end component control_unit;
-
-
-  -- Decoder
-  component decoder
-    generic (
-      OP_SIZE      : natural := 4;
-      REG_SEL_SIZE : natural := 4
-    );
-    port (
-      I_clock    : in  STD_LOGIC;
-      I_enable   : in  STD_LOGIC;
-      I_instruction : in  STD_LOGIC_VECTOR (31 downto 0);
-      O_op_code    : out STD_LOGIC_VECTOR (OP_SIZE-1 downto 0);
-      O_cfgMask  : out STD_LOGIC_VECTOR (1  downto 0);
-      O_rB       : out STD_LOGIC_VECTOR (REG_SEL_SIZE-1  downto 0);
-      O_immB     : out STD_LOGIC_VECTOR (10 downto 0);
-      O_address  : out STD_LOGIC_VECTOR (23 downto 0);
-      O_type     : out STD_LOGIC_VECTOR (1  downto 0);
-      O_WE       : out STD_LOGIC
-    );
-  end component decoder;
-
-
-  -- PC
-  component pc
-    generic (
-      PC_SIZE    : natural := 16;
-      PC_OP_SIZE : natural := 2
-    );
-    port (
-      I_clock     : in  STD_LOGIC;
-      I_reset     : in  STD_LOGIC;
-      I_enable    : in  STD_LOGIC;
-      I_newPC  : in  STD_LOGIC_VECTOR (PC_SIZE-1 downto 0);
-      I_PC_OPCode : in  STD_LOGIC_VECTOR (PC_OP_SIZE-1 downto 0);
-      O_PC        : out STD_LOGIC_VECTOR (PC_SIZE-1 downto 0)
-    );
-  end component pc;
-
-
-
-  -- Register File
-  component reg
-    generic (
-      REG_SIZE     : natural := 32;
-      REG_SEL_SIZE : natural := 4
-    );
-    port (
-      I_clock  : in  STD_LOGIC;
-      I_reset  : in  STD_LOGIC;
-      I_enable : in  STD_LOGIC;
-      I_we     : in  STD_LOGIC;
-      I_selD   : in  STD_LOGIC_VECTOR (REG_SEL_SIZE-1 downto 0);
-      I_selA   : in  STD_LOGIC_VECTOR (REG_SEL_SIZE-1 downto 0);
-      I_selB   : in  STD_LOGIC_VECTOR (REG_SEL_SIZE-1 downto 0);
-      I_dataD  : in  STD_LOGIC_VECTOR (REG_SIZE-1 downto 0);
-      O_dataB  : out STD_LOGIC_VECTOR (REG_SIZE-1 downto 0);
-      O_dataA  : out STD_LOGIC_VECTOR (REG_SIZE-1 downto 0);
-      O_dataD  : out STD_LOGIC_VECTOR (REG_SIZE-1 downto 0)
-    );
-  end component reg;
-
-
   -- Signals
-
-  -- Signals to/from control unit
-  signal s_op_code : STD_LOGIC_VECTOR (OP_SIZE-1 downto 0);
-  signal s_state   : STD_LOGIC_VECTOR (STATE_NUMBER-1 downto 0);
-
-  -- Signals to/from decoder
+  -- Instruction related
   signal s_instruction : STD_LOGIC_VECTOR (INSTR_SIZE-1 downto 0);
+  signal s_op_code     : STD_LOGIC_VECTOR (OP_SIZE-1 downto 0);
+  -- Control-unit related
+  signal s_state       : STD_LOGIC_VECTOR (STATE_NUMBER-1 downto 0);
+  -- Decoder related
   signal s_cfgMask     : STD_LOGIC_VECTOR (1 downto 0);
   signal s_sel_rA      : STD_LOGIC_VECTOR (REG_SEL_SIZE-1  downto 0);
   signal s_sel_rB      : STD_LOGIC_VECTOR (REG_SEL_SIZE-1  downto 0);
@@ -156,20 +46,17 @@ architecture arch_sdvu of sdvu is
   signal s_immB        : STD_LOGIC_VECTOR (REG_SIZE-1 downto 0);
   signal s_address     : STD_LOGIC_VECTOR (REG_SIZE-1 downto 0);
   signal s_WE          : STD_LOGIC;
-
-  -- Signals to/from alu
+  signal s_type        : STD_LOGIC_VECTOR (1 downto 0);
+  -- Register related
   signal s_dataA      : STD_LOGIC_VECTOR (REG_SIZE-1 downto 0);
   signal s_dataB      : STD_LOGIC_VECTOR (REG_SIZE-1 downto 0);
-  signal s_type       : STD_LOGIC_VECTOR (1 downto 0);
+  signal s_dataD      : STD_LOGIC_VECTOR (REG_SIZE-1 downto 0);
+  -- ALU related
   signal s_dataResult : STD_LOGIC_VECTOR (REG_SIZE-1 downto 0);
-
-  -- Signals to/from pc
+  -- PC related
   signal s_PC         : STD_LOGIC_VECTOR (PC_SIZE-1 downto 0);
+  signal s_newPC      : STD_LOGIC_VECTOR (PC_SIZE-1 downto 0);
   signal s_PC_op_code : STD_LOGIC_VECTOR (PC_OP_SIZE-1 downto 0);
-
-  -- Signals to/from registers
-  signal s_dataD  : STD_LOGIC_VECTOR (REG_SIZE-1 downto 0);
-
 
 -- Components mapping
 begin
@@ -177,8 +64,8 @@ begin
   sdvu_alu : entity work.alu(arch_alu)
     port map (
       I_clock      => I_clock,
-      I_enable     => I_enable, -- based on the state of the control unit
-      I_reset      => I_reset,  -- based on the state of the control unit
+      I_enable     => s_state(1), -- based on the state of the control unit
+      I_reset      => s_state(0),  -- based on the state of the control unit
       -- Inputs
       I_op_code    => s_op_code,
       I_cfgMask    => s_cfgMask,
@@ -194,10 +81,10 @@ begin
 
 
   -- Mapping Control Unit
-  sdvu_control_unit : control_unit
+  sdvu_control_unit : entity work.control_unit(arch_control_unit)
     port map (
       I_clock   => I_clock,
-      I_reset   => I_reset, -- based on the state of the control unit
+      I_reset   => s_state(0), -- based on the state of the control unit
       -- Inputs
       I_op_code => s_op_code,
       -- Outputs
@@ -206,10 +93,10 @@ begin
 
 
   -- Mapping Decoder
-  sdvu_decoder : decoder
+  sdvu_decoder : entity work.decoder(arch_decoder)
     port map (
       I_clock       => I_clock,
-      I_enable      => I_enable, -- based on the state of the control unit
+      I_enable      => s_state(1), -- based on the state of the control unit
       -- Inputs
       I_instruction => s_instruction,
       -- Outputs
@@ -227,11 +114,11 @@ begin
 
 
   -- Mapping Program Counter
-  sdvu_pc : pc
+  sdvu_pc : entity work.pc(arch_pc)
     port map (
       I_clock     => I_clock,
-      I_reset     => I_reset,  -- based on the state of the control unit
-      I_enable    => I_enable, -- based on the state of the control unit
+      I_reset     => s_state(0),  -- based on the state of the control unit
+      I_enable    => s_state(1), -- based on the state of the control unit
       -- Inputs
       I_newPC     => s_newPC,
       I_PC_OPCode => s_PC_op_code,
@@ -241,11 +128,11 @@ begin
 
 
   -- Mapping Register File
-  sdvu_reg : reg
+  sdvu_reg : entity work.reg(arch_reg)
     port map (
       I_clock  => I_clock,
-      I_reset  => I_reset,  -- based on the state of the control unit
-      I_enable => I_enable, -- based on the state of the control unit
+      I_reset  => s_state(0),  -- based on the state of the control unit
+      I_enable => s_state(1), -- based on the state of the control unit
       -- Inputs
       I_we     => s_WE,
       I_selA   => s_sel_rA,
