@@ -22,9 +22,18 @@ use work.sdvu_constants.all;
 
 -- Entity
 entity sdvu is
-  port(I_clock : in  std_logic;
-       I_instr : in  std_logic_vector(INSTR_SIZE-1 downto 0);
-       O_addr  : out std_logic_vector(REG_SIZE-1 downto 0)
+  port(I_clock : in STD_LOGIC;
+       I_reset : in STD_LOGIC;
+
+       -- Config memory
+       I_CFG_MEM_data    : in STD_LOGIC_VECTOR(TYPE_SIZE-1 downto 0);
+       O_CFG_MEM_we      : out STD_LOGIC;
+       O_CFG_MEM_type    : out STD_LOGIC_VECTOR(1 downto 0);
+       O_CFG_MEM_address : out STD_LOGIC_VECTOR(CFG_MEM_SIZE-1 downto 0);
+       O_CFG_MEM_data    : out STD_LOGIC_VECTOR(TYPE_SIZE-1 downto 0);
+       -- Program memory
+       I_PRG_MEM_data    : in STD_LOGIC_VECTOR(INSTR_SIZE-1 downto 0);
+       O_PRG_MEM_address : out std_logic_vector(PROG_MEM_SIZE-1 downto 0)
       );
 end sdvu;
 

@@ -163,4 +163,14 @@ begin
                         else '0';
 
 
+    -- Pas convaincu de celuila
+    O_PC_OPCode  <= PC_OP_INC when (
+                                 current_state = STATE_LOAD2 or
+                                 current_state = STATE_STORE2 or
+                                 current_state = STATE_BIN3
+                                )
+                    else PC_OP_ASSIGN when current_state = STATE_DECODE
+                    else PC_OP_RESET when  current_state = STATE_RESET
+                    else PC_OP_NOP;
+
 end arch_control_unit;
