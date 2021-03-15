@@ -27,12 +27,14 @@ entity sdvu is
 
        -- Config memory
        I_CFG_MEM_data    : in STD_LOGIC_VECTOR(TYPE_SIZE-1 downto 0);
+       O_enable_CFG_MEM  : out STD_LOGIC;
        O_CFG_MEM_we      : out STD_LOGIC;
        O_CFG_MEM_type    : out STD_LOGIC_VECTOR(1 downto 0);
        O_CFG_MEM_address : out STD_LOGIC_VECTOR(CFG_MEM_SIZE-1 downto 0);
        O_CFG_MEM_data    : out STD_LOGIC_VECTOR(TYPE_SIZE-1 downto 0);
        -- Program memory
        I_PRG_MEM_data    : in STD_LOGIC_VECTOR(INSTR_SIZE-1 downto 0);
+       O_enable_PRG_MEM  : out STD_LOGIC;
        O_PRG_MEM_address : out std_logic_vector(PROG_MEM_SIZE-1 downto 0)
       );
 end sdvu;
@@ -45,7 +47,18 @@ architecture arch_sdvu of sdvu is
   signal s_instruction : STD_LOGIC_VECTOR (INSTR_SIZE-1 downto 0);
   signal s_op_code     : STD_LOGIC_VECTOR (OP_SIZE-1 downto 0);
   -- Control-unit related
-  signal s_state       : STD_LOGIC_VECTOR (STATE_NUMBER-1 downto 0);
+
+  signal s_reset          : STD_LOGIC;
+  signal s_enable_ALU     : STD_LOGIC;
+  signal s_enable_CFG_MEM : STD_LOGIC;
+  signal s_enable_DECODER : STD_LOGIC;
+  signal s_enable_PC      : STD_LOGIC;
+  signal s_enable_PRG_MEM : STD_LOGIC;
+  signal s_enable_REG     : STD_LOGIC;
+  signal s_CFG_MEM_we     : STD_LOGIC;
+  signal s_REG_we         : STD_LOGIC;
+  signal s_PC_OPCode      : STD_LOGIC_VECTOR(PC_OP_SIZE-1 downto 0);
+
   -- Decoder related
   signal s_cfgMask     : STD_LOGIC_VECTOR (1 downto 0);
   signal s_sel_rA      : STD_LOGIC_VECTOR (REG_SEL_SIZE-1  downto 0);
@@ -73,8 +86,8 @@ begin
   sdvu_alu : entity work.alu(arch_alu)
     port map (
       I_clock      => I_clock,
-      I_enable     => s_state(1), -- based on the state of the control unit
-      I_reset      => s_state(0),  -- based on the state of the control unit
+      I_enable     => s_enable_ALU, -- based on the state of the control unit
+      I_reset      => s_reset,      -- based on the state of the control unit
       -- Inputs
       I_op_code    => s_op_code,
       I_cfgMask    => s_cfgMask,
@@ -90,14 +103,23 @@ begin
 
 
   -- Mapping Control Unit
-  sdvu_control_unit : entity work.control_unit(arch_control_unit)
+  control_sdvu_control_unit : entity work.control_unit(arch_control_unit)
     port map (
-      I_clock   => I_clock,
-      I_reset   => s_state(0), -- based on the state of the control unit
+      I_clock          => I_clock,
+      I_reset          => I_reset,
       -- Inputs
-      I_op_code => s_op_code,
+      I_op_code        => s_op_code,
       -- Outputs
-      O_state   => s_state
+      O_reset          => s_reset,
+      O_enable_ALU     => s_enable_ALU,
+      O_enable_CFG_MEM => s_enable_CFG_MEM,
+      O_enable_DECODER => s_enable_DECODER,
+      O_enable_PC      => s_enable_PC,
+      O_enable_PRG_MEM => s_enable_PRG_MEM,
+      O_enable_REG     => s_enable_REG,
+      O_CFG_MEM_we     => s_CFG_MEM_we,
+      O_REG_we         => s_REG_we,
+      O_PC_OPCode      => s_PC_OPCode
     );
 
 
@@ -105,7 +127,7 @@ begin
   sdvu_decoder : entity work.decoder(arch_decoder)
     port map (
       I_clock       => I_clock,
-      I_enable      => s_state(1), -- based on the state of the control unit
+      I_enable      => s_enable_DECODER,
       -- Inputs
       I_instruction => s_instruction,
       -- Outputs
@@ -126,8 +148,8 @@ begin
   sdvu_pc : entity work.pc(arch_pc)
     port map (
       I_clock     => I_clock,
-      I_reset     => s_state(0),  -- based on the state of the control unit
-      I_enable    => s_state(1), -- based on the state of the control unit
+      I_reset     => s_reset,
+      I_enable    => s_enable_PC,
       -- Inputs
       I_newPC     => s_newPC,
       I_PC_OPCode => s_PC_op_code,
@@ -140,8 +162,8 @@ begin
   sdvu_reg : entity work.reg(arch_reg)
     port map (
       I_clock  => I_clock,
-      I_reset  => s_state(0),  -- based on the state of the control unit
-      I_enable => s_state(1), -- based on the state of the control unit
+      I_reset  => s_reset,
+      I_enable => s_enable_REG,
       -- Inputs
       I_we     => s_WE,
       I_selA   => s_sel_rA,
