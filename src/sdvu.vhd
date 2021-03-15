@@ -30,12 +30,13 @@ entity sdvu is
        O_enable_CFG_MEM  : out STD_LOGIC;
        O_CFG_MEM_we      : out STD_LOGIC;
        O_CFG_MEM_type    : out STD_LOGIC_VECTOR(1 downto 0);
-       O_CFG_MEM_address : out STD_LOGIC_VECTOR(CFG_MEM_SIZE-1 downto 0);
+       O_CFG_MEM_address : out STD_LOGIC_VECTOR(REG_SIZE-1 downto 0);
        O_CFG_MEM_data    : out STD_LOGIC_VECTOR(TYPE_SIZE-1 downto 0);
        -- Program memory
        I_PRG_MEM_data    : in STD_LOGIC_VECTOR(INSTR_SIZE-1 downto 0);
        O_enable_PRG_MEM  : out STD_LOGIC;
-       O_PRG_MEM_address : out std_logic_vector(PROG_MEM_SIZE-1 downto 0)
+       O_PRG_MEM_we      : out STD_LOGIC;
+       O_PRG_MEM_PC      : out std_logic_vector(PC_SIZE-1 downto 0)
       );
 end sdvu;
 
@@ -46,8 +47,8 @@ architecture arch_sdvu of sdvu is
   -- Instruction related
   signal s_instruction : STD_LOGIC_VECTOR (INSTR_SIZE-1 downto 0);
   signal s_op_code     : STD_LOGIC_VECTOR (OP_SIZE-1 downto 0);
-  -- Control-unit related
 
+  -- Control-unit related
   signal s_reset          : STD_LOGIC;
   signal s_enable_ALU     : STD_LOGIC;
   signal s_enable_CFG_MEM : STD_LOGIC;
@@ -55,7 +56,9 @@ architecture arch_sdvu of sdvu is
   signal s_enable_PC      : STD_LOGIC;
   signal s_enable_PRG_MEM : STD_LOGIC;
   signal s_enable_REG     : STD_LOGIC;
+
   signal s_CFG_MEM_we     : STD_LOGIC;
+  signal s_PRG_MEM_we     : STD_LOGIC;
   signal s_REG_we         : STD_LOGIC;
   signal s_PC_OPCode      : STD_LOGIC_VECTOR(PC_OP_SIZE-1 downto 0);
 
@@ -175,5 +178,21 @@ begin
       O_dataA  => s_dataA,
       O_dataD  => s_dataD
     );
+
+  -- Using memory results
+  s_instruction <= I_PRG_MEM_data;
+  s_dataD       <= I_CFG_MEM_data;
+
+  -- CFG MEM output signals
+  O_enable_CFG_MEM  <= s_enable_CFG_MEM;
+  O_CFG_MEM_we      <= s_CFG_MEM_we;
+  O_CFG_MEM_type    <= s_type;
+  O_CFG_MEM_address <= s_address;
+  O_CFG_MEM_data    <= s_dataD;
+
+  -- PRG MEM output signals
+  O_enable_PRG_MEM  <= s_enable_PRG_MEM;
+  O_PRG_MEM_we      <= s_PRG_MEM_we;
+  O_PRG_MEM_PC      <= s_PC;
 
 end architecture arch_sdvu;

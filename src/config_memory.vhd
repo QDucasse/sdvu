@@ -27,7 +27,7 @@ entity config_memory is
           I_reset   : in STD_LOGIC;   -- Reset signal
           I_we      : in STD_LOGIC;   -- Write Enable
           I_type    : in STD_LOGIC_VECTOR(1 downto 0);               -- Indication on the type of the value
-          I_address : in STD_LOGIC_VECTOR (CFG_MEM_SIZE-1 downto 0); -- Address in the RAM
+          I_address : in STD_LOGIC_VECTOR (REG_SIZE-1 downto 0);     -- Address in the RAM
           I_data    : in STD_LOGIC_VECTOR (TYPE_SIZE-1 downto 0);    -- Data to write to address in memory
           O_data    : out STD_LOGIC_VECTOR (TYPE_SIZE-1 downto 0)    -- Read address from memory
           );

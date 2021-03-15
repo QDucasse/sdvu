@@ -61,7 +61,7 @@ package sdvu_constants is
   constant SIZE_BYTE:  natural := 8;
   constant SIZE_INT:   natural := 32;
   constant SIZE_STATE: natural := 16;
-  
+
   -- PC unit opcodes
   constant PC_OP_NOP    : STD_LOGIC_VECTOR(1 downto 0) := "00";
   constant PC_OP_INC    : STD_LOGIC_VECTOR(1 downto 0) := "01";

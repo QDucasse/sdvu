@@ -25,7 +25,7 @@ entity program_memory is
           I_reset   : in STD_LOGIC; -- Reset
           I_enable  : in STD_LOGIC; -- Enable
 
-          I_address : in STD_LOGIC_VECTOR (PROG_MEM_SIZE-1 downto 0); -- Address of the new instruction
+          I_PC    : in STD_LOGIC_VECTOR (PC_SIZE-1 downto 0); -- Address of the new instruction
           O_data  : out STD_LOGIC_VECTOR (INSTR_SIZE-1 downto 0) -- Data at address
           );
 end program_memory;
@@ -48,7 +48,7 @@ begin
           memory_bank <= (others => X"00000000");
         else
           -- Read from the address to the output
-          O_data <= memory_bank(to_integer(unsigned(I_address)));
+          O_data <= memory_bank(to_integer(unsigned(I_PC)));
         end if;
     end if;
   end process;
