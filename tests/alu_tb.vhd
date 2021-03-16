@@ -14,7 +14,7 @@ use IEEE.std_logic_1164.all;
 use IEEE.numeric_std.all;
 
 library work;
-use work.constant_codes.all;
+use work.sdvu_constants.all;
 
 -- =================
 --      Entity
@@ -104,7 +104,7 @@ architecture arch_alu_tb of alu_tb is
       -- ADD OPERATION
       -- =============
       -- Test 1: ADD - unsigned no carry/overflow
-      I_op_code <= OPCODE_ADD & "0"; -- add opcode + unsigned flag
+      I_op_code <= OP_ADD & "0"; -- add opcode + unsigned flag
       I_dataA <= X"0001";
       I_dataB <= X"0001";
       wait_cycles(3);
@@ -114,7 +114,7 @@ architecture arch_alu_tb of alu_tb is
       end if;
 
       -- Test 2: ADD - signed no carry/overflow
-      I_op_code <= OPCODE_ADD & "1"; -- add opcode + unsigned flag
+      I_op_code <= OP_ADD & "1"; -- add opcode + unsigned flag
       I_dataA <= X"FFFF"; -- -1 with two's complement
       I_dataB <= X"0002"; --  1
       wait_cycles(3);
@@ -129,7 +129,7 @@ architecture arch_alu_tb of alu_tb is
       -- SUB OPERATION
       -- =============
       -- Test 1: SUB - unsigned no carry/overflow
-      I_op_code <= OPCODE_SUB & "0"; -- sub opcode + unsigned flag
+      I_op_code <= OP_SUB & "0"; -- sub opcode + unsigned flag
       I_dataA <= X"0001";
       I_dataB <= X"0001";
       wait_cycles(3);
@@ -139,7 +139,7 @@ architecture arch_alu_tb of alu_tb is
       end if;
 
       -- Test 2: SUB - signed no carry/overflow
-      I_op_code <= OPCODE_SUB & "1"; -- sub opcode + unsigned flag
+      I_op_code <= OP_SUB & "1"; -- sub opcode + unsigned flag
       I_dataA <= X"FFFF"; -- -1 with two's complement
       I_dataB <= X"0002"; --  1
       wait_cycles(3);
@@ -154,7 +154,7 @@ architecture arch_alu_tb of alu_tb is
 
       -- OR OPERATION
       -- ============
-      I_op_code <= OPCODE_OR & "0"; -- or opcode + unused flag
+      I_op_code <= OP_OR & "0"; -- or opcode + unused flag
       I_dataA <= X"FFFF";
       I_dataB <= X"000F";
       wait_cycles(3);
@@ -165,7 +165,7 @@ architecture arch_alu_tb of alu_tb is
 
       -- XOR OPERATION
       -- =============
-      I_op_code <= OPCODE_XOR & "0"; -- xor opcode + unused flag
+      I_op_code <= OP_XOR & "0"; -- xor opcode + unused flag
       I_dataA <= X"FFFF";
       I_dataB <= X"000F";
       wait_cycles(3);
@@ -176,7 +176,7 @@ architecture arch_alu_tb of alu_tb is
 
       -- AND OPERATION
       -- =============
-      I_op_code <= OPCODE_AND & "0"; -- and opcode + unused flag
+      I_op_code <= OP_AND & "0"; -- and opcode + unused flag
       I_dataA <= X"FFFF";
       I_dataB <= X"000F";
       wait_cycles(3);
@@ -187,7 +187,7 @@ architecture arch_alu_tb of alu_tb is
 
       -- NOT OPERATION
       -- =============
-      I_op_code <= OPCODE_NOT & "0"; -- not opcode + unused flag
+      I_op_code <= OP_NOT & "0"; -- not opcode + unused flag
       I_dataA <= X"FFFF";
       wait_cycles(3);
       cmp := O_dataResult=X"0000" and O_shouldBranch='0';
@@ -199,7 +199,7 @@ architecture arch_alu_tb of alu_tb is
       -- LOAD OPERATION
       -- ==============
       -- Test 1: High-half
-      I_op_code <= OPCODE_LOAD & "0"; -- load opcode + high flag
+      I_op_code <= OP_LOAD & "0"; -- load opcode + high flag
       I_dataImm <= X"FFFF";
       wait_cycles(3);
       cmp := O_dataResult=X"FF00" and O_shouldBranch='0';
@@ -209,7 +209,7 @@ architecture arch_alu_tb of alu_tb is
 
 
       -- Test 2: Low-half
-      I_op_code <= OPCODE_LOAD & "1"; -- load opcode + low flag
+      I_op_code <= OP_LOAD & "1"; -- load opcode + low flag
       I_dataImm <= X"FFFF";
       wait_cycles(3);
       cmp := O_dataResult=X"00FF" and O_shouldBranch='0';
@@ -223,7 +223,7 @@ architecture arch_alu_tb of alu_tb is
       -- EQ
       -- ==
       -- Test 1: Equality - equal
-      I_op_code <= OPCODE_CMP & "0"; -- compare opcode + unused flag
+      I_op_code <= OP_CMP & "0"; -- compare opcode + unused flag
       I_dataA <= X"FFFF";
       I_dataB <= X"FFFF";
       wait_cycles(3);
@@ -236,7 +236,7 @@ architecture arch_alu_tb of alu_tb is
       end if;
 
       -- Test 2: Equality - not equal
-      I_op_code <= OPCODE_CMP & "0"; -- compare opcode + unused flag
+      I_op_code <= OP_CMP & "0"; -- compare opcode + unused flag
       I_dataA <= X"FFF0";
       I_dataB <= X"FFF1";
       wait_cycles(3);
@@ -251,7 +251,7 @@ architecture arch_alu_tb of alu_tb is
       -- AZ
       -- ==
       -- Test 1: Compare A and B to 0 - equal
-      I_op_code <= OPCODE_CMP & "0"; -- compare opcode + unused flag
+      I_op_code <= OP_CMP & "0"; -- compare opcode + unused flag
       I_dataA <= X"0000";
       I_dataB <= X"0000";
       wait_cycles(3);
@@ -265,7 +265,7 @@ architecture arch_alu_tb of alu_tb is
       end if;
 
       -- Test 2: Compare A and B to 0 - not equal
-      I_op_code <= OPCODE_CMP & "0"; -- compare opcode + unused flag
+      I_op_code <= OP_CMP & "0"; -- compare opcode + unused flag
       I_dataA <= X"0001";
       I_dataB <= X"0001";
       wait_cycles(3);
@@ -281,7 +281,7 @@ architecture arch_alu_tb of alu_tb is
       -- AGB
       -- ===
       -- Test 1: A > B (and not A < B) - unsigned
-      I_op_code <= OPCODE_CMP & "0"; -- compare opcode + unsigned
+      I_op_code <= OP_CMP & "0"; -- compare opcode + unsigned
       I_dataA <= X"0001";
       I_dataB <= X"0000";
       wait_cycles(3);
@@ -295,7 +295,7 @@ architecture arch_alu_tb of alu_tb is
       end if;
 
       -- Test 2: A < B (and not A > B) - unsigned
-      I_op_code <= OPCODE_CMP & "0"; -- compare opcode + unsigned
+      I_op_code <= OP_CMP & "0"; -- compare opcode + unsigned
       I_dataA <= X"0000";
       I_dataB <= X"0001";
       wait_cycles(3);
@@ -309,7 +309,7 @@ architecture arch_alu_tb of alu_tb is
       end if;
 
       -- Test 3: A > B (and not A < B) - signed
-      I_op_code <= OPCODE_CMP & "1"; -- compare opcode + signed
+      I_op_code <= OP_CMP & "1"; -- compare opcode + signed
       I_dataA <= X"FFFE"; -- -2
       I_dataB <= X"FFFD"; -- -3
       wait_cycles(3);
@@ -323,7 +323,7 @@ architecture arch_alu_tb of alu_tb is
       end if;
 
       -- Test 4: A < B (and not A > B) - signed
-      I_op_code <= OPCODE_CMP & "1"; -- compare opcode + signed
+      I_op_code <= OP_CMP & "1"; -- compare opcode + signed
       I_dataA <= X"FFFE"; -- -2
       I_dataB <= X"0001"; -- 1
       wait_cycles(3);
@@ -339,7 +339,7 @@ architecture arch_alu_tb of alu_tb is
       -- SHL OPERATION
       -- =============
       -- Test: Shift Left
-      I_op_code <= OPCODE_SHL & "0"; -- shift left opcode + unused flag
+      I_op_code <= OP_SHL & "0"; -- shift left opcode + unused flag
       for i in 0 to 15 loop
           I_dataA <= X"0001";
           I_dataB <= X"000" & std_logic_vector(to_unsigned(i,4)); -- Last 4 bits correspond to the number of bits to shift
@@ -354,7 +354,7 @@ architecture arch_alu_tb of alu_tb is
       -- JUMPEQ OPERATION
       -- ================
       -- Test 1: Branch target always set
-      I_op_code <= OPCODE_JUMPEQ & "0"; -- jumpeq opcode + register or immediate
+      I_op_code <= OP_JUMPEQ & "0"; -- jumpeq opcode + register or immediate
       I_dataB <= X"0001";
       wait_cycles(3);
       if (O_dataResult=X"0001") then report "Test JUMP - destination set: Passed" severity NOTE;
@@ -362,7 +362,7 @@ architecture arch_alu_tb of alu_tb is
       end if;
 
       -- Test 2: Equality (CJF_EQ)
-      I_op_code <= OPCODE_JUMPEQ & "0"; -- jumpeq opcode + first part of the CJF
+      I_op_code <= OP_JUMPEQ & "0"; -- jumpeq opcode + first part of the CJF
       I_dataImm(1 downto 0) <= "00";
       -- CJF_EQ = 000
       I_dataA <= X"0000";
@@ -376,7 +376,7 @@ architecture arch_alu_tb of alu_tb is
       end if;
 
       -- Test 3: A=0 (CJF_AZ)
-      I_op_code <= OPCODE_JUMPEQ & "0"; -- jumpeq opcode + first part of the CJF
+      I_op_code <= OP_JUMPEQ & "0"; -- jumpeq opcode + first part of the CJF
       I_dataImm(1 downto 0) <= "01";
       -- CJF_AZ = 001
       I_dataA <= X"0000";
@@ -390,7 +390,7 @@ architecture arch_alu_tb of alu_tb is
       end if;
 
       -- Test 4: B=0 (CJF_BZ)
-      I_op_code <= OPCODE_JUMPEQ & "0"; -- jumpeq opcode + first part of the CJF
+      I_op_code <= OP_JUMPEQ & "0"; -- jumpeq opcode + first part of the CJF
       I_dataImm(1 downto 0) <= "10";
       -- CJF_AZ = 001
       I_dataA <= X"0000";
@@ -404,7 +404,7 @@ architecture arch_alu_tb of alu_tb is
       end if;
 
       -- Test 5: A!=0 (CJF_ANZ)
-      I_op_code <= OPCODE_JUMPEQ & "0"; -- jumpeq opcode + first part of the CJF
+      I_op_code <= OP_JUMPEQ & "0"; -- jumpeq opcode + first part of the CJF
       I_dataImm(1 downto 0) <= "11";
       -- CJF_ANZ = 011
       I_dataA <= X"0000";
@@ -418,7 +418,7 @@ architecture arch_alu_tb of alu_tb is
       end if;
 
       -- Test 6: B!=0 (CJF_BNZ)
-      I_op_code <= OPCODE_JUMPEQ & "1"; -- jumpeq opcode + first part of the CJF
+      I_op_code <= OP_JUMPEQ & "1"; -- jumpeq opcode + first part of the CJF
       I_dataImm(1 downto 0) <= "00";
       -- CJF_BNZ = 100
       I_dataA <= X"0000";
@@ -432,7 +432,7 @@ architecture arch_alu_tb of alu_tb is
       end if;
 
       -- Test 7: A>B (CJF_AGB)
-      I_op_code <= OPCODE_JUMPEQ & "1"; -- jumpeq opcode + first part of the CJF
+      I_op_code <= OP_JUMPEQ & "1"; -- jumpeq opcode + first part of the CJF
       I_dataImm(1 downto 0) <= "01";
       -- CJF_AGB = 101
       I_dataA <= X"0000";
@@ -446,7 +446,7 @@ architecture arch_alu_tb of alu_tb is
       end if;
 
       -- Test 8: A<B (CJF_ALB)
-      I_op_code <= OPCODE_JUMPEQ & "1"; -- jumpeq opcode + first part of the CJF
+      I_op_code <= OP_JUMPEQ & "1"; -- jumpeq opcode + first part of the CJF
       I_dataImm(1 downto 0) <= "10";
       -- CJF_ALB = 110
       I_dataA <= X"0000";

@@ -188,7 +188,7 @@ begin
   O_CFG_MEM_we      <= s_CFG_MEM_we;
   O_CFG_MEM_type    <= s_type;
   O_CFG_MEM_address <= s_address;
-  O_CFG_MEM_data    <= s_dataD;
+  O_CFG_MEM_data    <= s_dataD;   -- In case of store
 
   -- PRG MEM output signals
   O_enable_PRG_MEM  <= s_enable_PRG_MEM;
