@@ -12,6 +12,10 @@
 library IEEE;
 use IEEE.std_logic_1164.all;
 
+library work;
+use work.tb_helpers.all;
+use work.sdvu_constants.all;
+
 -- =================
 --      Entity
 -- =================
@@ -25,84 +29,61 @@ end program_memory_tb;
 
 architecture arch_program_memory_tb of program_memory_tb is
     -- Clock, Reset and Enable signals
-    constant HALF_PERIOD : time := 5 ns; -- Clock half period
-    signal clock     : std_logic  := '0';  -- Clock signal
-    signal reset   : std_logic  := '0';  -- Reset signal
-    signal running : boolean    := true; -- Running flag, Simulation continues while true
-
-    -- Wait for a given number of clock cycles
-    procedure wait_cycles(n : natural) is
-     begin
-       for i in 1 to n loop
-         wait until rising_edge(clock);
-       end loop;
-     end procedure;
-
-    -- Constants
-    constant MEM_SIZE   : natural := 8;
-    constant INSTR_SIZE : natural := 16;
-
+    constant HALF_PERIOD : time := 5 ns;       -- Clock half period
+    signal clock         : std_logic  := '0';  -- Clock signal
+    signal reset         : std_logic  := '0';  -- Reset signal
+    signal enable        : std_logic  := '0';  -- Enable signal
+    signal running       : boolean    := true; -- Running flag, Simulation continues while true
     -- Signals for entity
-    signal I_we    : STD_LOGIC;
-    signal I_addr  : STD_LOGIC_VECTOR (MEM_SIZE-1 downto 0);
-    signal I_data  : STD_LOGIC_VECTOR (INSTR_SIZE-1 downto 0);
-    signal O_data  : STD_LOGIC_VECTOR (INSTR_SIZE-1 downto 0);
-
+    signal I_PC     : STD_LOGIC_VECTOR (PC_SIZE-1 downto 0);
+    signal O_data   : STD_LOGIC_VECTOR (INSTR_SIZE-1 downto 0);
+    -- Internal memory as an external
+    << signal dut.memory_bank : array (0 to 2**PROG_MEM_SIZE-1) of STD_LOGIC_VECTOR(INSTR_SIZE-1 downto 0) >>
 
     begin
-    -- Clock, reset and enable signals
-    reset <= '1', '0' after 10 ns;
-    clock <= not(clock) after HALF_PERIOD when running else clock;
+      -- Clock, Reset and Enable generation
+      ClockProcess : process
+      begin
+        genClock(clock, running, HALF_PERIOD);
+      end process;
+
+      ResetProcess : process
+      begin
+        genReset(reset, 10 ns, true);
+      end process;
+
+      EnableProcess : process
+      begin
+        genEnable(enable, 20 ns, false);
+      end process;
 
     -- DUT
     dut: entity work.program_memory(arch_program_memory)
-        generic map (
-          MEM_SIZE   => MEM_SIZE,
-          INSTR_SIZE => INSTR_SIZE
-        )
-        port map (
-          I_clock   => clock,
-          I_reset => reset,
-          I_we    => I_we,
-          I_addr  => I_addr,
-          I_data  => I_data,
-          O_data  => O_data
-        );
-
+      port map (
+        I_clock  => clock,
+        I_reset  => reset,
+        I_enable => enable,
+        I_PC     => I_PC,
+        O_data   => O_data
+      );
 
     -- Stimulus process
     StimulusProcess: process
     begin
       wait until reset = '0';
-      wait_cycles(1);
-      report "RAM: Running testbench";
+      wait until enable = '1';
+      wait_cycles(clock, 1);
+      report "Program Memory: Running testbench";
 
       -- TESTING OPERATIONS
+      -- Test 1: Read a given instruction
+      PRG_MEM(1) <= X"FFFFFFFF";
+      wait_cycles(clock, 1);
+      I_PC <= X"000000004";
 
-      -- Test 1: Write/Read to RAM
-      I_we <= '1'; -- Enable writing
-      I_addr <= "00000010"; -- 8 bit address (memory size 32)
-      I_data <= X"FEED";     -- 16-bits data
-      wait_cycles(2);
-      I_we <= '0'; -- Disable writing => Reading
-      wait_cycles(2);
-      if (O_data=X"FEED") then report "Test Write/Read 1: Passed" severity NOTE;
-        else report "Test Write/Read 1: Failed" severity FAILURE;
-      end if;
-
-      -- Test 2: Write/Read to RAM
-      I_we <= '1'; -- Enable writing
-      I_addr <= "00000100";  -- 8 bit address (memory size 255)
-      I_data <= X"CAFE";     -- 16-bits data
-      wait_cycles(2);
-      I_we <= '0'; -- Disable writing => Reading
-      wait_cycles(2);
-      if (O_data=X"CAFE") then report "Test Write/Read 2: Passed" severity NOTE;
-        else report "Test Write/Read 2: Failed" severity FAILURE;
-      end if;
 
       running <= false;
-      report "RAM: Testbench complete";
+      report "Program Memory: Testbench complete";
     end process;
 
 end arch_program_memory_tb;

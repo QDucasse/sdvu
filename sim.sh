@@ -1,7 +1,7 @@
 #!/bin/sh
 
 echo "Analyzing source file"
-ghdl -a ../src/$1.vhd
+ghdl -a ../src/$1.vhd --std=08
 
 echo "Analyzing testbench"
 ghdl -a ../tests/$1_tb.vhd

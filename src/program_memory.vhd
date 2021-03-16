@@ -25,8 +25,8 @@ entity program_memory is
           I_reset   : in STD_LOGIC; -- Reset
           I_enable  : in STD_LOGIC; -- Enable
 
-          I_PC    : in STD_LOGIC_VECTOR (PC_SIZE-1 downto 0); -- Address of the new instruction
-          O_data  : out STD_LOGIC_VECTOR (INSTR_SIZE-1 downto 0) -- Data at address
+          I_PC    : in STD_LOGIC_VECTOR (PC_SIZE-1 downto 0)     := (others => '0'); -- Address of the new instruction
+          O_data  : out STD_LOGIC_VECTOR (INSTR_SIZE-1 downto 0) := (others => '0')  -- Data at address
           );
 end program_memory;
 
@@ -43,6 +43,7 @@ begin
   -- Processes
   TransferData: process(I_clock) -- I_clock added to the sensitivity list of the process
   begin
+
       if rising_edge(I_clock) then  -- If new cycle
         if I_reset = '1' then     -- Reset
           memory_bank <= (others => X"00000000");
