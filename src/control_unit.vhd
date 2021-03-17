@@ -29,6 +29,7 @@ entity control_unit is
           I_reset   : in  STD_LOGIC;                                 -- Reset signal
           -- Inputs
           I_op_code : in STD_LOGIC_VECTOR(OP_SIZE-1 downto 0);       -- Instruction Op Code
+          I_PC_OPCode : in STD_LOGIC_VECTOR(PC_OP_SIZE-1 downto 0);  -- Carry over PC operation
 
           -- Outputs
           -- Enable signals based on the state
@@ -162,15 +163,17 @@ begin
                           )
                         else '0';
 
-
-    -- Pas convaincu de celuila
-    O_PC_OPCode  <= PC_OP_INC when (
+    O_PC_OPCode  <= I_PC_OPCode when current_state = STATE_FETCH1
+                    else PC_OP_INC when (
                                  current_state = STATE_LOAD2 or
                                  current_state = STATE_STORE2 or
                                  current_state = STATE_BIN3
                                 )
                     else PC_OP_ASSIGN when current_state = STATE_DECODE
-                    else PC_OP_RESET when  current_state = STATE_RESET
+                    else PC_OP_RESET when current_state = STATE_RESET
                     else PC_OP_NOP;
+
+    -- Propagate the OP_CODE
+    I_PC_OPCode <=
 
 end arch_control_unit;

@@ -32,7 +32,7 @@ architecture arch_config_memory_tb of config_memory_tb is
     constant HALF_PERIOD : TIME := 5 ns; -- Clock half period
     signal clock   : STD_LOGIC  := '0';  -- Clock signal
     signal reset   : STD_LOGIC  := '0';  -- Reset signal
-    signal enable  : STD_LOGIC  := '0';
+    signal enable  : STD_LOGIC  := '0';  -- Enable signal
     signal running : BOOLEAN    := true; -- Running flag, Simulation continues while true
 
     -- Signals for entity
