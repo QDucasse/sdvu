@@ -66,6 +66,7 @@ begin
         I_clock          => clock,
         I_reset          => reset,
         I_op_code        => I_op_code,
+        I_PC_OPCode      => O_PC_OPCode,
         O_reset          => O_reset,
         O_enable_ALU     => O_enable_ALU,
         O_enable_CFG_MEM => O_enable_CFG_MEM,
@@ -100,16 +101,16 @@ begin
 
       -- Test 2: Fetch
       wait_cycles(clock, 1);
-      test_expression(O_reset='0',           "FETCH1 - Reset not set");
-      test_expression(O_enable_ALU='0',      "FETCH1 - No enable ALU");
-      test_expression(O_enable_CFG_MEM='0',  "FETCH1 - No enable CFG_MEM");
-      test_expression(O_enable_DECODER='0',  "FETCH1 - No enable DECODER");
-      test_expression(O_enable_PC='1',       "FETCH1 - Enable PC");
-      test_expression(O_enable_PRG_MEM='0',  "FETCH1 - No enable PRG_MEM");
-      test_expression(O_enable_REG='0',      "FETCH1 - No enable REG");
-      test_expression(O_CFG_MEM_we='0',      "FETCH1 - No we CFG_MEM");
-      test_expression(O_REG_we='0',          "FETCH1 - No we REG");
-      test_expression(O_PC_OPCode=PC_OP_NOP, "FETCH1 - PC operation: NOP");
+      test_expression(O_reset='0',             "FETCH1 - Reset not set");
+      test_expression(O_enable_ALU='0',        "FETCH1 - No enable ALU");
+      test_expression(O_enable_CFG_MEM='0',    "FETCH1 - No enable CFG_MEM");
+      test_expression(O_enable_DECODER='0',    "FETCH1 - No enable DECODER");
+      test_expression(O_enable_PC='1',         "FETCH1 - Enable PC");
+      test_expression(O_enable_PRG_MEM='0',    "FETCH1 - No enable PRG_MEM");
+      test_expression(O_enable_REG='0',        "FETCH1 - No enable REG");
+      test_expression(O_CFG_MEM_we='0',        "FETCH1 - No we CFG_MEM");
+      test_expression(O_REG_we='0',            "FETCH1 - No we REG");
+      test_expression(O_PC_OPCode=PC_OP_INC,   "FETCH1 - PC operation: INC");
 
       -- Test 3: Fetch 2
       wait_cycles(clock, 1);
@@ -138,32 +139,159 @@ begin
       test_expression(O_REG_we='0',             "DECODE - No we REG");
       test_expression(O_PC_OPCode=PC_OP_ASSIGN, "DECODE - PC operation: ASSIGN");
 
-
       -- Test 5: Fetch 1 from JMP
+      wait_cycles(clock, 1);
+      test_expression(O_reset='0',              "FETCH1 JMP - Reset not set");
+      test_expression(O_enable_ALU='0',         "FETCH1 JMP - No enable ALU");
+      test_expression(O_enable_CFG_MEM='0',     "FETCH1 JMP - No enable CFG_MEM");
+      test_expression(O_enable_DECODER='0',     "FETCH1 JMP - No enable DECODER");
+      test_expression(O_enable_PC='1',          "FETCH1 JMP - Enable PC");
+      test_expression(O_enable_PRG_MEM='0',     "FETCH1 JMP - No enable PRG_MEM");
+      test_expression(O_enable_REG='0',         "FETCH1 JMP - No enable REG");
+      test_expression(O_CFG_MEM_we='0',         "FETCH1 JMP - No we CFG_MEM");
+      test_expression(O_REG_we='0',             "FETCH1 JMP - No we REG");
+      test_expression(O_PC_OPCode=PC_OP_ASSIGN, "FETCH1 JMP - PC operation: ASSIGN");
 
-      -- (Reset wait until state decode)
+      -- (Re-fetch, wait until state decode)
+      wait_cycles(clock, 2);
       -- Test 6: Store 1
+      I_op_code <= OP_STORE;
+      wait_cycles(clock, 1);
+      test_expression(O_reset='0',           "STORE1 - Reset not set");
+      test_expression(O_enable_ALU='0',      "STORE1 - No enable ALU");
+      test_expression(O_enable_CFG_MEM='0',  "STORE1 - No enable CFG_MEM");
+      test_expression(O_enable_DECODER='0',  "STORE1 - No enable DECODER");
+      test_expression(O_enable_PC='0',       "STORE1 - No enable PC");
+      test_expression(O_enable_PRG_MEM='0',  "STORE1 - No enable PRG_MEM");
+      test_expression(O_enable_REG='1',      "STORE1 - Enable REG");
+      test_expression(O_CFG_MEM_we='0',      "STORE1 - No we CFG_MEM");
+      test_expression(O_REG_we='0',          "STORE1 - No we REG");
+      test_expression(O_PC_OPCode=PC_OP_NOP, "STORE1 - PC operation: NOP");
 
       -- Test 7: Store 2
+      wait_cycles(clock, 1);
+      test_expression(O_reset='0',           "STORE2 - Reset not set");
+      test_expression(O_enable_ALU='0',      "STORE2 - No enable ALU");
+      test_expression(O_enable_CFG_MEM='1',  "STORE2 - Enable CFG_MEM");
+      test_expression(O_enable_DECODER='0',  "STORE2 - No enable DECODER");
+      test_expression(O_enable_PC='0',       "STORE2 - No enable PC");
+      test_expression(O_enable_PRG_MEM='0',  "STORE2 - No enable PRG_MEM");
+      test_expression(O_enable_REG='0',      "STORE2 - No enable REG");
+      test_expression(O_CFG_MEM_we='1',      "STORE2 - WE CFG_MEM");
+      test_expression(O_REG_we='0',          "STORE2 - No we REG");
+      test_expression(O_PC_OPCode=PC_OP_INC, "STORE2 - PC operation: INC");
 
       -- Test 8: Fetch 1 from Store
+      wait_cycles(clock, 1);
+      test_expression(O_reset='0',           "FETCH1 STORE - Reset not set");
+      test_expression(O_enable_ALU='0',      "FETCH1 STORE - No enable ALU");
+      test_expression(O_enable_CFG_MEM='0',  "FETCH1 STORE - No enable CFG_MEM");
+      test_expression(O_enable_DECODER='0',  "FETCH1 STORE - No enable DECODER");
+      test_expression(O_enable_PC='1',       "FETCH1 STORE - Enable PC");
+      test_expression(O_enable_PRG_MEM='0',  "FETCH1 STORE - No enable PRG_MEM");
+      test_expression(O_enable_REG='0',      "FETCH1 STORE - No enable REG");
+      test_expression(O_CFG_MEM_we='0',      "FETCH1 STORE - No we CFG_MEM");
+      test_expression(O_REG_we='0',          "FETCH1 STORE - No we REG");
+      test_expression(O_PC_OPCode=PC_OP_INC, "FETCH1 STORE - PC operation: INC");
 
-      -- (Reset wait until state decode)
+      -- (Re-fetch, wait until state decode)
+      wait_cycles(clock, 2);
       -- Test 9: Load 1
+      I_op_code <= OP_LOAD;
+      wait_cycles(clock, 1);
+      test_expression(O_reset='0',           "LOAD1 - Reset not set");
+      test_expression(O_enable_ALU='0',      "LOAD1 - No enable ALU");
+      test_expression(O_enable_CFG_MEM='1',  "LOAD1 - Enable CFG_MEM");
+      test_expression(O_enable_DECODER='0',  "LOAD1 - No enable DECODER");
+      test_expression(O_enable_PC='0',       "LOAD1 - No enable PC");
+      test_expression(O_enable_PRG_MEM='0',  "LOAD1 - No enable PRG_MEM");
+      test_expression(O_enable_REG='0',      "LOAD1 - No enable REG");
+      test_expression(O_CFG_MEM_we='0',      "LOAD1 - No we CFG_MEM");
+      test_expression(O_REG_we='0',          "LOAD1 - No we REG");
+      test_expression(O_PC_OPCode=PC_OP_NOP, "LOAD1 - PC operation: NOP");
 
       -- Test 10: Load 2
+      wait_cycles(clock, 1);
+      test_expression(O_reset='0',           "LOAD2 - Reset not set");
+      test_expression(O_enable_ALU='0',      "LOAD2 - No enable ALU");
+      test_expression(O_enable_CFG_MEM='0',  "LOAD2 - No enable CFG_MEM");
+      test_expression(O_enable_DECODER='0',  "LOAD2 - No enable DECODER");
+      test_expression(O_enable_PC='0',       "LOAD2 - No enable PC");
+      test_expression(O_enable_PRG_MEM='0',  "LOAD2 - No enable PRG_MEM");
+      test_expression(O_enable_REG='1',      "LOAD2 - No enable REG");
+      test_expression(O_CFG_MEM_we='0',      "LOAD2 - No we CFG_MEM");
+      test_expression(O_REG_we='1',          "LOAD2 - WE REG");
+      test_expression(O_PC_OPCode=PC_OP_INC, "LOAD2 - PC operation: INC");
 
       -- Test 11: Fetch 1 from Load
+      wait_cycles(clock, 1);
+      test_expression(O_reset='0',           "FETCH1 LOAD - Reset not set");
+      test_expression(O_enable_ALU='0',      "FETCH1 LOAD - No enable ALU");
+      test_expression(O_enable_CFG_MEM='0',  "FETCH1 LOAD - No enable CFG_MEM");
+      test_expression(O_enable_DECODER='0',  "FETCH1 LOAD - No enable DECODER");
+      test_expression(O_enable_PC='1',       "FETCH1 LOAD - Enable PC");
+      test_expression(O_enable_PRG_MEM='0',  "FETCH1 LOAD - No enable PRG_MEM");
+      test_expression(O_enable_REG='0',      "FETCH1 LOAD - No enable REG");
+      test_expression(O_CFG_MEM_we='0',      "FETCH1 LOAD - No we CFG_MEM");
+      test_expression(O_REG_we='0',          "FETCH1 LOAD - No we REG");
+      test_expression(O_PC_OPCode=PC_OP_INC, "FETCH1 LOAD - PC operation: INC");
 
       -- (Reset wait until state decode)
+      wait_cycles(clock, 2);
       -- Test 12: Bin 1
+      I_op_code <= OP_ADD;
+      wait_cycles(clock, 1);
+      test_expression(O_reset='0',           "BIN1 - Reset not set");
+      test_expression(O_enable_ALU='0',      "BIN1 - No enable ALU");
+      test_expression(O_enable_CFG_MEM='0',  "BIN1 - No enable CFG_MEM");
+      test_expression(O_enable_DECODER='0',  "BIN1 - No enable DECODER");
+      test_expression(O_enable_PC='0',       "BIN1 - No enable PC");
+      test_expression(O_enable_PRG_MEM='0',  "BIN1 - No enable PRG_MEM");
+      test_expression(O_enable_REG='1',      "BIN1 - Enable REG");
+      test_expression(O_CFG_MEM_we='0',      "BIN1 - No we CFG_MEM");
+      test_expression(O_REG_we='0',          "BIN1 - No we REG");
+      test_expression(O_PC_OPCode=PC_OP_NOP, "BIN1 - PC operation: NOP");
 
       -- Test 13: Bin 2
+      wait_cycles(clock, 1);
+      test_expression(O_reset='0',           "BIN2 - Reset not set");
+      test_expression(O_enable_ALU='1',      "BIN2 - Enable ALU");
+      test_expression(O_enable_CFG_MEM='0',  "BIN2 - No enable CFG_MEM");
+      test_expression(O_enable_DECODER='0',  "BIN2 - No enable DECODER");
+      test_expression(O_enable_PC='0',       "BIN2 - No enable PC");
+      test_expression(O_enable_PRG_MEM='0',  "BIN2 - No enable PRG_MEM");
+      test_expression(O_enable_REG='0',      "BIN2 - No enable REG");
+      test_expression(O_CFG_MEM_we='0',      "BIN2 - No we CFG_MEM");
+      test_expression(O_REG_we='0',          "BIN2 - No we REG");
+      test_expression(O_PC_OPCode=PC_OP_NOP, "BIN2 - PC operation: NOP");
 
       -- Test 14: Bin 3
+      wait_cycles(clock, 1);
+      test_expression(O_reset='0',           "BIN3 - Reset not set");
+      test_expression(O_enable_ALU='0',      "BIN3 - No enable ALU");
+      test_expression(O_enable_CFG_MEM='0',  "BIN3 - No enable CFG_MEM");
+      test_expression(O_enable_DECODER='0',  "BIN3 - No enable DECODER");
+      test_expression(O_enable_PC='0',       "BIN3 - No enable PC");
+      test_expression(O_enable_PRG_MEM='0',  "BIN3 - No enable PRG_MEM");
+      test_expression(O_enable_REG='1',      "BIN3 - Enable REG");
+      test_expression(O_CFG_MEM_we='0',      "BIN3 - No we CFG_MEM");
+      test_expression(O_REG_we='1',          "BIN3 - WE REG");
+      test_expression(O_PC_OPCode=PC_OP_INC, "BIN3 - PC operation: INC");
+
 
       -- Test 15: Fetch 1 from Bin
-      wait_cycles(clock, 50);
+      wait_cycles(clock, 1);
+      test_expression(O_reset='0',           "FETCH1 LOAD - Reset not set");
+      test_expression(O_enable_ALU='0',      "FETCH1 LOAD - No enable ALU");
+      test_expression(O_enable_CFG_MEM='0',  "FETCH1 LOAD - No enable CFG_MEM");
+      test_expression(O_enable_DECODER='0',  "FETCH1 LOAD - No enable DECODER");
+      test_expression(O_enable_PC='1',       "FETCH1 LOAD - Enable PC");
+      test_expression(O_enable_PRG_MEM='0',  "FETCH1 LOAD - No enable PRG_MEM");
+      test_expression(O_enable_REG='0',      "FETCH1 LOAD - No enable REG");
+      test_expression(O_CFG_MEM_we='0',      "FETCH1 LOAD - No we CFG_MEM");
+      test_expression(O_REG_we='0',          "FETCH1 LOAD - No we REG");
+      test_expression(O_PC_OPCode=PC_OP_INC, "FETCH1 LOAD - PC operation: INC");
+
       running <= false;
       report "Control Unit: Testbench complete";
     end process;
