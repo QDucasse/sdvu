@@ -32,18 +32,6 @@ architecture arch_reg_tb of reg_tb is
     signal enable  : std_logic  := '0';  -- Enable signal
     signal running : boolean    := true; -- Running flag, Simulation continues while true
 
-    -- Wait for a given number of clock cycles
-    procedure wait_cycles(n : natural) is
-     begin
-       for i in 1 to n loop
-         wait until rising_edge(clock);
-       end loop;
-     end procedure;
-
-    -- Constants for the entity
-    constant REG_WIDTH : natural := 16;
-    constant SIZE      : natural := 3;
-
     -- Signal definitions for the entity
     signal I_dataD : STD_LOGIC_VECTOR (REG_WIDTH-1 downto 0);
     signal I_selD  : STD_LOGIC_VECTOR (SIZE-1 downto 0);
@@ -54,10 +42,21 @@ architecture arch_reg_tb of reg_tb is
     signal I_we    : STD_LOGIC;
 
 begin
-   -- Clock, reset and enable signals
-   reset <= '1', '0' after 10 ns;
-   enable  <= '0', '1' after 50 ns;
-   clock <= not(clock) after HALF_PERIOD when running else clock;
+    -- Clock, Reset and Enable generation
+    ClockProcess : process
+    begin
+      genClock(clock, running, HALF_PERIOD);
+    end process;
+
+    ResetProcess : process
+    begin
+      genPulse(reset, 10 ns, true);
+    end process;
+
+    EnableProcess : process
+    begin
+      genPulse(enable, 20 ns, false);
+    end process;
 
    -- Design Under Test (DUT)
    dut: entity work.reg(arch_reg)

@@ -12,10 +12,8 @@ use ieee.numeric_std.all;
 package tb_helpers is
   -- Generate a clock signal with a given half period
   procedure genClock(signal clock : inout std_logic; signal running : in boolean; half_period : time);
-  -- Generate a reset signal for a given reset time
-  procedure genReset(signal reset : inout std_logic; reset_time : time; high : boolean);
-  -- Generate an enable signal for a given reset time
-  procedure genEnable(signal enable : inout std_logic; enable_time : time; high : boolean);
+  -- Generate a pulse signal for a given time
+  procedure genPulse(signal pulse : inout std_logic; pulse_time : time; high : boolean);
   -- Wait for a given number of cycles
   procedure wait_cycles(signal clock : in std_logic; n : natural);
   -- Test a condition and reports a message
@@ -47,36 +45,19 @@ package body tb_helpers is
       end if;
     end procedure;
 
-  -- Generate a reset signal after a given time
-  procedure genReset(signal reset : inout std_logic;
-                     reset_time   : time;
-                     high         : boolean) is
-    begin
-      if high then
-        reset <= '1';
-        wait for reset_time;
-        reset <= '0';
-      else
-        reset <= '0';
-        wait for reset_time;
-        reset <= '1';
-      end if;
-      wait;
-    end procedure;
-
-    -- Generate a reset signal after a given time
-    procedure genEnable(signal enable : inout std_logic;
-                        enable_time   : time;
-                        high          : boolean) is
+    -- Generate a pulse signal after a given time
+    procedure genPulse(signal pulse : inout std_logic;
+                       pulse_time   : time;
+                       high         : boolean) is
       begin
         if high then
-          enable <= '1';
-          wait for enable_time;
-          enable <= '0';
+          pulse <= '1';
+          wait for pulse_time;
+          pulse <= '0';
         else
-          enable <= '0';
-          wait for enable_time;
-          enable <= '1';
+          pulse <= '0';
+          wait for pulse_time;
+          pulse <= '1';
         end if;
         wait;
       end procedure;

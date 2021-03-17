@@ -12,6 +12,10 @@
 library IEEE;
 use IEEE.std_logic_1164.all;
 
+library work;
+use work.tb_helpers.all;
+use work.sdvu_constants.all;
+
 -- =================
 --      Entity
 -- =================
@@ -25,84 +29,118 @@ end config_memory_tb;
 
 architecture arch_config_memory_tb of config_memory_tb is
     -- Clock, Reset and Enable signals
-    constant HALF_PERIOD : time := 5 ns; -- Clock half period
-    signal clock     : std_logic  := '0';  -- Clock signal
-    signal reset   : std_logic  := '0';  -- Reset signal
-    signal running : boolean    := true; -- Running flag, Simulation continues while true
-
-    -- Wait for a given number of clock cycles
-    procedure wait_cycles(n : natural) is
-     begin
-       for i in 1 to n loop
-         wait until rising_edge(clock);
-       end loop;
-     end procedure;
-
-    -- Constants
-    constant MEM_SIZE   : natural := 8;
-    constant INSTR_SIZE : natural := 16;
+    constant HALF_PERIOD : TIME := 5 ns; -- Clock half period
+    signal clock   : STD_LOGIC  := '0';  -- Clock signal
+    signal reset   : STD_LOGIC  := '0';  -- Reset signal
+    signal enable  : STD_LOGIC  := '0';
+    signal running : BOOLEAN    := true; -- Running flag, Simulation continues while true
 
     -- Signals for entity
-    signal I_we    : STD_LOGIC;
-    signal I_addr  : STD_LOGIC_VECTOR (MEM_SIZE-1 downto 0);
-    signal I_data  : STD_LOGIC_VECTOR (INSTR_SIZE-1 downto 0);
-    signal O_data  : STD_LOGIC_VECTOR (INSTR_SIZE-1 downto 0);
+    signal I_we      : STD_LOGIC;
+    signal I_type    : STD_LOGIC_VECTOR(1 downto 0);
+    signal I_address : STD_LOGIC_VECTOR (REG_SIZE-1 downto 0);
+    signal I_data    : STD_LOGIC_VECTOR (TYPE_SIZE-1 downto 0);
+    signal O_data    : STD_LOGIC_VECTOR (TYPE_SIZE-1 downto 0);
 
+    -- External to access the internal memory object
+    -- <<signal dut.memory_bank : STD_LOGIC_VECTOR(2**CFG_MEM_SIZE-1 downto 0)>> <= (others => '0');
 
     begin
-    -- Clock, reset and enable signals
-    reset <= '1', '0' after 10 ns;
-    clock <= not(clock) after HALF_PERIOD when running else clock;
+      -- Clock, Reset and Enable generation
+      ClockProcess : process
+      begin
+        genClock(clock, running, HALF_PERIOD);
+      end process;
+
+      ResetProcess : process
+      begin
+        genPulse(reset, 10 ns, true);
+      end process;
+
+      EnableProcess : process
+      begin
+        genPulse(enable, 20 ns, false);
+      end process;
 
     -- DUT
     dut: entity work.config_memory(arch_config_memory)
-        generic map (
-          MEM_SIZE   => MEM_SIZE,
-          INSTR_SIZE => INSTR_SIZE
-        )
-        port map (
-          I_clock   => clock,
-          I_reset => reset,
-          I_we    => I_we,
-          I_addr  => I_addr,
-          I_data  => I_data,
-          O_data  => O_data
-        );
-
+      port map (
+        I_clock   => clock,
+        I_enable  => enable,
+        I_reset   => reset,
+        I_we      => I_we,
+        I_type    => I_type,
+        I_address => I_address,
+        I_data    => I_data,
+        O_data    => O_data
+      );
 
     -- Stimulus process
     StimulusProcess: process
     begin
       wait until reset = '0';
-      wait_cycles(1);
-      report "RAM: Running testbench";
+      wait_cycles(clock, 1);
+      report "Config Memory: Running testbench";
 
       -- TESTING OPERATIONS
 
-      -- Test 1: Write/Read to RAM
+      -- Test 1: Write (Boolean)
       I_we <= '1'; -- Enable writing
-      I_addr <= "00000010"; -- 8 bit address (memory size 32)
-      I_data <= X"FEED";     -- 16-bits data
-      wait_cycles(2);
-      I_we <= '0'; -- Disable writing => Reading
-      wait_cycles(2);
-      if (O_data=X"FEED") then report "Test Write/Read 1: Passed" severity NOTE;
-        else report "Test Write/Read 1: Failed" severity FAILURE;
-      end if;
+      I_address <= X"00000008"; -- 32-bit address (8)
+      I_type <= TYPE_BOOL;      -- Boolean value, 8 bits
+      I_data <= X"000000BA";    -- 32-bit data (depends on the type of the data) -> 8 bits here
+      wait_cycles(clock, 2);
+      -- test_expression(external(15 downto 8)=X"BA", "Write Boolean")
 
-      -- Test 2: Write/Read to RAM
-      I_we <= '1'; -- Enable writing
-      I_addr <= "00000100";  -- 8 bit address (memory size 255)
-      I_data <= X"CAFE";     -- 16-bits data
-      wait_cycles(2);
+      -- Test 2: Read (Boolean)
       I_we <= '0'; -- Disable writing => Reading
-      wait_cycles(2);
-      if (O_data=X"CAFE") then report "Test Write/Read 2: Passed" severity NOTE;
-        else report "Test Write/Read 2: Failed" severity FAILURE;
-      end if;
+      wait_cycles(clock, 2);
+      -- test_expression(O_data=X"000000BA", "Read Boolean");
+
+      -- Test 3: Write (Byte)
+      I_we <= '1'; -- Enable writing
+      I_address <= X"00000010"; -- 32-bit address (16)
+      I_type <= TYPE_BYTE;      -- Byte value, 8 bits
+      I_data <= X"000000BA";    -- 32-bit data (depends on the type of the data) -> 8 bits here
+      wait_cycles(clock, 2);
+      -- test_expression(external(23 downto 16)=X"BA", "Write Byte")
+      -- test_expression(external(15 downto 8)=X"BA", "Write Byte - No side effect")
+
+      -- Test 4: Read (Boolean)
+      I_we <= '0'; -- Disable writing => Reading
+      wait_cycles(clock, 2);
+      -- test_expression(O_data=X"000000BA", "Read Byte");
+
+      -- Test 5: Write (Int)
+      I_we <= '1'; -- Enable writing
+      I_address <= X"00000018"; -- 32-bit address (24)
+      I_type <= TYPE_INT;       -- Int value, 32 bits
+      I_data <= X"ABCDEF98";    -- 32-bit data (depends on the type of the data) -> 32 bits here
+      wait_cycles(clock, 2);
+      -- test_expression(external(55 downto 24)=X"ABCDEF98", "Write INT")
+      -- test_expression(external(23 downto 8)=X"BABA", "Write Int - No side effect")
+
+      -- Test 6: Read (Int)
+      I_we <= '0'; -- Disable writing => Reading
+      wait_cycles(clock, 2);
+      -- test_expression(O_data=X"ABCDEF98", "Read INT");
+
+      -- Test 7: Write (State)
+      I_we <= '1'; -- Enable writing
+      I_address <= X"00000038"; -- 32-bit address (56)
+      I_type <= TYPE_STATE;     -- State value, 16 bits
+      I_data <= X"0000ABCD";    -- 32-bit data (depends on the type of the data) -> 16 bits here
+      wait_cycles(clock, 2);
+      -- test_expression(external(71 downto 56)=X"ABCD", "Write State")
+      -- test_expression(external(55 downto 8)=X"ABCDEF98BABA", "Write State - No side effect")
+
+      -- Test 8: Read (State)
+      I_we <= '0'; -- Disable writing => Reading
+      wait_cycles(clock, 2);
+      -- test_expression(O_data=X"000000BA", "Read State");
 
       running <= false;
-      report "RAM: Testbench complete";
+      report "Config Memory: Testbench complete";
     end process;
 
 end arch_config_memory_tb;

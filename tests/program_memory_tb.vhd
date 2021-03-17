@@ -34,11 +34,13 @@ architecture arch_program_memory_tb of program_memory_tb is
     signal reset         : std_logic  := '0';  -- Reset signal
     signal enable        : std_logic  := '0';  -- Enable signal
     signal running       : boolean    := true; -- Running flag, Simulation continues while true
+    
     -- Signals for entity
     signal I_PC     : STD_LOGIC_VECTOR (PC_SIZE-1 downto 0);
     signal O_data   : STD_LOGIC_VECTOR (INSTR_SIZE-1 downto 0);
+
     -- Internal memory as an external
-    << signal dut.memory_bank : array (0 to 2**PROG_MEM_SIZE-1) of STD_LOGIC_VECTOR(INSTR_SIZE-1 downto 0) >>
+    <<signal dut.memory_bank : array (0 to 2**PROG_MEM_SIZE-1) of STD_LOGIC_VECTOR(INSTR_SIZE-1 downto 0)>> <= (others => '0');
 
     begin
       -- Clock, Reset and Enable generation
@@ -49,12 +51,12 @@ architecture arch_program_memory_tb of program_memory_tb is
 
       ResetProcess : process
       begin
-        genReset(reset, 10 ns, true);
+        genPulse(reset, 10 ns, true);
       end process;
 
       EnableProcess : process
       begin
-        genEnable(enable, 20 ns, false);
+        genPulse(enable, 20 ns, false);
       end process;
 
     -- DUT

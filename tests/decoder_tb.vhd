@@ -32,15 +32,7 @@ architecture arch_decoder_tb of decoder_tb is
     signal clock     : std_logic  := '0';  -- Clock signal
     signal enable  : std_logic  := '0';  -- Enable signal
     signal running : boolean    := true; -- Running flag, Simulation continues while true
-
-    -- Wait for a given number of clock cycles
-    procedure wait_cycles(n : natural) is
-     begin
-       for i in 1 to n loop
-         wait until rising_edge(clock);
-       end loop;
-     end procedure;
-
+    
      -- Signals for decode
      signal I_instruction : STD_LOGIC_VECTOR (31 downto 0);
      signal O_op_code    : STD_LOGIC_VECTOR (3  downto 0);
@@ -57,9 +49,22 @@ architecture arch_decoder_tb of decoder_tb is
 
 
 begin
-    -- Clock and enable signals
-    enable  <= '0', '1' after 50 ns;
-    clock <= not(clock) after HALF_PERIOD when running else clock;
+    -- Clock, Reset and Enable generation
+    ClockProcess : process
+    begin
+      genClock(clock, running, HALF_PERIOD);
+    end process;
+
+    ResetProcess : process
+    begin
+      genPulse(reset, 10 ns, true);
+    end process;
+
+    EnableProcess : process
+    begin
+      genPulse(enable, 20 ns, false);
+    end process;
+
     -- DUT
       dut : entity work.decoder(arch_decoder)
       port map (
