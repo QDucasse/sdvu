@@ -33,7 +33,7 @@ entity reg is
           -- Outputs
           O_dataB: out STD_LOGIC_VECTOR (REG_SIZE-1 downto 0); -- Output B from regB
           O_dataA: out STD_LOGIC_VECTOR (REG_SIZE-1 downto 0); -- Output A from regA
-          O_dataD: out STD_LOGIC_VECTOR (REG_SIZE-1 downto 0) -- Output D from regD (in case of STORE/LOAD/JMP)
+          O_dataD: out STD_LOGIC_VECTOR (REG_SIZE-1 downto 0)  -- Output D from regD (in case of STORE )
           );
 end reg;
 
@@ -53,10 +53,10 @@ begin
           if I_reset = '1' then -- Reset routine
             reg_bank <= (others => X"00000000");
           elsif I_enable= '1' then
-            O_dataA <= reg_bank(to_integer(unsigned(I_selA)));     -- Propagate the input to the output (A)
-            O_dataB <= reg_bank(to_integer(unsigned(I_selB)));     -- Propagate the input to the output (B)
-            O_dataD <= reg_bank(to_integer(unsigned(I_selD)));     -- Propagate the input to the output (D)
-            if (I_we = '1') then                                   -- If write-enable propagate the data
+            O_dataA <= reg_bank(to_integer(unsigned(I_selA)));   -- Propagate the input to the output (A)
+            O_dataB <= reg_bank(to_integer(unsigned(I_selB)));   -- Propagate the input to the output (B)
+            O_dataD <= reg_bank(to_integer(unsigned(I_selD)));   -- Propagate the input to the output (D)
+            if (I_we = '1') then                                 -- If write-enable propagate the data
               reg_bank(to_integer(unsigned(I_selD))) <= I_dataD; -- Write dataD to the selD register
             end if;
           end if;
