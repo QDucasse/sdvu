@@ -17,7 +17,7 @@ package tb_helpers is
   -- Wait for a given number of cycles
   procedure wait_cycles(signal clock : in std_logic; n : natural);
   -- Test a condition and reports a message
-  procedure test_expression(condition : boolean; test_name : string);
+  procedure assert_true(condition : boolean; test_name : string);
 
   -- Convert an int to the corresponding std logic vector
   pure function int_to_slv(i : integer) return std_logic_vector;
@@ -72,10 +72,10 @@ package body tb_helpers is
     end procedure;
 
     -- Test a given expression and reports the result
-    procedure test_expression(condition : boolean;
+    procedure assert_true(condition : boolean;
                               test_name : string) is
       begin
-        if (condition) then report (test_name & ": passed") severity NOTE;
+        if (condition) then report (test_name & ": Passed") severity NOTE;
           else report (test_name & ": Failed") severity FAILURE;
         end if;
       end procedure;

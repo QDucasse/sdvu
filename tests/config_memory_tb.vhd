@@ -90,12 +90,12 @@ architecture arch_config_memory_tb of config_memory_tb is
       I_type <= TYPE_BOOL;      -- Boolean value, 8 bits
       I_data <= X"000000BA";    -- 32-bit data (depends on the type of the data) -> 8 bits here
       wait_cycles(clock, 2);
-      -- test_expression(external(15 downto 8)=X"BA", "Write Boolean")
+      -- assert_true(external(15 downto 8)=X"BA", "Write Boolean")
 
       -- Test 2: Read (Boolean)
       I_we <= '0'; -- Disable writing => Reading
       wait_cycles(clock, 2);
-      -- test_expression(O_data=X"000000BA", "Read Boolean");
+      -- assert_true(O_data=X"000000BA", "Read Boolean");
 
       -- Test 3: Write (Byte)
       I_we <= '1'; -- Enable writing
@@ -103,13 +103,13 @@ architecture arch_config_memory_tb of config_memory_tb is
       I_type <= TYPE_BYTE;      -- Byte value, 8 bits
       I_data <= X"000000BA";    -- 32-bit data (depends on the type of the data) -> 8 bits here
       wait_cycles(clock, 2);
-      -- test_expression(external(23 downto 16)=X"BA", "Write Byte")
-      -- test_expression(external(15 downto 8)=X"BA", "Write Byte - No side effect")
+      -- assert_true(external(23 downto 16)=X"BA", "Write Byte")
+      -- assert_true(external(15 downto 8)=X"BA", "Write Byte - No side effect")
 
       -- Test 4: Read (Boolean)
       I_we <= '0'; -- Disable writing => Reading
       wait_cycles(clock, 2);
-      -- test_expression(O_data=X"000000BA", "Read Byte");
+      -- assert_true(O_data=X"000000BA", "Read Byte");
 
       -- Test 5: Write (Int)
       I_we <= '1'; -- Enable writing
@@ -117,13 +117,13 @@ architecture arch_config_memory_tb of config_memory_tb is
       I_type <= TYPE_INT;       -- Int value, 32 bits
       I_data <= X"ABCDEF98";    -- 32-bit data (depends on the type of the data) -> 32 bits here
       wait_cycles(clock, 2);
-      -- test_expression(external(55 downto 24)=X"ABCDEF98", "Write INT")
-      -- test_expression(external(23 downto 8)=X"BABA", "Write Int - No side effect")
+      -- assert_true(external(55 downto 24)=X"ABCDEF98", "Write INT")
+      -- assert_true(external(23 downto 8)=X"BABA", "Write Int - No side effect")
 
       -- Test 6: Read (Int)
       I_we <= '0'; -- Disable writing => Reading
       wait_cycles(clock, 2);
-      -- test_expression(O_data=X"ABCDEF98", "Read INT");
+      -- assert_true(O_data=X"ABCDEF98", "Read INT");
 
       -- Test 7: Write (State)
       I_we <= '1'; -- Enable writing
@@ -131,13 +131,13 @@ architecture arch_config_memory_tb of config_memory_tb is
       I_type <= TYPE_STATE;     -- State value, 16 bits
       I_data <= X"0000ABCD";    -- 32-bit data (depends on the type of the data) -> 16 bits here
       wait_cycles(clock, 2);
-      -- test_expression(external(71 downto 56)=X"ABCD", "Write State")
-      -- test_expression(external(55 downto 8)=X"ABCDEF98BABA", "Write State - No side effect")
+      -- assert_true(external(71 downto 56)=X"ABCD", "Write State")
+      -- assert_true(external(55 downto 8)=X"ABCDEF98BABA", "Write State - No side effect")
 
       -- Test 8: Read (State)
       I_we <= '0'; -- Disable writing => Reading
       wait_cycles(clock, 2);
-      -- test_expression(O_data=X"000000BA", "Read State");
+      -- assert_true(O_data=X"000000BA", "Read State");
 
       running <= false;
       report "Config Memory: Testbench complete";

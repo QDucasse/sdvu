@@ -70,7 +70,6 @@ architecture arch_sdvu of sdvu is
   signal s_immA        : STD_LOGIC_VECTOR (REG_SIZE-1 downto 0);
   signal s_immB        : STD_LOGIC_VECTOR (REG_SIZE-1 downto 0);
   signal s_address     : STD_LOGIC_VECTOR (REG_SIZE-1 downto 0);
-  signal s_WE          : STD_LOGIC;
   signal s_type        : STD_LOGIC_VECTOR (1 downto 0);
   -- Register related
   signal s_dataA      : STD_LOGIC_VECTOR (REG_SIZE-1 downto 0);
@@ -142,8 +141,7 @@ begin
       O_immA        => s_immA,
       O_immB        => s_immB,
       O_address     => s_address,
-      O_type        => s_type,
-      O_WE          => s_WE
+      O_type        => s_type
     );
 
 
@@ -168,7 +166,7 @@ begin
       I_reset  => s_reset,
       I_enable => s_enable_REG,
       -- Inputs
-      I_we     => s_WE,
+      I_we     => s_REG_we,
       I_selA   => s_sel_rA,
       I_selB   => s_sel_rB,
       I_selD   => s_sel_rD,
