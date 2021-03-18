@@ -19,8 +19,8 @@ use work.tb_helpers.all;
 --      Entity
 -- =================
 
-entity config_memory_tb is
-end config_memory_tb;
+entity sdvu_tb is
+end sdvu_tb;
 
 -- =================
 --   Architecture
@@ -58,7 +58,7 @@ architecture arch_sdvu_tb of sdvu_tb is
       end process;
 
       -- DUT
-      dut: entity work.program_memory(arch_program_memory)
+      dut: entity work.sdvu(arch_sdvu)
         port map (
           I_clock           => clock,
           I_reset           => reset,
@@ -83,9 +83,9 @@ architecture arch_sdvu_tb of sdvu_tb is
         wait_cycles(clock, 1);
         report "SDVU: Running testbench";
 
+        I_PRG_MEM_data <= OP_SUB & "00" & "1111" & "00000000001" & "00000000010";
 
-
-
+        wait_cycles(clock, 50);
 
         running <= false;
         report "SDVU: Testbench complete";

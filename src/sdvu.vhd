@@ -111,6 +111,7 @@ begin
       I_reset          => I_reset,
       -- Inputs
       I_op_code        => s_op_code,
+      I_PC_OPCode      => s_PC_OPCode,
       -- Outputs
       O_reset          => s_reset,
       O_enable_ALU     => s_enable_ALU,
