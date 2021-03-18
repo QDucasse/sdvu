@@ -1,3 +1,6 @@
+-- Author: Quentin Ducasse
+--   mail:   quentin.ducasse@ensta-bretagne.org
+--   github: QDucasse
 -- =================================
 -- Testbench helpers
 

@@ -1,4 +1,3 @@
--- TPU Blogpost series by @domipheus
 -- Author: Quentin Ducasse
 --   mail:   quentin.ducasse@ensta-bretagne.org
 --   github: QDucasse
@@ -13,8 +12,8 @@ library IEEE;
 use IEEE.std_logic_1164.all;
 
 library work;
-use work.tb_helpers.all;
 use work.sdvu_constants.all;
+use work.tb_helpers.all;
 
 -- =================
 --      Entity
@@ -34,13 +33,13 @@ architecture arch_program_memory_tb of program_memory_tb is
     signal reset         : std_logic  := '0';  -- Reset signal
     signal enable        : std_logic  := '0';  -- Enable signal
     signal running       : boolean    := true; -- Running flag, Simulation continues while true
-    
+
     -- Signals for entity
     signal I_PC     : STD_LOGIC_VECTOR (PC_SIZE-1 downto 0);
     signal O_data   : STD_LOGIC_VECTOR (INSTR_SIZE-1 downto 0);
 
     -- Internal memory as an external
-    <<signal dut.memory_bank : array (0 to 2**PROG_MEM_SIZE-1) of STD_LOGIC_VECTOR(INSTR_SIZE-1 downto 0)>> <= (others => '0');
+    -- <<signal dut.memory_bank : array (0 to 2**PROG_MEM_SIZE-1) of STD_LOGIC_VECTOR(INSTR_SIZE-1 downto 0)>> <= (others => '0');
 
     begin
       -- Clock, Reset and Enable generation

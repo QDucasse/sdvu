@@ -1,4 +1,3 @@
--- TPU Blogpost series by @domipheus
 -- Author: Quentin Ducasse
 --   mail:   quentin.ducasse@ensta-bretagne.org
 --   github: QDucasse
@@ -11,6 +10,7 @@
 
 library IEEE;
 use IEEE.std_logic_1164.all;
+
 library work;
 use work.sdvu_constants.all;
 use work.tb_helpers.all;
