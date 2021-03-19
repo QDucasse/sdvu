@@ -55,7 +55,8 @@ end control_unit;
 architecture arch_control_unit of control_unit is
     -- Internal Objects
     type state is (
-      STATE_RESET,  -- Reset the system components
+      STATE_RESET1,  -- Transfer the reset signal to the other components
+      STATE_RESET2, -- Wait for the propagation of the reset
       STATE_FETCH1, -- Process PC
       STATE_FETCH2, -- Use PC to get instruction
       STATE_DECODE, -- Decode instruction
@@ -67,7 +68,7 @@ architecture arch_control_unit of control_unit is
       STATE_BIN2,   -- Do the actual calculation
       STATE_BIN3    -- Store the result in a register
     );
-    signal current_state : state := STATE_RESET;
+    signal current_state : state := STATE_RESET1;
 begin
 
     -- Processes
@@ -75,12 +76,15 @@ begin
     begin
         if rising_edge(I_clock) then
           if I_reset = '1' then
-            current_state <= STATE_RESET;
+            current_state <= STATE_RESET1;
           else
             case current_state is
+              -- RESET TRANSITION
+              when STATE_RESET1 =>
+                current_state <= STATE_RESET2;
 
               -- INSTRUCTION TRANSITIONS
-              when STATE_RESET =>
+              when STATE_RESET2 =>
                 current_state <= STATE_FETCH1;
               when STATE_FETCH1 =>
                 current_state <= STATE_FETCH2;
@@ -121,14 +125,14 @@ begin
                 current_state <= STATE_FETCH1;
 
               when others =>
-                current_state <= STATE_RESET;
+                current_state <= STATE_RESET1;
             end case;
           end if;
         end if;
     end process;
 
     -- State mapping to the outputs
-    O_reset          <= '1' when current_state = STATE_RESET else '0';
+    O_reset          <= '1' when current_state = STATE_RESET1 else '0';
     O_enable_PC      <= '1' when current_state = STATE_FETCH1 else '0';
     O_enable_PRG_MEM <= '1' when current_state = STATE_FETCH2 else '0';
 
@@ -162,6 +166,11 @@ begin
                           )
                         else '0';
 
+    -- The PC op code is either:
+    -- RESET in case of a reset
+    -- ASSIGN when JMP (in decode state) --> needs to be propagated with the first line
+    -- INC when finishing a load, store or bin
+    -- NOP otherwise
     O_PC_OPCode  <= I_PC_OPCode when (current_state = STATE_FETCH1 and I_PC_OPCode /= PC_OP_RESET)
                     else PC_OP_INC when (
                                  current_state = STATE_LOAD2 or
@@ -170,7 +179,7 @@ begin
                                  current_state = STATE_FETCH1
                                 )
                     else PC_OP_ASSIGN when current_state = STATE_DECODE
-                    else PC_OP_RESET when current_state = STATE_RESET
+                    else PC_OP_RESET when current_state = STATE_RESET1
                     else PC_OP_NOP;
 
 end arch_control_unit;

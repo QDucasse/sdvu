@@ -60,7 +60,6 @@ architecture arch_sdvu of sdvu is
   signal s_CFG_MEM_we     : STD_LOGIC;
   signal s_PRG_MEM_we     : STD_LOGIC;
   signal s_REG_we         : STD_LOGIC;
-  signal s_PC_OPCode      : STD_LOGIC_VECTOR(PC_OP_SIZE-1 downto 0);
 
   -- Decoder related
   signal s_cfgMask     : STD_LOGIC_VECTOR (1 downto 0);
@@ -80,7 +79,7 @@ architecture arch_sdvu of sdvu is
   -- PC related
   signal s_PC         : STD_LOGIC_VECTOR (PC_SIZE-1 downto 0);
   signal s_newPC      : STD_LOGIC_VECTOR (PC_SIZE-1 downto 0);
-  signal s_PC_op_code : STD_LOGIC_VECTOR (PC_OP_SIZE-1 downto 0);
+  signal s_PC_OPCode  : STD_LOGIC_VECTOR (PC_OP_SIZE-1 downto 0);
 
 -- Components mapping
 begin
@@ -154,7 +153,7 @@ begin
       I_enable    => s_enable_PC,
       -- Inputs
       I_newPC     => s_newPC,
-      I_PC_OPCode => s_PC_op_code,
+      I_PC_OPCode => s_PC_OPCode,
       -- Outputs
       O_PC        => s_PC
     );
@@ -171,7 +170,7 @@ begin
       I_selA   => s_sel_rA,
       I_selB   => s_sel_rB,
       I_selD   => s_sel_rD,
-      I_dataD  => s_dataD,
+      I_dataD  => s_dataResult,
       -- Outputs
       O_dataB  => s_dataB,
       O_dataA  => s_dataA,

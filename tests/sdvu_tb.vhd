@@ -28,22 +28,22 @@ end sdvu_tb;
 
 architecture arch_sdvu_tb of sdvu_tb is
   -- Clock, Reset and Enable signals
-  constant HALF_PERIOD : time := 5 ns;       -- Clock half period
+  constant HALF_PERIOD : time       := 5 ns; -- Clock half period
   signal clock         : std_logic  := '0';  -- Clock signal
   signal reset         : std_logic  := '0';  -- Reset signal
   signal running       : boolean    := true; -- Running flag, Simulation continues while true
 
     -- Signals for entity
-    signal I_CFG_MEM_data    : STD_LOGIC_VECTOR(TYPE_SIZE-1 downto 0);
-    signal O_enable_CFG_MEM  : STD_LOGIC;
-    signal O_CFG_MEM_we      : STD_LOGIC;
-    signal O_CFG_MEM_type    : STD_LOGIC_VECTOR(1 downto 0);
-    signal O_CFG_MEM_address : STD_LOGIC_VECTOR(REG_SIZE-1 downto 0);
-    signal O_CFG_MEM_data    : STD_LOGIC_VECTOR(TYPE_SIZE-1 downto 0);
-    signal I_PRG_MEM_data    : STD_LOGIC_VECTOR(INSTR_SIZE-1 downto 0);
-    signal O_enable_PRG_MEM  : STD_LOGIC;
-    signal O_PRG_MEM_we      : STD_LOGIC;
-    signal O_PRG_MEM_PC      : std_logic_vector(PC_SIZE-1 downto 0);
+    signal s_I_CFG_MEM_data    : STD_LOGIC_VECTOR(TYPE_SIZE-1 downto 0);
+    signal s_O_enable_CFG_MEM  : STD_LOGIC;
+    signal s_O_CFG_MEM_we      : STD_LOGIC;
+    signal s_O_CFG_MEM_type    : STD_LOGIC_VECTOR(1 downto 0);
+    signal s_O_CFG_MEM_address : STD_LOGIC_VECTOR(REG_SIZE-1 downto 0);
+    signal s_O_CFG_MEM_data    : STD_LOGIC_VECTOR(TYPE_SIZE-1 downto 0);
+    signal s_I_PRG_MEM_data    : STD_LOGIC_VECTOR(INSTR_SIZE-1 downto 0);
+    signal s_O_enable_PRG_MEM  : STD_LOGIC;
+    signal s_O_PRG_MEM_we      : STD_LOGIC;
+    signal s_O_PRG_MEM_PC      : std_logic_vector(PC_SIZE-1 downto 0);
 
     begin
       -- Clock, Reset and Enable generation
@@ -63,17 +63,17 @@ architecture arch_sdvu_tb of sdvu_tb is
           I_clock           => clock,
           I_reset           => reset,
 
-          I_CFG_MEM_data    => I_CFG_MEM_data,
-          O_enable_CFG_MEM  => O_enable_CFG_MEM,
-          O_CFG_MEM_we      => O_CFG_MEM_we,
-          O_CFG_MEM_type    => O_CFG_MEM_type,
-          O_CFG_MEM_address => O_CFG_MEM_address,
-          O_CFG_MEM_data    => O_CFG_MEM_data,
+          I_CFG_MEM_data    => s_I_CFG_MEM_data,
+          O_enable_CFG_MEM  => s_O_enable_CFG_MEM,
+          O_CFG_MEM_we      => s_O_CFG_MEM_we,
+          O_CFG_MEM_type    => s_O_CFG_MEM_type,
+          O_CFG_MEM_address => s_O_CFG_MEM_address,
+          O_CFG_MEM_data    => s_O_CFG_MEM_data,
 
-          I_PRG_MEM_data    => I_PRG_MEM_data,
-          O_enable_PRG_MEM  => O_enable_PRG_MEM,
-          O_PRG_MEM_we      => O_PRG_MEM_we,
-          O_PRG_MEM_PC      => O_PRG_MEM_PC
+          I_PRG_MEM_data    => s_I_PRG_MEM_data,
+          O_enable_PRG_MEM  => s_O_enable_PRG_MEM,
+          O_PRG_MEM_we      => s_O_PRG_MEM_we,
+          O_PRG_MEM_PC      => s_O_PRG_MEM_PC
         );
 
       -- Stimulus process
@@ -83,8 +83,9 @@ architecture arch_sdvu_tb of sdvu_tb is
         wait_cycles(clock, 1);
         report "SDVU: Running testbench";
 
-        I_PRG_MEM_data <= OP_SUB & "00" & "1111" & "00000000001" & "00000000010";
-
+        s_I_PRG_MEM_data <= OP_ADD & "11" & "1111" & "00000000001" & "00000000010";
+        wait_cycles(clock, 5);
+        s_I_PRG_MEM_data <= OP_ADD & "11" & "1110" & "00000000100" & "00000000011";
         wait_cycles(clock, 50);
 
         running <= false;
