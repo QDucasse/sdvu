@@ -81,7 +81,6 @@ architecture arch_alu of alu is
     -- Internal register for operation result. (able to hold the 24-bits address in case of JMP)
     signal s_result : STD_LOGIC_VECTOR(REG_SIZE-1 downto 0) := (others => '0');
     -- Comparators to bring locally static choices
-    signal cmp_op : std_logic_vector(3 downto 0);
 begin
     -- Processes
     PerformOperation: process(I_clock, I_enable, I_reset) -- I_clock and I_enable added to the sensitivity list of the process
@@ -91,8 +90,7 @@ begin
         if I_reset = '1' then -- Reset routine
           s_result <= (others => '0');
         elsif I_enable = '1' then  -- Enable
-          cmp_op <= I_op_code(3 downto 0);
-          case cmp_op is
+          case I_op_code(OP_SIZE-1 downto 0) is
 
               -- ADD operation
               -- =============

@@ -104,7 +104,7 @@ begin
 
 
   -- Mapping Control Unit
-  control_sdvu_control_unit : entity work.control_unit(arch_control_unit)
+  sdvu_control_unit : entity work.control_unit(arch_control_unit)
     port map (
       I_clock          => I_clock,
       I_reset          => I_reset,

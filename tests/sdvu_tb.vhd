@@ -80,14 +80,16 @@ architecture arch_sdvu_tb of sdvu_tb is
       StimulusProcess: process
       begin
         wait until reset = '0';
-        wait_cycles(clock, 1);
         report "SDVU: Running testbench";
-
+        wait_cycles(clock, 4);
         s_I_PRG_MEM_data <= OP_ADD & "11" & "1111" & "00000000001" & "00000000010";
-        wait_cycles(clock, 5);
+        wait_cycles(clock, 6);
         s_I_PRG_MEM_data <= OP_ADD & "11" & "1110" & "00000000100" & "00000000011";
-        wait_cycles(clock, 50);
-
+        wait_cycles(clock, 6);
+        s_I_PRG_MEM_data <= OP_ADD & "00" & "1101" & "00000001111" & "00000001110";
+        wait_cycles(clock, 6);
+        s_I_PRG_MEM_data <= OP_LOAD & "00" & "1101" & "00000001111" & "00000001110";
+        wait_cycles(clock, 6);
         running <= false;
         report "SDVU: Testbench complete";
       end process;
