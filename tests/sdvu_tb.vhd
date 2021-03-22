@@ -88,7 +88,7 @@ architecture arch_sdvu_tb of sdvu_tb is
         wait_cycles(clock, 6);
         s_I_PRG_MEM_data <= OP_ADD & "00" & "1101" & "00000001111" & "00000001110";
         wait_cycles(clock, 6);
-        s_I_PRG_MEM_data <= OP_LOAD & "00" & "1101" & "00000001111" & "00000001110";
+        s_I_PRG_MEM_data <= OP_LOAD & "10" & "00" & "1100" & "00000000000000000011";
         wait_cycles(clock, 6);
         running <= false;
         report "SDVU: Testbench complete";

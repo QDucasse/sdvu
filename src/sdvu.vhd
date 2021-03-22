@@ -99,7 +99,7 @@ begin
       I_address    => s_address,
       I_type       => s_type,
       -- Outputs
-      O_dataResult => s_dataResult
+      O_result     => s_dataResult
     );
 
 

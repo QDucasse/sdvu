@@ -35,7 +35,7 @@ entity alu is
           I_address  : in STD_LOGIC_VECTOR (REG_SIZE-1 downto 0); -- Address for JMP, STORE and LOAD
           I_type     : in STD_LOGIC_VECTOR (1 downto 0);          -- Type of the value loaded or stored
           -- Outputs
-          O_dataResult : out STD_LOGIC_VECTOR (REG_SIZE-1 downto 0) -- Result of the operation
+          O_result : out STD_LOGIC_VECTOR (REG_SIZE-1 downto 0) -- Result of the operation
           );
 end alu;
 
@@ -53,8 +53,8 @@ architecture arch_alu of alu is
     begin
       if r1 < r2 then
         result := '1';
-      return result;
       end if;
+      return result;
     end function "<";
 
     -- GREATER THAN
@@ -63,8 +63,8 @@ architecture arch_alu of alu is
     begin
       if r1 > r2 then
         result := '1';
-      return result;
       end if;
+      return result;
     end function ">";
 
     -- EQUAL
@@ -73,8 +73,8 @@ architecture arch_alu of alu is
     begin
       if r1 = r2 then
         result := '1';
-      return result;
       end if;
+      return result;
     end function "=";
 
     -- Internal Objects
@@ -84,6 +84,7 @@ architecture arch_alu of alu is
 begin
     -- Processes
     PerformOperation: process(I_clock, I_enable, I_reset) -- I_clock and I_enable added to the sensitivity list of the process
+      constant ZERO : std_logic_vector(REG_SIZE-1 downto 0) := (others => '0');
     begin
       -- Operations routine
       if rising_edge(I_clock) then
@@ -97,13 +98,13 @@ begin
               when OP_ADD =>
                 case I_cfgMask is
                   when CFG_RR =>
-                    s_result(REG_SIZE-1 downto 0) <= std_logic_vector(unsigned(I_dataA) + unsigned(I_dataB));
+                    s_result <= std_logic_vector(resize(unsigned(I_dataA) + unsigned(I_dataB), REG_SIZE));
                   when CFG_RI =>
-                    s_result(REG_SIZE-1 downto 0) <= std_logic_vector(unsigned(I_dataA) + unsigned(I_immB));
+                    s_result <= std_logic_vector(resize(unsigned(I_dataA) + unsigned(I_immB), REG_SIZE));
                   when CFG_IR =>
-                    s_result(REG_SIZE-1 downto 0) <= std_logic_vector(unsigned(I_immA) + unsigned(I_dataB));
+                    s_result <= std_logic_vector(resize(unsigned(I_immA) + unsigned(I_dataB), REG_SIZE));
                   when CFG_II =>
-                    s_result(REG_SIZE-1 downto 0) <= std_logic_vector(unsigned(I_immA) + unsigned(I_immB));
+                    s_result <= std_logic_vector(resize(unsigned(I_immA) + unsigned(I_immB), REG_SIZE));
                   when others =>
                     -- unreachable
                 end case;
@@ -113,13 +114,13 @@ begin
               when OP_SUB =>
                 case I_cfgMask is
                   when CFG_RR =>
-                    s_result(REG_SIZE-1 downto 0) <= std_logic_vector(unsigned(I_dataA) - unsigned(I_dataB));
+                    s_result <= std_logic_vector(resize(unsigned(I_dataA) - unsigned(I_dataB), REG_SIZE));
                   when CFG_RI =>
-                    s_result(REG_SIZE-1 downto 0) <= std_logic_vector(unsigned(I_dataA) - unsigned(I_immB));
+                    s_result <= std_logic_vector(resize(unsigned(I_dataA) - unsigned(I_immB), REG_SIZE));
                   when CFG_IR =>
-                    s_result(REG_SIZE-1 downto 0) <= std_logic_vector(unsigned(I_immA) - unsigned(I_dataB));
+                    s_result <= std_logic_vector(resize(unsigned(I_immA) - unsigned(I_dataB), REG_SIZE));
                   when CFG_II =>
-                    s_result(REG_SIZE-1 downto 0) <= std_logic_vector(unsigned(I_immA) - unsigned(I_immB));
+                    s_result <= std_logic_vector(resize(unsigned(I_immA) - unsigned(I_immB), REG_SIZE));
                   when others =>
                     -- unreachable
                 end case;
@@ -129,13 +130,13 @@ begin
               when OP_MUL =>
                 case I_cfgMask is
                   when CFG_RR =>
-                    s_result(REG_SIZE-1 downto 0) <= std_logic_vector(unsigned(I_dataA) * unsigned(I_dataB));
+                    s_result <= std_logic_vector(resize(unsigned(I_dataA) * unsigned(I_dataB), REG_SIZE));
                   when CFG_RI =>
-                    s_result(REG_SIZE-1 downto 0) <= std_logic_vector(unsigned(I_dataA) * unsigned(I_immB));
+                    s_result <= std_logic_vector(resize(unsigned(I_dataA) * unsigned(I_immB), REG_SIZE));
                   when CFG_IR =>
-                    s_result(REG_SIZE-1 downto 0) <= std_logic_vector(unsigned(I_immA) * unsigned(I_dataB));
+                    s_result <= std_logic_vector(resize(unsigned(I_immA) * unsigned(I_dataB), REG_SIZE));
                   when CFG_II =>
-                    s_result(REG_SIZE-1 downto 0) <= std_logic_vector(unsigned(I_immA) * unsigned(I_immB));
+                    s_result <= std_logic_vector(resize(unsigned(I_immA) * unsigned(I_immB), REG_SIZE));
                   when others =>
                     -- unreachable
                 end case;
@@ -173,13 +174,13 @@ begin
               when OP_AND =>
                 case I_cfgMask is
                   when CFG_RR =>
-                    s_result(REG_SIZE-1 downto 0) <= I_dataA and I_dataB;
+                    s_result <= I_dataA and I_dataB;
                   when CFG_RI =>
-                    s_result(REG_SIZE-1 downto 0) <= I_dataA and I_immB;
+                    s_result <= I_dataA and I_immB;
                   when CFG_IR =>
-                    s_result(REG_SIZE-1 downto 0) <= I_immA and I_dataB;
+                    s_result <= I_immA and I_dataB;
                   when CFG_II =>
-                    s_result(REG_SIZE-1 downto 0) <= I_immA and I_immB;
+                    s_result <= I_immA and I_immB;
                   when others =>
                     -- unreachable
                 end case;
@@ -189,13 +190,13 @@ begin
               when OP_OR =>
                 case I_cfgMask is
                   when CFG_RR =>
-                    s_result(REG_SIZE-1 downto 0) <= I_dataA or I_dataB;
+                    s_result <= I_dataA or I_dataB;
                   when CFG_RI =>
-                    s_result(REG_SIZE-1 downto 0) <= I_dataA or I_immB;
+                    s_result <= I_dataA or I_immB;
                   when CFG_IR =>
-                    s_result(REG_SIZE-1 downto 0) <= I_immA or I_dataB;
+                    s_result <= I_immA or I_dataB;
                   when CFG_II =>
-                    s_result(REG_SIZE-1 downto 0) <= I_immA or I_immB;
+                    s_result <= I_immA or I_immB;
                   when others =>
                     -- unreachable
                 end case;
@@ -206,13 +207,13 @@ begin
               when OP_LT =>
                 case I_cfgMask is
                   when CFG_RR =>
-                    s_result(0) <= I_dataA < I_dataB;
+                    s_result <= ZERO(REG_SIZE-1 downto 1) & (I_dataA < I_dataB);
                   when CFG_RI =>
-                    s_result(0) <= I_dataA < I_immB;
+                    s_result <= ZERO(REG_SIZE-1 downto 1) & (I_dataA < I_immB);
                   when CFG_IR =>
-                    s_result(0) <= I_immA < I_dataB;
+                    s_result <= ZERO(REG_SIZE-1 downto 1) & (I_immA < I_dataB);
                   when CFG_II =>
-                    s_result(0) <= I_immA < I_immB;
+                    s_result <= ZERO(REG_SIZE-1 downto 1) & (I_immA < I_immB);
                   when others =>
                     -- unreachable
                 end case;
@@ -222,13 +223,13 @@ begin
               when OP_GT =>
                 case I_cfgMask is
                   when CFG_RR =>
-                    s_result(0) <= I_dataA > I_dataB;
+                    s_result <= ZERO(REG_SIZE-1 downto 1) & (I_dataA > I_dataB);
                   when CFG_RI =>
-                    s_result(0) <= I_dataA > I_immB;
+                    s_result <= ZERO(REG_SIZE-1 downto 1) & (I_dataA > I_immB);
                   when CFG_IR =>
-                    s_result(0) <= I_immA > I_dataB;
+                    s_result <= ZERO(REG_SIZE-1 downto 1) & (I_immA > I_dataB);
                   when CFG_II =>
-                    s_result(0) <= I_immA > I_immB;
+                    s_result <= ZERO(REG_SIZE-1 downto 1) & (I_immA > I_immB);
                   when others =>
                     -- unreachable
                 end case;
@@ -239,13 +240,13 @@ begin
               when OP_EQ =>
                 case I_cfgMask is
                   when CFG_RR =>
-                    s_result(0) <= I_dataA = I_dataB;
+                    s_result <= ZERO(REG_SIZE-1 downto 1) & (I_dataA = I_dataB);
                   when CFG_RI =>
-                    s_result(0) <= I_dataA = I_immB;
+                    s_result <= ZERO(REG_SIZE-1 downto 1) & (I_dataA = I_immB);
                   when CFG_IR =>
-                    s_result(0) <= I_immA = I_dataB;
+                    s_result <= ZERO(REG_SIZE-1 downto 1) & (I_immA = I_dataB);
                   when CFG_II =>
-                    s_result(0) <= I_immA = I_immB;
+                    s_result <= ZERO(REG_SIZE-1 downto 1) & (I_immA = I_immB);
                   when others =>
                     -- unreachable
                 end case;
@@ -253,29 +254,12 @@ begin
               -- NOT operation
               -- =============
               when OP_NOT =>
-                s_result(REG_SIZE-1 downto 0) <= std_logic_vector(not I_dataA);
+                if I_dataA = ZERO then
+                  s_result <= ZERO(REG_SIZE-1 downto 1) & '1';
+                else
+                  s_result <= ZERO(REG_SIZE-1 downto 1) & '0';
+                end if;
 
-              -- -- JMP operation
-              -- -- ================
-              -- when OP_JMP =>
-              --   -- Set target anyway
-              --   s_result(23 downto 0) <= I_address;
-              --   -- If condition verified, shouldBranch set to true
-              --   if I_dataA then
-              --     s_shouldBranch = '1';
-              --   else
-              --     s_shouldBranch = '0';
-              --   end if;
-              --
-              -- -- STORE operation
-              -- -- ==============
-              -- when OP_STORE =>
-              --   s_shouldBranch <= '0';
-              --
-              -- -- LOAD operation
-              -- -- ==============
-              -- when OP_LOAD =>
-              --   s_shouldBranch <= '0';
 
               -- Other operations
               -- ================
@@ -288,6 +272,6 @@ begin
     end process;
 
     -- Propagate to outputs
-    O_dataResult <= s_result;
+    O_result <= s_result;
 
 end arch_alu;
