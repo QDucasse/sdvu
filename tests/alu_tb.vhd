@@ -188,7 +188,7 @@ architecture arch_alu_tb of alu_tb is
       -- II
       I_cfgMask <= CFG_II;
       wait_cycles(clock, 1);
-      assert_true(O_result=X"00000000", "AND II");
+      assert_true(O_result=X"00000001", "AND II");
 
 
       -- =============
@@ -298,7 +298,7 @@ architecture arch_alu_tb of alu_tb is
       wait_cycles(clock, 1);
       assert_true(O_result=X"00000001", "NOT from false");
 
-      
+
       running <= false;
       report "ALU: Testbench complete";
     end process;

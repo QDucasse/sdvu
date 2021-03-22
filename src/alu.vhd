@@ -44,38 +44,18 @@ end alu;
 -- =================
 
 architecture arch_alu of alu is
-    -- Functions
 
+    -- Functions
     -- Overloading comparators to produce an STD LOGIC output
     -- LESS THAN
-    function "<"(r1: STD_LOGIC_VECTOR; r2: STD_LOGIC_VECTOR) return STD_LOGIC is
-      variable result : STD_LOGIC := '0';
+    function bool_to_logic(bool : boolean) return STD_LOGIC_VECTOR is
+      variable result : STD_LOGIC_VECTOR(REG_SIZE-1 downto 0) := (others => '0');
     begin
-      if r1 < r2 then
-        result := '1';
+      if bool then
+        result(0) := '1';
       end if;
       return result;
-    end function "<";
-
-    -- GREATER THAN
-    function ">"(r1: STD_LOGIC_VECTOR; r2: STD_LOGIC_VECTOR) return STD_LOGIC is
-      variable result : STD_LOGIC := '0';
-    begin
-      if r1 > r2 then
-        result := '1';
-      end if;
-      return result;
-    end function ">";
-
-    -- EQUAL
-    function "="(r1: STD_LOGIC_VECTOR; r2: STD_LOGIC_VECTOR) return STD_LOGIC is
-      variable result : STD_LOGIC := '0';
-    begin
-      if r1 = r2 then
-        result := '1';
-      end if;
-      return result;
-    end function "=";
+    end function bool_to_logic;
 
     -- Internal Objects
     -- Internal register for operation result. (able to hold the 24-bits address in case of JMP)
@@ -169,34 +149,34 @@ begin
                 --     s_result(REG_SIZE-1 downto 0) <= std_logic_vector(unsigned(I_immA) mod unsigned(I_immB));
                 -- end case;
 
-              -- AND operation
-              -- =============
-              when OP_AND =>
-                case I_cfgMask is
-                  when CFG_RR =>
-                    s_result <= I_dataA and I_dataB;
-                  when CFG_RI =>
-                    s_result <= I_dataA and I_immB;
-                  when CFG_IR =>
-                    s_result <= I_immA and I_dataB;
-                  when CFG_II =>
-                    s_result <= I_immA and I_immB;
-                  when others =>
-                    -- unreachable
-                end case;
+              -- -- AND operation
+              -- -- =============
+              -- when OP_AND =>
+              --   case I_cfgMask is
+              --     when CFG_RR =>
+              --       s_result <= I_dataA and I_dataB;
+              --     when CFG_RI =>
+              --       s_result <= I_dataA and I_immB;
+              --     when CFG_IR =>
+              --       s_result <= I_immA and I_dataB;
+              --     when CFG_II =>
+              --       s_result <= I_immA and I_immB;
+              --     when others =>
+              --       -- unreachable
+              --   end case;
 
               -- OR operation
               -- =============
               when OP_OR =>
                 case I_cfgMask is
                   when CFG_RR =>
-                    s_result <= I_dataA or I_dataB;
+                    s_result <= bool_to_logic(unsigned(I_dataA) /= 0 or unsigned(I_dataB) /= 0);
                   when CFG_RI =>
-                    s_result <= I_dataA or I_immB;
+                    s_result <= bool_to_logic(unsigned(I_dataA) /= 0 or unsigned(I_immB) /= 0);
                   when CFG_IR =>
-                    s_result <= I_immA or I_dataB;
+                    s_result <= bool_to_logic(unsigned(I_immA) /= 0 or unsigned(I_dataB) /= 0);
                   when CFG_II =>
-                    s_result <= I_immA or I_immB;
+                    s_result <= bool_to_logic(unsigned(I_immA) /= 0 or unsigned(I_immB) /= 0);
                   when others =>
                     -- unreachable
                 end case;
@@ -207,13 +187,13 @@ begin
               when OP_LT =>
                 case I_cfgMask is
                   when CFG_RR =>
-                    s_result <= ZERO(REG_SIZE-1 downto 1) & (I_dataA < I_dataB);
+                    s_result <= bool_to_logic(I_dataA < I_dataB);
                   when CFG_RI =>
-                    s_result <= ZERO(REG_SIZE-1 downto 1) & (I_dataA < I_immB);
+                    s_result <= bool_to_logic(I_dataA < I_immB);
                   when CFG_IR =>
-                    s_result <= ZERO(REG_SIZE-1 downto 1) & (I_immA < I_dataB);
+                    s_result <= bool_to_logic(I_immA < I_dataB);
                   when CFG_II =>
-                    s_result <= ZERO(REG_SIZE-1 downto 1) & (I_immA < I_immB);
+                    s_result <= bool_to_logic(I_immA < I_immB);
                   when others =>
                     -- unreachable
                 end case;
@@ -223,13 +203,13 @@ begin
               when OP_GT =>
                 case I_cfgMask is
                   when CFG_RR =>
-                    s_result <= ZERO(REG_SIZE-1 downto 1) & (I_dataA > I_dataB);
+                    s_result <= bool_to_logic(I_dataA > I_dataB);
                   when CFG_RI =>
-                    s_result <= ZERO(REG_SIZE-1 downto 1) & (I_dataA > I_immB);
+                    s_result <= bool_to_logic(I_dataA > I_immB);
                   when CFG_IR =>
-                    s_result <= ZERO(REG_SIZE-1 downto 1) & (I_immA > I_dataB);
+                    s_result <= bool_to_logic(I_immA > I_dataB);
                   when CFG_II =>
-                    s_result <= ZERO(REG_SIZE-1 downto 1) & (I_immA > I_immB);
+                    s_result <= bool_to_logic(I_immA > I_immB);
                   when others =>
                     -- unreachable
                 end case;
@@ -237,16 +217,16 @@ begin
 
               -- EQ operation
               -- ============
-              when OP_EQ =>
+              when OP_EQ | OP_AND =>
                 case I_cfgMask is
                   when CFG_RR =>
-                    s_result <= ZERO(REG_SIZE-1 downto 1) & (I_dataA = I_dataB);
+                    s_result <= bool_to_logic(I_dataA = I_dataB);
                   when CFG_RI =>
-                    s_result <= ZERO(REG_SIZE-1 downto 1) & (I_dataA = I_immB);
+                    s_result <= bool_to_logic(I_dataA = I_immB);
                   when CFG_IR =>
-                    s_result <= ZERO(REG_SIZE-1 downto 1) & (I_immA = I_dataB);
+                    s_result <= bool_to_logic(I_immA = I_dataB);
                   when CFG_II =>
-                    s_result <= ZERO(REG_SIZE-1 downto 1) & (I_immA = I_immB);
+                    s_result <= bool_to_logic(I_immA = I_immB);
                   when others =>
                     -- unreachable
                 end case;

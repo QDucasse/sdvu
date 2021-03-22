@@ -1,4 +1,11 @@
+# GHDL
 /build
 */*.cf
 *.cf
 *.ghw
+
+# MODELSIM
+/work
+transcript
+*.wlf
+vsim.*
