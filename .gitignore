@@ -4,8 +4,27 @@
 *.cf
 *.ghw
 
+
 # MODELSIM
-/work
-transcript
+[_@]*
+
+# Compilation output
+*.mti
+*.dat
+*.dbs
+*.psm
+*.bak
+*.cmp
+*.jpg
+*.html
+*.bsf
+
+# Simulation output
+wlf*
 *.wlf
-vsim.*
+*.vstf
+*.ucdb
+cov*/
+transcript*
+sc_dpiheader.h
+vsim.dbg
