@@ -35,22 +35,16 @@ architecture arch_program_memory_tb of program_memory_tb is
     signal running       : boolean    := true; -- Running flag, Simulation continues while true
 
     -- Signals for entity
-    signal I_PC     : STD_LOGIC_VECTOR (PC_SIZE-1 downto 0);
+    signal I_PC     : STD_LOGIC_VECTOR (PC_SIZE-1 downto 0) := X"0000";
     signal O_data   : STD_LOGIC_VECTOR (INSTR_SIZE-1 downto 0);
 
     -- Internal memory as an external
-    -- <<signal dut.memory_bank : array (0 to 2**PROG_MEM_SIZE-1) of STD_LOGIC_VECTOR(INSTR_SIZE-1 downto 0)>> <= (others => '0');
 
     begin
       -- Clock, Reset and Enable generation
       ClockProcess : process
       begin
         genClock(clock, running, HALF_PERIOD);
-      end process;
-
-      ResetProcess : process
-      begin
-        genPulse(reset, 10 ns, true);
       end process;
 
       EnableProcess : process
@@ -70,18 +64,32 @@ architecture arch_program_memory_tb of program_memory_tb is
 
     -- Stimulus process
     StimulusProcess: process
+      -- External to access the internal memory object
+      type memory_file is array (0 to 2**PROG_MEM_SIZE-1) of STD_LOGIC_VECTOR(INSTR_SIZE-1 downto 0);
+      -- alias mem_bank is <<signal dut.memory_bank : memory_file>>;
     begin
-      wait until reset = '0';
+      reset <= '0';
       wait until enable = '1';
-      wait_cycles(clock, 1);
       report "Program Memory: Running testbench";
 
-      -- TESTING OPERATIONS
-      -- Test 1: Read a given instruction
-      PRG_MEM(1) <= X"FFFFFFFF";
+      -- Test 1: Fetch first instruction
+      I_PC <= X"0000";
       wait_cycles(clock, 1);
-      I_PC <= X"000000004";
+      assert_true(O_data=X"DBE00060", "Fetch first instruction");
 
+      -- Test 1: Fetch second instruction
+      I_PC <= X"0001";
+      wait_cycles(clock, 1);
+      assert_true(O_data=X"94007000", "Fetch second instruction");
+
+      -- Test Reset
+      reset <= '1';
+      wait_cycles(clock, 1);
+
+      I_PC <= X"0002";
+      reset <= '0';
+      wait_cycles(clock, 1);
+      assert_true(O_data=X"00000000", "Reset");
 
       running <= false;
       report "Program Memory: Testbench complete";

@@ -12,6 +12,8 @@ library IEEE;
 use IEEE.std_logic_1164.all;
 use IEEE.numeric_std.all;
 
+use std.textio.all;
+
 library work;
 use work.sdvu_constants.all;
 
@@ -34,9 +36,28 @@ end program_memory;
 -- =================
 
 architecture arch_program_memory of program_memory is
-    -- Internal Objects
     type memory_file is array (0 to 2**PROG_MEM_SIZE-1) of STD_LOGIC_VECTOR(INSTR_SIZE-1 downto 0);  -- 128 32-bit addresses
-    signal memory_bank: memory_file := (others => X"00000000"); -- Affectation of the array and initialization at 0
+
+    -- Functions
+    impure function init_prg_mem return memory_file is
+      file text_file : text open read_mode is "cfg/prg_mem.ini";
+      variable text_line : line;
+      variable memory_content : memory_file;
+      variable file_ended : boolean := false;
+    begin
+      for i in 0 to 2**PROG_MEM_SIZE-1 loop
+        if endfile(text_file) then
+          memory_content(i) := X"00000000";
+        else
+          readline(text_file, text_line);
+          hread(text_line, memory_content(i));
+        end if;
+      end loop;
+      return memory_content;
+    end function;
+
+    -- Internal objects
+    signal memory_bank: memory_file := init_prg_mem; -- Affectation of the array and initialization at 0
 
 begin
   -- Processes
