@@ -188,7 +188,6 @@ begin
 
   -- PRG MEM output signals
   O_enable_PRG_MEM  <= s_enable_PRG_MEM;
-  O_PRG_MEM_we      <= s_PRG_MEM_we;
   O_PRG_MEM_PC      <= s_PC;
 
 end architecture arch_sdvu;

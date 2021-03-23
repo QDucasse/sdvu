@@ -23,7 +23,7 @@ use work.sdvu_constants.all;
 --      Entity
 -- =================
 
-entity program_memory is
+entity auto_program_memory is
     port (I_clock   : in STD_LOGIC; -- Clock
           I_reset   : in STD_LOGIC; -- Reset
           I_enable  : in STD_LOGIC; -- Enable
@@ -31,13 +31,13 @@ entity program_memory is
           I_PC    : in STD_LOGIC_VECTOR (PC_SIZE-1 downto 0)     := (others => '0'); -- Address of the new instruction
           O_data  : out STD_LOGIC_VECTOR (INSTR_SIZE-1 downto 0) := (others => '0')  -- Data at address
           );
-end program_memory;
+end auto_program_memory;
 
 -- =================
 --   Architecture
 -- =================
 
-architecture arch_program_memory of program_memory is
+architecture arch_auto_program_memory of auto_program_memory is
     type memory_file is array (0 to 2**PROG_MEM_SIZE-1) of STD_LOGIC_VECTOR(INSTR_SIZE-1 downto 0);
     -- Internal objects
     signal memory_bank: memory_file := (
@@ -60,4 +60,4 @@ begin
         end if;
     end if;
   end process;
-end arch_program_memory;
+end arch_auto_program_memory;

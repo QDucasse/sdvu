@@ -31,16 +31,16 @@ architecture arch_sdvu_top of sdvu_top is
 
   -- Signals
   -- CFG MEM related
-  signal s_enable_CFG_MEM  : STD_LOGIC;
-  signal s_CFG_MEM_data    : STD_LOGIC_VECTOR(TYPE_SIZE-1 downto 0);
-  signal s_CFG_MEM_we      : STD_LOGIC;
-  signal s_CFG_MEM_type    : STD_LOGIC_VECTOR(1 downto 0);
-  signal s_CFG_MEM_address : STD_LOGIC_VECTOR(REG_SIZE-1 downto 0);
-  signal s_CFG_MEM_data    : STD_LOGIC_VECTOR(TYPE_SIZE-1 downto 0);
+  signal s_enable_CFG_MEM     : STD_LOGIC;
+  signal s_CFG_MEM_data_write : STD_LOGIC_VECTOR(TYPE_SIZE-1 downto 0);
+  signal s_CFG_MEM_we         : STD_LOGIC;
+  signal s_CFG_MEM_type       : STD_LOGIC_VECTOR(1 downto 0);
+  signal s_CFG_MEM_address    : STD_LOGIC_VECTOR(REG_SIZE-1 downto 0);
+  signal s_CFG_MEM_data_read  : STD_LOGIC_VECTOR(TYPE_SIZE-1 downto 0);
   -- PRG MEM related
-  signal s_enable_PRG_MEM  : STD_LOGIC;
-  signal s_PRG_MEM_data    : STD_LOGIC_VECTOR(INSTR_SIZE-1 downto 0);
-  signal s_PRG_MEM_PC      : STD_LOGIC_VECTOR(PC_SIZE-1 downto 0);
+  signal s_enable_PRG_MEM : STD_LOGIC;
+  signal s_PRG_MEM_data   : STD_LOGIC_VECTOR(INSTR_SIZE-1 downto 0);
+  signal s_PRG_MEM_PC     : STD_LOGIC_VECTOR(PC_SIZE-1 downto 0);
 
 begin
   -- Components Mapping
@@ -56,7 +56,6 @@ begin
       O_CFG_MEM_data    => s_CFG_MEM_data_read,
       I_PRG_MEM_data    => s_PRG_MEM_data,
       O_enable_PRG_MEM  => s_enable_PRG_MEM,
-      O_PRG_MEM_we      => s_PRG_MEM_we,
       O_PRG_MEM_PC      => s_PRG_MEM_PC
     );
 
