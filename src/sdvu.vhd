@@ -35,8 +35,7 @@ entity sdvu is
        -- Program memory
        I_PRG_MEM_data    : in STD_LOGIC_VECTOR(INSTR_SIZE-1 downto 0);
        O_enable_PRG_MEM  : out STD_LOGIC;
-       O_PRG_MEM_we      : out STD_LOGIC;
-       O_PRG_MEM_PC      : out std_logic_vector(PC_SIZE-1 downto 0)
+       O_PRG_MEM_PC      : out STD_LOGIC_VECTOR(PC_SIZE-1 downto 0)
       );
 end sdvu;
 
@@ -58,7 +57,6 @@ architecture arch_sdvu of sdvu is
   signal s_enable_REG     : STD_LOGIC;
 
   signal s_CFG_MEM_we     : STD_LOGIC;
-  signal s_PRG_MEM_we     : STD_LOGIC;
   signal s_REG_we         : STD_LOGIC;
 
   -- Decoder related
