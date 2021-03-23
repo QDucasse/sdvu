@@ -22,7 +22,7 @@ use work.sdvu_constants.all;
 --      Entity
 -- =================
 
-entity config_memory is
+entity auto_config_memory is
     port (I_clock    : in STD_LOGIC; -- Clock signal
           I_enable  : in STD_LOGIC;   -- Unit enable
           I_reset   : in STD_LOGIC;   -- Reset signal
@@ -32,18 +32,15 @@ entity config_memory is
           I_data    : in STD_LOGIC_VECTOR (TYPE_SIZE-1 downto 0);    -- Data to write to address in memory
           O_data    : out STD_LOGIC_VECTOR (TYPE_SIZE-1 downto 0)    -- Read address from memory
           );
-end config_memory;
+end auto_config_memory;
 
 -- =================
 --   Architecture
 -- =================
 
-architecture arch_config_memory of config_memory is
+architecture arch_auto_config_memory of auto_config_memory is
     -- Internal Objects
-    signal memory_bank : STD_LOGIC_VECTOR(2**CFG_MEM_SIZE-1 downto 0) := (
-      X"{{config}}";
-    );
-
+    signal memory_bank : STD_LOGIC_VECTOR(2**CFG_MEM_SIZE-1 downto 0) := X"{{config}}";
 begin
   -- Processes
   TransferData: process(I_clock) -- I_clock added to the sensitivity list of the process
@@ -82,4 +79,4 @@ begin
         end if;
     end if;
   end process;
-end arch_config_memory;
+end arch_auto_config_memory;

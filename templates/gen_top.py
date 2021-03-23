@@ -12,12 +12,16 @@ class TemplateHandler():
     TEMPLATE_CFG = "auto_config_memory.vhd.template"
     TEMPLATE_PRG = "auto_program_memory.vhd.template"
 
-    def __init__(self, cfg_mem_file_name, out_cfg_mem_file, cfg_mem_size,
-                       prg_mem_file_name, out_prg_mem_file, prg_mem_size):
+    def __init__(self, cfg_mem_file_name, out_cfg_mem_file,
+                       prg_mem_file_name, out_prg_mem_file):
 
         self.environment = Environment(loader=FileSystemLoader('templates'))
         self.template_cfg_mem = self.environment.get_template(self.TEMPLATE_CFG)
         self.template_prg_mem = self.environment.get_template(self.TEMPLATE_PRG)
+        # Find sizes
+        cfg_mem_width, prg_mem_width = self.parse_widths()
+        cfg_mem_size = 2**cfg_mem_width // 4
+        prg_mem_size = 2**prg_mem_width 
         # Read program instructions
         self.instructions = []
         with open(prg_mem_file_name, "rb") as file:
@@ -37,6 +41,17 @@ class TemplateHandler():
 
         self.out_cfg_mem_file = out_cfg_mem_file
         self.out_prg_mem_file = out_prg_mem_file
+
+    def parse_widths(self):
+        cfg_mem_width = 0
+        prg_mem_width = 0
+        with open("src/sdvu_constants.vhd", "r") as file:
+            for line in file.readlines():
+                if "PROG_MEM_SIZE" in line:
+                    prg_mem_width = int(line.split("=")[1][:-2].strip())
+                elif "CFG_MEM_SIZE" in line:
+                    cfg_mem_width = int(line.split("=")[1][:-2].strip())
+        return cfg_mem_width, prg_mem_width
 
     def fill_instructions(self, size):
         while len(self.instructions) < size:
@@ -66,7 +81,7 @@ class TemplateHandler():
 
 if __name__ == "__main__":
     th = TemplateHandler(
-        "templates/adding.6.cfg", "src/auto_config_memory.vhd",  128,
-        "templates/adding.6.out", "src/auto_program_memory.vhd", 256
+        "templates/adding.6.cfg", "src/auto_config_memory.vhd",
+        "templates/adding.6.out", "src/auto_program_memory.vhd"
     )
     th.gen_memories()
