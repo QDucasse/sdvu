@@ -2,7 +2,7 @@
 --   mail:   quentin.ducasse@ensta-bretagne.org
 --   github: QDucasse
 -- =================================
--- Program Counter Benchmark
+-- Testbench for the Control Unit
 
 -- =================
 --    Libraries

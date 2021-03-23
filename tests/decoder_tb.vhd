@@ -2,7 +2,7 @@
 --   mail:   quentin.ducasse@ensta-bretagne.org
 --   github: QDucasse
 -- =================================
--- Testbench for the decode entity.
+-- Testbench for the Decoder
 
 -- =================
 --    Libraries

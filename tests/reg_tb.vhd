@@ -2,7 +2,7 @@
 --   mail:   quentin.ducasse@ensta-bretagne.org
 --   github: QDucasse
 -- =================================
--- Testbench for the register entity
+-- Testbench for the Register File
 
 -- =================
 --    Libraries

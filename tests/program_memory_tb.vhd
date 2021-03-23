@@ -2,7 +2,7 @@
 --   mail:   quentin.ducasse@ensta-bretagne.org
 --   github: QDucasse
 -- =================================
--- Testbench for the ram entity.
+-- Testbench for the Program Memory
 
 -- =================
 --    Libraries

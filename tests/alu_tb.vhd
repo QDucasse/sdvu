@@ -2,7 +2,7 @@
 --   mail:   quentin.ducasse@ensta-bretagne.org
 --   github: QDucasse
 -- =================================
--- Testbench file for the ALU
+-- Testbench for the ALU
 
 -- =================
 --    Libraries
