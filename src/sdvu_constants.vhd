@@ -79,7 +79,7 @@ package sdvu_constants is
   -- Control unit related
   constant STATE_NUMBER  : natural := 14;
   -- PC related
-  constant PC_SIZE       : natural := 16;
+  constant PC_SIZE       : natural := 32;
   constant PC_OP_SIZE    : natural := 2;
   -- Memory related
   constant PROG_MEM_SIZE : natural := 8;

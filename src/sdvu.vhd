@@ -77,7 +77,6 @@ architecture arch_sdvu of sdvu is
   signal s_dataD_STORE : STD_LOGIC_VECTOR (REG_SIZE-1 downto 0);
   -- PC related
   signal s_PC         : STD_LOGIC_VECTOR (PC_SIZE-1 downto 0);
-  signal s_newPC      : STD_LOGIC_VECTOR (PC_SIZE-1 downto 0);
   signal s_PC_OPCode  : STD_LOGIC_VECTOR (PC_OP_SIZE-1 downto 0);
 
 -- Components mapping
@@ -152,7 +151,7 @@ begin
       I_reset     => s_reset,
       I_enable    => s_enable_PC,
       -- Inputs
-      I_newPC     => s_newPC,
+      I_newPC     => s_address,
       I_PC_OPCode => s_PC_OPCode,
       -- Outputs
       O_PC        => s_PC

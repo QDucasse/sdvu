@@ -57,7 +57,7 @@ architecture arch_sdvu_top_tb of sdvu_top_tb is
       begin
         wait until reset = '0';
         report "SDVU TOP: Running testbench";
-        wait_cycles(clock, 40);
+        wait_cycles(clock, 200);
         running <= false;
         report "SDVU: Testbench complete";
       end process;
