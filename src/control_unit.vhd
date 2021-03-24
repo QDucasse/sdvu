@@ -2,11 +2,7 @@
 --   mail:   quentin.ducasse@ensta-bretagne.org
 --   github: QDucasse
 -- =================================
--- Simple control unit with different states
---    Decode
---    Reg Read
---    ALU
---    Reg Write
+-- FSM for the control unit
 
 -- =================
 --    Libraries
@@ -56,17 +52,18 @@ architecture arch_control_unit of control_unit is
     -- Internal Objects
     type state is (
       STATE_RESET1,  -- Transfer the reset signal to the other components
-      STATE_RESET2, -- Wait for the propagation of the reset
-      STATE_FETCH1, -- Process PC
-      STATE_FETCH2, -- Use PC to get instruction
-      STATE_DECODE, -- Decode instruction
-      STATE_STORE1, -- Process the regs to get the value to store
-      STATE_STORE2, -- Store the value in memory
-      STATE_LOAD1,  -- Get the value at the given address
-      STATE_LOAD2,  -- Store it in registers
-      STATE_BIN1,   -- Get the values behind registers
-      STATE_BIN2,   -- Do the actual calculation
-      STATE_BIN3    -- Store the result in a register
+      STATE_RESET2,  -- Wait for the propagation of the reset
+      STATE_FETCH1,  -- Process PC
+      STATE_FETCH2,  -- Use PC to get instruction
+      STATE_DECODE1, -- Decode instruction
+      STATE_DECODE2, -- Switch on the instruction
+      STATE_STORE1,  -- Process the regs to get the value to store
+      STATE_STORE2,  -- Store the value in memory
+      STATE_LOAD1,   -- Get the value at the given address
+      STATE_LOAD2,   -- Store it in registers
+      STATE_BIN1,    -- Get the values behind registers
+      STATE_BIN2,    -- Do the actual calculation
+      STATE_BIN3     -- Store the result in a register
     );
     signal current_state : state := STATE_RESET1;
 begin
@@ -89,10 +86,12 @@ begin
               when STATE_FETCH1 =>
                 current_state <= STATE_FETCH2;
               when STATE_FETCH2 =>
-                current_state <= STATE_DECODE;
+                current_state <= STATE_DECODE1;
+              when STATE_DECODE1 =>
+                current_state <= STATE_DECODE2;
 
-              -- SWITCH ON THE DECODE
-              when STATE_DECODE =>
+              -- SWITCH ON THE DECODE1
+              when STATE_DECODE2 =>
                 case I_op_code is
                   when OP_STORE =>
                     current_state <= STATE_STORE1;
@@ -142,7 +141,7 @@ begin
                                current_state = STATE_STORE2
                                )
                             else '0';
-    O_enable_DECODER <= '1' when current_state = STATE_DECODE else '0';
+    O_enable_DECODER <= '1' when current_state = STATE_DECODE1 else '0';
     O_enable_ALU     <= '1' when current_state = STATE_BIN2 else '0';
     -- Reg needed when retrieving the operands of a binary operation
     --                 writing the result to a register
@@ -178,7 +177,7 @@ begin
                                  current_state = STATE_BIN3 or
                                  current_state = STATE_FETCH1
                                 )
-                    else PC_OP_ASSIGN when current_state = STATE_DECODE
+                    else PC_OP_ASSIGN when current_state = STATE_DECODE2
                     else PC_OP_RESET when current_state = STATE_RESET1
                     else PC_OP_NOP;
 

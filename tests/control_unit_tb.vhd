@@ -138,21 +138,34 @@ begin
       assert_true(O_REG_we='0',          "FETCH2 - No we REG");
       assert_true(O_PC_OPCode=PC_OP_NOP, "FETCH2 - PC operation: NOP");
 
-      -- Test 5: Decode
+      -- Test 5: Decode 1
       I_op_code <= OP_JMP;
       wait_cycles(clock, 1);
-      assert_true(O_reset='0',              "DECODE - Reset not set");
-      assert_true(O_enable_ALU='0',         "DECODE - No enable ALU");
-      assert_true(O_enable_CFG_MEM='0',     "DECODE - No enable CFG_MEM");
-      assert_true(O_enable_DECODER='1',     "DECODE - Enable DECODER");
-      assert_true(O_enable_PC='0',          "DECODE - No enable PC");
-      assert_true(O_enable_PRG_MEM='0',     "DECODE - No enable PRG_MEM");
-      assert_true(O_enable_REG='0',         "DECODE - No enable REG");
-      assert_true(O_CFG_MEM_we='0',         "DECODE - No we CFG_MEM");
-      assert_true(O_REG_we='0',             "DECODE - No we REG");
-      assert_true(O_PC_OPCode=PC_OP_ASSIGN, "DECODE - PC operation: ASSIGN");
+      assert_true(O_reset='0',              "DECODE1 - Reset not set");
+      assert_true(O_enable_ALU='0',         "DECODE1 - No enable ALU");
+      assert_true(O_enable_CFG_MEM='0',     "DECODE1 - No enable CFG_MEM");
+      assert_true(O_enable_DECODER='1',     "DECODE1 - Enable DECODER");
+      assert_true(O_enable_PC='0',          "DECODE1 - No enable PC");
+      assert_true(O_enable_PRG_MEM='0',     "DECODE1 - No enable PRG_MEM");
+      assert_true(O_enable_REG='0',         "DECODE1 - No enable REG");
+      assert_true(O_CFG_MEM_we='0',         "DECODE1 - No we CFG_MEM");
+      assert_true(O_REG_we='0',             "DECODE1 - No we REG");
+      assert_true(O_PC_OPCode=PC_OP_NOP,    "DECODE1 - PC operation: NOP");
 
-      -- Test 6: Fetch 1 from JMP
+      -- Test 6: Decode 2
+      wait_cycles(clock, 1);
+      assert_true(O_reset='0',              "DECODE2 - Reset not set");
+      assert_true(O_enable_ALU='0',         "DECODE2 - No enable ALU");
+      assert_true(O_enable_CFG_MEM='0',     "DECODE2 - No enable CFG_MEM");
+      assert_true(O_enable_DECODER='0',     "DECODE2 - Enable DECODER");
+      assert_true(O_enable_PC='0',          "DECODE2 - No enable PC");
+      assert_true(O_enable_PRG_MEM='0',     "DECODE2 - No enable PRG_MEM");
+      assert_true(O_enable_REG='0',         "DECODE2 - No enable REG");
+      assert_true(O_CFG_MEM_we='0',         "DECODE2 - No we CFG_MEM");
+      assert_true(O_REG_we='0',             "DECODE2 - No we REG");
+      assert_true(O_PC_OPCode=PC_OP_ASSIGN, "DECODE2 - PC operation: ASSIGN");
+
+      -- Test 7: Fetch 1 from JMP
       wait_cycles(clock, 1);
       assert_true(O_reset='0',              "FETCH1 JMP - Reset not set");
       assert_true(O_enable_ALU='0',         "FETCH1 JMP - No enable ALU");
@@ -165,9 +178,9 @@ begin
       assert_true(O_REG_we='0',             "FETCH1 JMP - No we REG");
       assert_true(O_PC_OPCode=PC_OP_ASSIGN, "FETCH1 JMP - PC operation: ASSIGN");
 
-      -- (Re-fetch, wait until state decode)
-      wait_cycles(clock, 2);
-      -- Test 7: Store 1
+      -- (Re-fetch, wait until state decode2)
+      wait_cycles(clock, 3);
+      -- Test 8: Store 1
       I_op_code <= OP_STORE;
       wait_cycles(clock, 1);
       assert_true(O_reset='0',           "STORE1 - Reset not set");
@@ -207,8 +220,8 @@ begin
       assert_true(O_REG_we='0',          "FETCH1 STORE - No we REG");
       assert_true(O_PC_OPCode=PC_OP_INC, "FETCH1 STORE - PC operation: INC");
 
-      -- (Re-fetch, wait until state decode)
-      wait_cycles(clock, 2);
+      -- (Re-fetch, wait until state decode2)
+      wait_cycles(clock, 3);
       -- Test 10: Load 1
       I_op_code <= OP_LOAD;
       wait_cycles(clock, 1);
@@ -249,8 +262,8 @@ begin
       assert_true(O_REG_we='0',          "FETCH1 LOAD - No we REG");
       assert_true(O_PC_OPCode=PC_OP_INC, "FETCH1 LOAD - PC operation: INC");
 
-      -- (Reset wait until state decode)
-      wait_cycles(clock, 2);
+      -- (Reset wait until state decode2)
+      wait_cycles(clock, 3);
       -- Test 13: Bin 1
       I_op_code <= OP_ADD;
       wait_cycles(clock, 1);

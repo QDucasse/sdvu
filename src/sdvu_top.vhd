@@ -48,12 +48,12 @@ begin
     port map (
       I_clock           => I_clock,
       I_reset           => I_reset,
-      I_CFG_MEM_data    => s_CFG_MEM_data_write,
+      I_CFG_MEM_data    => s_CFG_MEM_data_read,
       O_enable_CFG_MEM  => s_enable_CFG_MEM,
       O_CFG_MEM_we      => s_CFG_MEM_we,
       O_CFG_MEM_type    => s_CFG_MEM_type,
       O_CFG_MEM_address => s_CFG_MEM_address,
-      O_CFG_MEM_data    => s_CFG_MEM_data_read,
+      O_CFG_MEM_data    => s_CFG_MEM_data_write,
       I_PRG_MEM_data    => s_PRG_MEM_data,
       O_enable_PRG_MEM  => s_enable_PRG_MEM,
       O_PRG_MEM_PC      => s_PRG_MEM_PC

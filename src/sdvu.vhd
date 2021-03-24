@@ -72,8 +72,6 @@ architecture arch_sdvu of sdvu is
   signal s_dataA      : STD_LOGIC_VECTOR (REG_SIZE-1 downto 0);
   signal s_dataB      : STD_LOGIC_VECTOR (REG_SIZE-1 downto 0);
   signal s_dataD      : STD_LOGIC_VECTOR (REG_SIZE-1 downto 0);
-  -- ALU related
-  signal s_dataResult : STD_LOGIC_VECTOR (REG_SIZE-1 downto 0);
   -- PC related
   signal s_PC         : STD_LOGIC_VECTOR (PC_SIZE-1 downto 0);
   signal s_newPC      : STD_LOGIC_VECTOR (PC_SIZE-1 downto 0);
@@ -97,7 +95,7 @@ begin
       I_address    => s_address,
       I_type       => s_type,
       -- Outputs
-      O_result     => s_dataResult
+      O_result     => s_dataD
     );
 
 
@@ -168,7 +166,7 @@ begin
       I_selA   => s_sel_rA,
       I_selB   => s_sel_rB,
       I_selD   => s_sel_rD,
-      I_dataD  => s_dataResult,
+      I_dataD  => s_dataD,
       -- Outputs
       O_dataB  => s_dataB,
       O_dataA  => s_dataA,
