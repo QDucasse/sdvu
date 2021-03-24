@@ -37,9 +37,10 @@ entity control_unit is
           O_enable_REG     : out STD_LOGIC;
 
           -- Other signals
-          O_CFG_MEM_we : out STD_LOGIC;
-          O_REG_we     : out STD_LOGIC;
-          O_PC_OPCode  : out STD_LOGIC_VECTOR(PC_OP_SIZE-1 downto 0)
+          O_CFG_MEM_we  : out STD_LOGIC;
+          O_REG_we_ALU  : out STD_LOGIC;
+          O_REG_we_LOAD : out STD_LOGIC;
+          O_PC_OPCode   : out STD_LOGIC_VECTOR(PC_OP_SIZE-1 downto 0)
 
           );
 end control_unit;
@@ -157,14 +158,11 @@ begin
                             else '0';
 
     -- Write to memory in case of STORE
-    O_CFG_MEM_we <= '1' when current_state = STATE_STORE2 else '0';
+    O_CFG_MEM_we  <= '1' when current_state = STATE_STORE2 else '0';
     -- Write to register in case of result of a binary operation or load
-    O_REG_we     <= '1' when (
-                           current_state = STATE_LOAD2 or
-                           current_state = STATE_BIN3
-                          )
-                        else '0';
-
+    O_REG_we_ALU  <= '1' when current_state = STATE_BIN3 else '0';
+    O_REG_we_LOAD <= '1' when current_state = STATE_LOAD2 else '0';
+    
     -- The PC op code is either:
     -- RESET in case of a reset
     -- ASSIGN when JMP (in decode state) --> needs to be propagated with the first line

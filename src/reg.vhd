@@ -24,15 +24,17 @@ entity reg is
           I_reset  : in STD_LOGIC; -- Reset
           I_enable : in STD_LOGIC; -- Enable
           -- Inputs
-          I_we   : in STD_LOGIC;                                  -- Write Enable (write the destination value or not)
-          I_selD : in STD_LOGIC_VECTOR (REG_SEL_SIZE-1 downto 0); -- Input - select destination
-          I_selA : in STD_LOGIC_VECTOR (REG_SEL_SIZE-1 downto 0); -- Input - select source A
-          I_selB : in STD_LOGIC_VECTOR (REG_SEL_SIZE-1 downto 0); -- Input - select source B
-          I_dataD: in STD_LOGIC_VECTOR (REG_SIZE-1 downto 0);     -- Input Data to store in a register
+          I_we_alu     : in STD_LOGIC;                                  -- Write Enable (write the destination value or not) ALU
+          I_we_load    : in STD_LOGIC;                                  -- Write Enable (write the destination value or not) STORE
+          I_selD       : in STD_LOGIC_VECTOR (REG_SEL_SIZE-1 downto 0); -- Input - select destination
+          I_selA       : in STD_LOGIC_VECTOR (REG_SEL_SIZE-1 downto 0); -- Input - select source A
+          I_selB       : in STD_LOGIC_VECTOR (REG_SEL_SIZE-1 downto 0); -- Input - select source B
+          I_dataD_ALU  : in STD_LOGIC_VECTOR (REG_SIZE-1 downto 0);     -- Input Data to store in a register
+          I_dataD_LOAD : in STD_LOGIC_VECTOR (REG_SIZE-1 downto 0);     -- Input Data to store in a register
           -- Outputs
-          O_dataB: out STD_LOGIC_VECTOR (REG_SIZE-1 downto 0); -- Output B from regB
-          O_dataA: out STD_LOGIC_VECTOR (REG_SIZE-1 downto 0); -- Output A from regA
-          O_dataD: out STD_LOGIC_VECTOR (REG_SIZE-1 downto 0)  -- Output D from regD (in case of STORE )
+          O_dataB : out STD_LOGIC_VECTOR (REG_SIZE-1 downto 0); -- Output B from regB
+          O_dataA : out STD_LOGIC_VECTOR (REG_SIZE-1 downto 0); -- Output A from regA
+          O_dataD : out STD_LOGIC_VECTOR (REG_SIZE-1 downto 0)  -- Output D from regD (in case of STORE )
           );
 end reg;
 
@@ -55,8 +57,11 @@ begin
             O_dataA <= reg_bank(to_integer(unsigned(I_selA)));   -- Propagate the input to the output (A)
             O_dataB <= reg_bank(to_integer(unsigned(I_selB)));   -- Propagate the input to the output (B)
             O_dataD <= reg_bank(to_integer(unsigned(I_selD)));   -- Propagate the input to the output (D)
-            if (I_we = '1') then                                 -- If write-enable propagate the data
-              reg_bank(to_integer(unsigned(I_selD))) <= I_dataD; -- Write dataD to the selD register
+            if (I_we_alu = '1') then                                 -- If write-enable propagate the data
+              reg_bank(to_integer(unsigned(I_selD))) <= I_dataD_ALU; -- Write dataD to the selD register
+            end if;
+            if (I_we_load = '1') then                                 -- If write-enable propagate the data
+              reg_bank(to_integer(unsigned(I_selD))) <= I_dataD_LOAD; -- Write dataD to the selD register
             end if;
           end if;
         end if;

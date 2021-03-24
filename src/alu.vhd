@@ -251,6 +251,7 @@ begin
       end if;
     end process;
 
+
     -- Propagate to outputs
     O_result <= s_result;
 

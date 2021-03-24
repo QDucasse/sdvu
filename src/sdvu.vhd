@@ -57,7 +57,8 @@ architecture arch_sdvu of sdvu is
   signal s_enable_REG     : STD_LOGIC;
 
   signal s_CFG_MEM_we     : STD_LOGIC;
-  signal s_REG_we         : STD_LOGIC;
+  signal s_REG_we_ALU     : STD_LOGIC;
+  signal s_REG_we_LOAD    : STD_LOGIC;
 
   -- Decoder related
   signal s_cfgMask     : STD_LOGIC_VECTOR (1 downto 0);
@@ -69,9 +70,11 @@ architecture arch_sdvu of sdvu is
   signal s_address     : STD_LOGIC_VECTOR (REG_SIZE-1 downto 0);
   signal s_type        : STD_LOGIC_VECTOR (1 downto 0);
   -- Register related
-  signal s_dataA      : STD_LOGIC_VECTOR (REG_SIZE-1 downto 0);
-  signal s_dataB      : STD_LOGIC_VECTOR (REG_SIZE-1 downto 0);
-  signal s_dataD      : STD_LOGIC_VECTOR (REG_SIZE-1 downto 0);
+  signal s_dataA       : STD_LOGIC_VECTOR (REG_SIZE-1 downto 0);
+  signal s_dataB       : STD_LOGIC_VECTOR (REG_SIZE-1 downto 0);
+  signal s_dataD_ALU   : STD_LOGIC_VECTOR (REG_SIZE-1 downto 0);
+  signal s_dataD_LOAD  : STD_LOGIC_VECTOR (REG_SIZE-1 downto 0);
+  signal s_dataD_STORE : STD_LOGIC_VECTOR (REG_SIZE-1 downto 0);
   -- PC related
   signal s_PC         : STD_LOGIC_VECTOR (PC_SIZE-1 downto 0);
   signal s_newPC      : STD_LOGIC_VECTOR (PC_SIZE-1 downto 0);
@@ -95,7 +98,7 @@ begin
       I_address    => s_address,
       I_type       => s_type,
       -- Outputs
-      O_result     => s_dataD
+      O_result     => s_dataD_ALU
     );
 
 
@@ -116,7 +119,8 @@ begin
       O_enable_PRG_MEM => s_enable_PRG_MEM,
       O_enable_REG     => s_enable_REG,
       O_CFG_MEM_we     => s_CFG_MEM_we,
-      O_REG_we         => s_REG_we,
+      O_REG_we_ALU     => s_REG_we_ALU,
+      O_REG_we_LOAD    => s_REG_we_LOAD,
       O_PC_OPCode      => s_PC_OPCode
     );
 
@@ -162,27 +166,29 @@ begin
       I_reset  => s_reset,
       I_enable => s_enable_REG,
       -- Inputs
-      I_we     => s_REG_we,
-      I_selA   => s_sel_rA,
-      I_selB   => s_sel_rB,
-      I_selD   => s_sel_rD,
-      I_dataD  => s_dataD,
+      I_we_ALU     => s_REG_we_ALU,
+      I_we_LOAD    => s_REG_we_LOAD,
+      I_selA       => s_sel_rA,
+      I_selB       => s_sel_rB,
+      I_selD       => s_sel_rD,
+      I_dataD_ALU  => s_dataD_ALU,
+      I_dataD_LOAD => s_dataD_LOAD,
       -- Outputs
-      O_dataB  => s_dataB,
-      O_dataA  => s_dataA,
-      O_dataD  => s_dataD
+      O_dataB   => s_dataB,
+      O_dataA   => s_dataA,
+      O_dataD   => s_dataD_STORE
     );
 
   -- Using memory results
   s_instruction <= I_PRG_MEM_data;
-  s_dataD       <= I_CFG_MEM_data;
+  s_dataD_LOAD  <= I_CFG_MEM_data;
 
   -- CFG MEM output signals
   O_enable_CFG_MEM  <= s_enable_CFG_MEM;
   O_CFG_MEM_we      <= s_CFG_MEM_we;
   O_CFG_MEM_type    <= s_type;
   O_CFG_MEM_address <= s_address;
-  O_CFG_MEM_data    <= s_dataD;   -- In case of store
+  O_CFG_MEM_data    <= s_dataD_STORE;   -- In case of store
 
   -- PRG MEM output signals
   O_enable_PRG_MEM  <= s_enable_PRG_MEM;
