@@ -21,6 +21,7 @@ src/auto_*
 *.jpg
 *.html
 *.bsf
+*.mpf
 
 # Simulation output
 wlf*
