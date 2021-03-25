@@ -59,6 +59,9 @@ architecture arch_sdvu of sdvu is
   signal s_CFG_MEM_we     : STD_LOGIC;
   signal s_REG_we_ALU     : STD_LOGIC;
   signal s_REG_we_LOAD    : STD_LOGIC;
+  signal s_REG_we_MOVIMM  : STD_LOGIC;
+  signal s_REG_we_MOVREG  : STD_LOGIC;
+
 
   -- Decoder related
   signal s_cfgMask     : STD_LOGIC_VECTOR (1 downto 0);
@@ -109,6 +112,9 @@ begin
       -- Inputs
       I_op_code        => s_op_code,
       I_PC_OPCode      => s_PC_OPCode,
+      I_cfg_mask       => s_cfgMask,
+      I_address        => s_address,
+      I_address_RAA    => s_dataA,
       -- Outputs
       O_reset          => s_reset,
       O_enable_ALU     => s_enable_ALU,
@@ -120,7 +126,10 @@ begin
       O_CFG_MEM_we     => s_CFG_MEM_we,
       O_REG_we_ALU     => s_REG_we_ALU,
       O_REG_we_LOAD    => s_REG_we_LOAD,
-      O_PC_OPCode      => s_PC_OPCode
+      O_REG_we_MOVIMM  => s_REG_we_MOVIMM,
+      O_REG_we_MOVREG  => s_REG_we_MOVREG,
+      O_PC_OPCode      => s_PC_OPCode,
+      O_address        => s_address
     );
 
 
@@ -161,17 +170,20 @@ begin
   -- Mapping Register File
   sdvu_reg : entity work.reg(arch_reg)
     port map (
-      I_clock  => I_clock,
-      I_reset  => s_reset,
-      I_enable => s_enable_REG,
+      I_clock        => I_clock,
+      I_reset        => s_reset,
+      I_enable       => s_enable_REG,
       -- Inputs
-      I_we_ALU     => s_REG_we_ALU,
-      I_we_LOAD    => s_REG_we_LOAD,
-      I_selA       => s_sel_rA,
-      I_selB       => s_sel_rB,
-      I_selD       => s_sel_rD,
-      I_dataD_ALU  => s_dataD_ALU,
-      I_dataD_LOAD => s_dataD_LOAD,
+      I_we_ALU       => s_REG_we_ALU,
+      I_we_LOAD      => s_REG_we_LOAD,
+      I_we_MOVREG    => s_REG_we_MOVREG,
+      I_we_MOVIMM    => s_REG_we_MOVIMM,
+      I_selA         => s_sel_rA,
+      I_selB         => s_sel_rB,
+      I_selD         => s_sel_rD,
+      I_dataD_ALU    => s_dataD_ALU,
+      I_dataD_LOAD   => s_dataD_LOAD,
+      I_dataD_MOVIMM => s_immA,
       -- Outputs
       O_dataB   => s_dataB,
       O_dataA   => s_dataA,
