@@ -103,7 +103,7 @@ architecture arch_alu_tb of alu_tb is
       I_immB  <= X"00000002";
       -- RR
       I_cfgMask <= CFG_RR;
-      wait_cycles(clock, 1);
+      wait_cycles(clock, 2);
       assert_true(O_result=X"0000000F", "ADD RR");
       -- IR
       I_cfgMask <= CFG_RI;

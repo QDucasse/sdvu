@@ -218,9 +218,11 @@ begin
     -- NOP otherwise
     O_PC_OPCode  <= I_PC_OPCode when (current_state = STATE_FETCH1 and I_PC_OPCode /= PC_OP_RESET)
                     else PC_OP_INC when (
-                                 current_state = STATE_LOAD2 or
+                                 current_state = STATE_LOAD2  or
                                  current_state = STATE_STORE2 or
-                                 current_state = STATE_BIN3 or
+                                 current_state = STATE_BIN3   or
+                                 current_state = STATE_MOVIMM or
+                                 current_state = STATE_MOVREG or
                                  current_state = STATE_FETCH1
                                 )
                     else PC_OP_ASSIGN when current_state = STATE_DECODE2
