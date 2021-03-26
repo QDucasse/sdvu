@@ -20,7 +20,7 @@ use work.sdvu_constants.all;
 --      Entity
 -- =================
 
-entity config_memory is
+entity auto_config_memory is
     port (I_clock       : in STD_LOGIC;   -- Clock signal
           I_enable      : in STD_LOGIC;   -- Unit enable
           I_reset       : in STD_LOGIC;   -- Reset signal
@@ -38,7 +38,7 @@ end config_memory;
 --   Architecture
 -- =================
 
-architecture arch_config_memory of config_memory is
+architecture arch_auto_config_memory of auto_config_memory is
     -- Internal Objects
     signal memory_bank : STD_LOGIC_VECTOR(2**CFG_MEM_SIZE-1 downto 0) := X"{{config}}";
     signal address : STD_LOGIC_VECTOR(REG_SIZE-1 downto 0) := (others => '0');
@@ -87,4 +87,4 @@ begin
         end if;
     end if;
   end process;
-end arch_config_memory;
+end arch_auto_config_memory;

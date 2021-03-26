@@ -26,12 +26,14 @@ entity sdvu is
        I_reset : in STD_LOGIC;
 
        -- Config memory
-       I_CFG_MEM_data    : in STD_LOGIC_VECTOR(TYPE_SIZE-1 downto 0);
-       O_enable_CFG_MEM  : out STD_LOGIC;
-       O_CFG_MEM_we      : out STD_LOGIC;
-       O_CFG_MEM_type    : out STD_LOGIC_VECTOR(1 downto 0);
-       O_CFG_MEM_address : out STD_LOGIC_VECTOR(REG_SIZE-1 downto 0);
-       O_CFG_MEM_data    : out STD_LOGIC_VECTOR(TYPE_SIZE-1 downto 0);
+       I_CFG_MEM_data        : in STD_LOGIC_VECTOR(TYPE_SIZE-1 downto 0);
+       O_enable_CFG_MEM      : out STD_LOGIC;
+       O_CFG_MEM_we          : out STD_LOGIC;
+       O_CFG_MEM_RAA         : out STD_LOGIC;
+       O_CFG_MEM_type        : out STD_LOGIC_VECTOR(1 downto 0);
+       O_CFG_MEM_address     : out STD_LOGIC_VECTOR(REG_SIZE-1 downto 0);
+       O_CFG_MEM_address_RAA : out STD_LOGIC_VECTOR(REG_SIZE-1 downto 0);
+       O_CFG_MEM_data        : out STD_LOGIC_VECTOR(TYPE_SIZE-1 downto 0);
        -- Program memory
        I_PRG_MEM_data    : in STD_LOGIC_VECTOR(INSTR_SIZE-1 downto 0);
        O_enable_PRG_MEM  : out STD_LOGIC;
@@ -57,6 +59,7 @@ architecture arch_sdvu of sdvu is
   signal s_enable_REG     : STD_LOGIC;
 
   signal s_CFG_MEM_we     : STD_LOGIC;
+  signal s_RAA            : STD_LOGIC;
   signal s_REG_we_ALU     : STD_LOGIC;
   signal s_REG_we_LOAD    : STD_LOGIC;
   signal s_REG_we_MOVIMM  : STD_LOGIC;
@@ -112,9 +115,8 @@ begin
       -- Inputs
       I_op_code        => s_op_code,
       I_PC_OPCode      => s_PC_OPCode,
+      I_CFG_MEM_RAA    => s_RAA,
       I_cfg_mask       => s_cfgMask,
-      I_address        => s_address,
-      I_address_RAA    => s_dataA,
       -- Outputs
       O_reset          => s_reset,
       O_enable_ALU     => s_enable_ALU,
@@ -124,14 +126,13 @@ begin
       O_enable_PRG_MEM => s_enable_PRG_MEM,
       O_enable_REG     => s_enable_REG,
       O_CFG_MEM_we     => s_CFG_MEM_we,
+      O_CFG_MEM_RAA    => s_RAA,
       O_REG_we_ALU     => s_REG_we_ALU,
       O_REG_we_LOAD    => s_REG_we_LOAD,
       O_REG_we_MOVIMM  => s_REG_we_MOVIMM,
       O_REG_we_MOVREG  => s_REG_we_MOVREG,
-      O_PC_OPCode      => s_PC_OPCode,
-      O_address        => s_address
+      O_PC_OPCode      => s_PC_OPCode
     );
-
 
   -- Mapping Decoder
   sdvu_decoder : entity work.decoder(arch_decoder)
@@ -195,11 +196,13 @@ begin
   s_dataD_LOAD  <= I_CFG_MEM_data;
 
   -- CFG MEM output signals
-  O_enable_CFG_MEM  <= s_enable_CFG_MEM;
-  O_CFG_MEM_we      <= s_CFG_MEM_we;
-  O_CFG_MEM_type    <= s_type;
-  O_CFG_MEM_address <= s_address;
-  O_CFG_MEM_data    <= s_dataD_STORE;   -- In case of store
+  O_enable_CFG_MEM      <= s_enable_CFG_MEM;
+  O_CFG_MEM_we          <= s_CFG_MEM_we;
+  O_CFG_MEM_RAA         <= s_RAA;
+  O_CFG_MEM_type        <= s_type;
+  O_CFG_MEM_address     <= s_address;
+  O_CFG_MEM_address_RAA <= s_dataA;
+  O_CFG_MEM_data        <= s_dataD_STORE;   -- In case of store
 
   -- PRG MEM output signals
   O_enable_PRG_MEM  <= s_enable_PRG_MEM;
