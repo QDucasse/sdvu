@@ -42,7 +42,6 @@ architecture arch_sdvu_tb of sdvu_tb is
     signal s_O_CFG_MEM_data    : STD_LOGIC_VECTOR(TYPE_SIZE-1 downto 0);
     signal s_I_PRG_MEM_data    : STD_LOGIC_VECTOR(INSTR_SIZE-1 downto 0);
     signal s_O_enable_PRG_MEM  : STD_LOGIC;
-    signal s_O_PRG_MEM_we      : STD_LOGIC;
     signal s_O_PRG_MEM_PC      : std_logic_vector(PC_SIZE-1 downto 0);
 
     begin
@@ -72,7 +71,6 @@ architecture arch_sdvu_tb of sdvu_tb is
 
           I_PRG_MEM_data    => s_I_PRG_MEM_data,
           O_enable_PRG_MEM  => s_O_enable_PRG_MEM,
-          O_PRG_MEM_we      => s_O_PRG_MEM_we,
           O_PRG_MEM_PC      => s_O_PRG_MEM_PC
         );
 
