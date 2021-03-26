@@ -24,10 +24,9 @@ entity control_unit is
           I_reset   : in  STD_LOGIC;                                 -- Reset signal
           -- Inputs
           I_op_code   : in STD_LOGIC_VECTOR(OP_SIZE-1 downto 0);    -- Instruction Op Code
-          I_cfg_mask  : in STD_LOGIC_VECTOR(1 downto 0);            -- Conig mask
+          I_cfg_mask  : in STD_LOGIC_VECTOR(1 downto 0);            -- Config mask
           I_PC_OPCode : in STD_LOGIC_VECTOR(PC_OP_SIZE-1 downto 0); -- Carry over PC operation
-          I_address     : in STD_LOGIC_VECTOR(REG_SIZE-1 downto 0);
-          I_address_RAA : in STD_LOGIC_VECTOR(REG_SIZE-1 downto 0);
+          I_CFG_MEM_RAA : in STD_LOGIC; -- Carry over RAA mode
           -- Outputs
           -- Enable signals based on the state
           O_reset          : out STD_LOGIC;
@@ -40,11 +39,11 @@ entity control_unit is
 
           -- Other signals
           O_CFG_MEM_we    : out STD_LOGIC;
+          O_CFG_MEM_RAA   : out STD_LOGIC;
           O_REG_we_ALU    : out STD_LOGIC;
           O_REG_we_LOAD   : out STD_LOGIC;
           O_REG_we_MOVIMM : out STD_LOGIC;
           O_REG_we_MOVREG : out STD_LOGIC;
-          O_address       : out STD_LOGIC_VECTOR(REG_SIZE-1 downto 0);
           O_PC_OPCode     : out STD_LOGIC_VECTOR(PC_OP_SIZE-1 downto 0)
           );
 end control_unit;
@@ -229,9 +228,8 @@ begin
                     else PC_OP_RESET when current_state = STATE_RESET1
                     else PC_OP_NOP;
 
-    -- The address signal is either equal to the address from the decoder
-    -- or the content of a register (RAA)
-    O_address <= I_address_RAA when (current_state = STATE_LOADRAA or current_state = STATE_STORERAA)
-                        else I_address;
+    O_CFG_MEM_RAA <= I_CFG_MEM_RAA when (current_state = STATE_LOAD1 or current_state = STATE_STORE2)
+                     else '1' when (current_state = STATE_LOADRAA or current_state = STATE_STORERAA)
+                     else '0';
 
 end arch_control_unit;

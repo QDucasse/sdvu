@@ -39,7 +39,7 @@ architecture arch_decoder_tb of decoder_tb is
      signal O_op_code        : STD_LOGIC_VECTOR (OP_SIZE-1 downto 0);
      signal O_cfgMask        : STD_LOGIC_VECTOR (1 downto 0);
      signal O_rA, O_rb, O_rd : STD_LOGIC_VECTOR (REG_SEL_SIZE-1  downto 0);
-     signal O_imma, O_immB   : STD_LOGIC_VECTOR (REG_SIZE-1 downto 0);
+     signal O_immA, O_immB   : STD_LOGIC_VECTOR (REG_SIZE-1 downto 0);
      signal O_address        : STD_LOGIC_VECTOR (REG_SIZE-1 downto 0);
      signal O_type           : STD_LOGIC_VECTOR (1 downto 0);
 
@@ -82,7 +82,7 @@ begin
       -- Test 1: Binary - RR Instruction type
       I_instruction <= OP_SUB & "00" & "1111" & "00000000001" & "00000000010";
       -- OP_SUB(0001) | CFG_RR(00) | RD = 15(1111) | RA = 0 (0000000 0000) | RB = 1 (0000000 0001)
-      wait_cycles(clock, 2);
+      wait_cycles(clock, 3);
       -- Used
       assert_true(O_op_code=OP_SUB,      "Binary RR - Correct OP Code");
       assert_true(O_cfgMask=CFG_RR,      "Binary RR - Correct Config Mask");
