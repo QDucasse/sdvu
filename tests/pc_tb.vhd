@@ -78,25 +78,25 @@ begin
 
       -- Test 1: ASSIGN | Assign PC
       I_PC_OPCode <= PC_OP_ASSIGN;
-      I_newPC<= X"FEED";
+      I_newPC<= X"0000FEED";
       wait_cycles(clock, 2);
-      assert_true(O_PC=X"FEED", "Assign");
+      assert_true(O_PC=X"0000FEED", "Assign");
 
       -- Test 2: NOP | Do nothing
       I_PC_OPCode <= PC_OP_NOP;
-      wait_cycles(clock, 1);
-      assert_true(O_PC=X"FEED", "No operation");
+      wait_cycles(clock, 2);
+      assert_true(O_PC=X"0000FEED", "No operation");
 
       -- Test 3: INC | Increment the PC
       I_PC_OPCode <= PC_OP_INC;
-      wait_cycles(clock, 1);
-      assert_true(O_PC=X"FEEE", "Increment");
+      wait_cycles(clock, 2);
+      assert_true(O_PC=X"0000FEEE", "Increment");
 
 
       -- Test 4: RESET | Reset the PC
       I_PC_OPCode <= PC_OP_RESET;
-      wait_cycles(clock, 1);
-      assert_true(O_PC=X"0000", "Reset");
+      wait_cycles(clock, 2);
+      assert_true(O_PC=X"00000000", "Reset");
 
       running <= false;
       report "PC: Testbench complete";

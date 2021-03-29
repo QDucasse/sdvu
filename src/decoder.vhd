@@ -41,7 +41,7 @@ end decoder;
 
 architecture arch_decoder of decoder is
     -- Internal Objects
-    signal current_op : STD_LOGIC_VECTOR(OP_SIZE-1 downto 0) := (others => '0');
+    -- None
 begin
     -- Processes
     DecodeInstr: process(I_clock) -- I_clock added to the sensitivity list of the process
@@ -49,9 +49,9 @@ begin
     begin
         if rising_edge(I_clock) then  -- If new cycle and enable
             if I_enable = '1' then        -- If enable
-                current_op <= I_instruction(31 downto 28); -- Decode ALU operation
+                O_op_code <= I_instruction(31 downto 28); -- Decode ALU operation
                 -- Switch on the opcode
-                case current_op is
+                case I_instruction(31 downto 28) is
                   when OP_NOT => -- NOT OPERATION
                     -- Used
                     O_rD <= I_instruction(27 downto 24); -- 0000 1111 0000 0000 0000 0000 0000 0000
@@ -112,7 +112,6 @@ begin
                     O_type    <= (others => '0');
                     O_address <= (others => '0');
                 end case;
-                O_op_code <= current_op;
             end if;
         end if;
     end process;

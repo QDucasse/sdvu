@@ -108,7 +108,7 @@ begin
       I_selB <= X"4";
       I_selD <= X"4";
       I_we_ALU <= '0';
-      wait_cycles(clock, 1);
+      wait_cycles(clock, 2);
       assert_true(O_dataA=X"0000CAFE", "Write/Read ALU - RA");
       assert_true(O_dataB=X"0000CAFE", "Write/Read ALU - RB");
       assert_true(O_dataD=X"0000CAFE", "Write/Read ALU - RD");
@@ -126,7 +126,7 @@ begin
       I_selB <= X"5";
       I_selD <= X"5";
       I_we_LOAD <= '0';
-      wait_cycles(clock, 1);
+      wait_cycles(clock, 2);
       assert_true(O_dataA=X"0000CACA", "Write/Read LOAD - RA");
       assert_true(O_dataB=X"0000CACA", "Write/Read LOAD - RB");
       assert_true(O_dataD=X"0000CACA", "Write/Read LOAD - RD");
@@ -144,7 +144,7 @@ begin
       I_selB <= X"6";
       I_selD <= X"6";
       I_we_MOVIMM <= '0';
-      wait_cycles(clock, 1);
+      wait_cycles(clock, 2);
       assert_true(O_dataA=X"00000DAB", "Write/Read MOVIMM - RA");
       assert_true(O_dataB=X"00000DAB", "Write/Read MOVIMM - RB");
       assert_true(O_dataD=X"00000DAB", "Write/Read MOVIMM - RD");
@@ -161,7 +161,7 @@ begin
       I_selB <= X"2";
       I_selD <= X"2";
       I_we_MOVREG <= '0';
-      wait_cycles(clock, 1);
+      wait_cycles(clock, 2);
       assert_true(O_dataA=X"00000DAB", "Write/Read MOVREG - RA");
       assert_true(O_dataB=X"00000DAB", "Write/Read MOVREG - RB");
       assert_true(O_dataD=X"00000DAB", "Write/Read MOVREG - RD");

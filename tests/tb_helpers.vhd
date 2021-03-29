@@ -70,7 +70,7 @@ package body tb_helpers is
                         n : natural) is
     begin
       for i in 1 to n loop
-        wait until falling_edge(clock);
+        wait until rising_edge(clock);
       end loop;
     end procedure;
 

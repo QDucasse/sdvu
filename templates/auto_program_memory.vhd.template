@@ -58,7 +58,7 @@ begin
               X"{{instruction}}"{% if not loop.last %},{% endif %}
             {%- endfor %}
           );
-        else
+        elsif I_enable = '1' then
           -- Read from the address to the output
           O_data <= memory_bank(to_integer(unsigned(I_PC)));
         end if;

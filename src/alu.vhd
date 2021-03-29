@@ -32,8 +32,6 @@ entity alu is
           I_dataB    : in STD_LOGIC_VECTOR (REG_SIZE-1 downto 0); -- Input data B
           I_immA     : in STD_LOGIC_VECTOR (REG_SIZE-1 downto 0); -- Immediate value A
           I_immB     : in STD_LOGIC_VECTOR (REG_SIZE-1 downto 0); -- Immediate value B
-          I_address  : in STD_LOGIC_VECTOR (REG_SIZE-1 downto 0); -- Address for JMP, STORE and LOAD
-          I_type     : in STD_LOGIC_VECTOR (1 downto 0);          -- Type of the value loaded or stored
           -- Outputs
           O_result : out STD_LOGIC_VECTOR (REG_SIZE-1 downto 0) -- Result of the operation
           );
@@ -244,7 +242,7 @@ begin
               -- Other operations
               -- ================
               when others =>
-                s_result <= X"FFFFFFFF"; -- Default Result Code
+                -- Default Result Code
 
           end case;
         end if;

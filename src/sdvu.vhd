@@ -100,8 +100,6 @@ begin
       I_dataB      => s_dataB,
       I_immA       => s_immA,
       I_immB       => s_immB,
-      I_address    => s_address,
-      I_type       => s_type,
       -- Outputs
       O_result     => s_dataD_ALU
     );

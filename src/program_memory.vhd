@@ -67,7 +67,7 @@ begin
       if rising_edge(I_clock) then  -- If new cycle
         if I_reset = '1' then     -- Reset
           memory_bank <= (others => X"00000000");
-        else
+        elsif I_enable = '1' then
           -- Read from the address to the output
           O_data <= memory_bank(to_integer(unsigned(I_PC)));
         end if;

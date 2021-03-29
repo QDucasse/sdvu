@@ -82,7 +82,7 @@ begin
       -- Test 1: Binary - RR Instruction type
       I_instruction <= OP_SUB & "00" & "1111" & "00000000001" & "00000000010";
       -- OP_SUB(0001) | CFG_RR(00) | RD = 15(1111) | RA = 0 (0000000 0000) | RB = 1 (0000000 0001)
-      wait_cycles(clock, 3);
+      wait_cycles(clock, 2);
       -- Used
       assert_true(O_op_code=OP_SUB,      "Binary RR - Correct OP Code");
       assert_true(O_cfgMask=CFG_RR,      "Binary RR - Correct Config Mask");

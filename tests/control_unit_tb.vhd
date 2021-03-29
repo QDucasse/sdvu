@@ -102,11 +102,10 @@ begin
     StimulusProcess: process
     begin
       report "Control Unit: Running testbench";
-      I_op_code <= OP_ADD;
       -- TESTING OPERATIONS
-      wait_cycles(clock, 1);
       -- Test 1: Initial reset
       -- assert_true(external, STATE_RESET1)
+      wait_cycles(clock, 2);
       assert_true(O_reset='1',             "RESET1 - Reset set");
       assert_true(O_enable_ALU='0',        "RESET1 - No enable ALU");
       assert_true(O_enable_CFG_MEM='0',    "RESET1 - No enable CFG_MEM");
@@ -227,11 +226,11 @@ begin
       assert_true(O_PC_OPCode=PC_OP_ASSIGN, "FETCH1 JMP - PC operation: ASSIGN");
 
       -- (Re-fetch, wait until state decode2)
-      wait_cycles(clock, 3);
+      wait_cycles(clock, 2);
       -- Test 8: Store ADR
       I_op_code <= OP_STORE;
       I_cfg_mask <= STORE_ADR;
-      wait_cycles(clock, 1);
+      wait_cycles(clock, 2);
       assert_true(O_reset='0',           "STORE1 - Reset not set");
       assert_true(O_enable_ALU='0',      "STORE1 - No enable ALU");
       assert_true(O_enable_CFG_MEM='0',  "STORE1 - No enable CFG_MEM");
@@ -282,11 +281,11 @@ begin
       assert_true(O_PC_OPCode=PC_OP_INC, "FETCH1 STORE - PC operation: INC");
 
       -- (Re-fetch, wait until state decode2)
-      wait_cycles(clock, 3);
+      wait_cycles(clock, 2);
       -- Test 8: Store RAA
       I_op_code <= OP_STORE;
       I_cfg_mask <= STORE_RAA;
-      wait_cycles(clock, 1);
+      wait_cycles(clock, 2);
       assert_true(O_reset='0',           "STORERAA - Reset not set");
       assert_true(O_enable_ALU='0',      "STORERAA - No enable ALU");
       assert_true(O_enable_CFG_MEM='0',  "STORERAA - No enable CFG_MEM");
@@ -321,12 +320,12 @@ begin
       assert_true(O_PC_OPCode=PC_OP_INC, "STORE2 RAA - PC operation: INC");
 
       -- (Re-fetch, wait until state decode2)
-      wait_cycles(clock, 4);
+      wait_cycles(clock, 3);
       -- Test 10: Load 1
       I_op_code <= OP_LOAD;
       I_cfg_mask <= LOAD_ADR;
 
-      wait_cycles(clock, 1);
+      wait_cycles(clock, 2);
       assert_true(O_reset='0',           "LOAD1 - Reset not set");
       assert_true(O_enable_ALU='0',      "LOAD1 - No enable ALU");
       assert_true(O_enable_CFG_MEM='1',  "LOAD1 - Enable CFG_MEM");
@@ -375,12 +374,12 @@ begin
       assert_true(O_PC_OPCode=PC_OP_INC, "FETCH1 LOAD - PC operation: INC");
 
       -- (Re-fetch, wait until state decode2)
-      wait_cycles(clock, 3);
+      wait_cycles(clock, 2);
       -- Test 10: Load 1
       I_op_code <= OP_LOAD;
       I_cfg_mask <= LOAD_RAA;
 
-      wait_cycles(clock, 1);
+      wait_cycles(clock, 2);
       assert_true(O_reset='0',           "LOAD RAA - Reset not set");
       assert_true(O_enable_ALU='0',      "LOAD RAA - No enable ALU");
       assert_true(O_enable_CFG_MEM='0',  "LOAD RAA - Enable CFG_MEM");
@@ -414,12 +413,12 @@ begin
       assert_true(O_PC_OPCode=PC_OP_NOP, "LOAD1 from RAA - PC operation: NOP");
 
       -- (Re-fetch, wait until state decode2)
-      wait_cycles(clock, 5);
+      wait_cycles(clock, 4);
       -- Test 10: Load 1
       I_op_code <= OP_LOAD;
       I_cfg_mask <= LOAD_IMM;
 
-      wait_cycles(clock, 1);
+      wait_cycles(clock, 2);
       assert_true(O_reset='0',           "MOV IMM - Reset not set");
       assert_true(O_enable_ALU='0',      "MOV IMM - No enable ALU");
       assert_true(O_enable_CFG_MEM='0',  "MOV IMM - Enable CFG_MEM");
@@ -454,12 +453,12 @@ begin
 
 
       -- (Re-fetch, wait until state decode2)
-      wait_cycles(clock, 3);
+      wait_cycles(clock, 2);
       -- Test 10: Load 1
       I_op_code <= OP_LOAD;
       I_cfg_mask <= LOAD_REG;
 
-      wait_cycles(clock, 1);
+      wait_cycles(clock, 2);
       assert_true(O_reset='0',           "MOV REG - Reset not set");
       assert_true(O_enable_ALU='0',      "MOV REG - No enable ALU");
       assert_true(O_enable_CFG_MEM='0',  "MOV REG - Enable CFG_MEM");
@@ -494,10 +493,10 @@ begin
 
 
       -- (Reset wait until state decode2)
-      wait_cycles(clock, 3);
+      wait_cycles(clock, 2);
       -- Test 13: Bin 1
       I_op_code <= OP_ADD;
-      wait_cycles(clock, 1);
+      wait_cycles(clock, 2);
       assert_true(O_reset='0',           "BIN1 - Reset not set");
       assert_true(O_enable_ALU='0',      "BIN1 - No enable ALU");
       assert_true(O_enable_CFG_MEM='0',  "BIN1 - No enable CFG_MEM");

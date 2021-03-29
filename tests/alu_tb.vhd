@@ -42,8 +42,6 @@ architecture arch_alu_tb of alu_tb is
     signal I_dataB   : STD_LOGIC_VECTOR (REG_SIZE-1 downto 0);
     signal I_immA    : STD_LOGIC_VECTOR (REG_SIZE-1 downto 0);
     signal I_immB    : STD_LOGIC_VECTOR (REG_SIZE-1 downto 0);
-    signal I_address : STD_LOGIC_VECTOR (REG_SIZE-1 downto 0);
-    signal I_type    : STD_LOGIC_VECTOR (1 downto 0);
     signal O_result  : STD_LOGIC_VECTOR (REG_SIZE-1 downto 0);
 
     begin
@@ -75,8 +73,6 @@ architecture arch_alu_tb of alu_tb is
         I_dataB   => I_dataB,
         I_immA    => I_immA,
         I_immB    => I_immB,
-        I_address => I_address,
-        I_type    => I_type,
         O_result  => O_result
       );
 
@@ -107,15 +103,15 @@ architecture arch_alu_tb of alu_tb is
       assert_true(O_result=X"0000000F", "ADD RR");
       -- IR
       I_cfgMask <= CFG_RI;
-      wait_cycles(clock, 1);
+      wait_cycles(clock, 2);
       assert_true(O_result=X"00000010", "ADD RI");
       -- RI
       I_cfgMask <= CFG_IR;
-      wait_cycles(clock, 1);
+      wait_cycles(clock, 2);
       assert_true(O_result=X"0000000E", "ADD IR");
       -- II
       I_cfgMask <= CFG_II;
-      wait_cycles(clock, 1);
+      wait_cycles(clock, 2);
       assert_true(O_result=X"0000000F", "ADD II");
 
       -- =============
@@ -127,19 +123,19 @@ architecture arch_alu_tb of alu_tb is
       I_immB  <= X"00000002";
       -- RR
       I_cfgMask <= CFG_RR;
-      wait_cycles(clock, 1);
+      wait_cycles(clock, 2);
       assert_true(O_result=X"0000000D", "SUB RR");
       -- IR
       I_cfgMask <= CFG_RI;
-      wait_cycles(clock, 1);
+      wait_cycles(clock, 2);
       assert_true(O_result=X"0000000C", "SUB RI");
       -- RI
       I_cfgMask <= CFG_IR;
-      wait_cycles(clock, 1);
+      wait_cycles(clock, 2);
       assert_true(O_result=X"0000000C", "SUB IR");
       -- II
       I_cfgMask <= CFG_II;
-      wait_cycles(clock, 1);
+      wait_cycles(clock, 2);
       assert_true(O_result=X"0000000B", "SUB II");
 
       -- =============
@@ -151,19 +147,19 @@ architecture arch_alu_tb of alu_tb is
       I_immB  <= X"00000002";
       -- RR
       I_cfgMask <= CFG_RR;
-      wait_cycles(clock, 1);
+      wait_cycles(clock, 2);
       assert_true(O_result=X"0000000E", "MUL RR");
       -- IR
       I_cfgMask <= CFG_RI;
-      wait_cycles(clock, 1);
+      wait_cycles(clock, 2);
       assert_true(O_result=X"0000001C", "MUL RI");
       -- RI
       I_cfgMask <= CFG_IR;
-      wait_cycles(clock, 1);
+      wait_cycles(clock, 2);
       assert_true(O_result=X"0000000D", "MUL IR");
       -- II
       I_cfgMask <= CFG_II;
-      wait_cycles(clock, 1);
+      wait_cycles(clock, 2);
       assert_true(O_result=X"0000001A", "MUL II");
 
       -- =============
@@ -175,19 +171,19 @@ architecture arch_alu_tb of alu_tb is
       I_immB  <= X"00000000";
       -- RR
       I_cfgMask <= CFG_RR;
-      wait_cycles(clock, 1);
+      wait_cycles(clock, 2);
       assert_true(O_result=X"00000001", "AND RR");
       -- IR
       I_cfgMask <= CFG_RI;
-      wait_cycles(clock, 1);
+      wait_cycles(clock, 2);
       assert_true(O_result=X"00000000", "AND RI");
       -- RI
       I_cfgMask <= CFG_IR;
-      wait_cycles(clock, 1);
+      wait_cycles(clock, 2);
       assert_true(O_result=X"00000000", "AND IR");
       -- II
       I_cfgMask <= CFG_II;
-      wait_cycles(clock, 1);
+      wait_cycles(clock, 2);
       assert_true(O_result=X"00000001", "AND II");
 
 
@@ -200,19 +196,19 @@ architecture arch_alu_tb of alu_tb is
       I_immB  <= X"00000000";
       -- RR
       I_cfgMask <= CFG_RR;
-      wait_cycles(clock, 1);
+      wait_cycles(clock, 2);
       assert_true(O_result=X"00000001", "OR RR");
       -- IR
       I_cfgMask <= CFG_RI;
-      wait_cycles(clock, 1);
+      wait_cycles(clock, 2);
       assert_true(O_result=X"00000001", "OR RI");
       -- RI
       I_cfgMask <= CFG_IR;
-      wait_cycles(clock, 1);
+      wait_cycles(clock, 2);
       assert_true(O_result=X"00000001", "OR IR");
       -- II
       I_cfgMask <= CFG_II;
-      wait_cycles(clock, 1);
+      wait_cycles(clock, 2);
       assert_true(O_result=X"00000000", "OR II");
 
       -- =============
@@ -224,19 +220,19 @@ architecture arch_alu_tb of alu_tb is
       I_immB  <= X"0000000F";
       -- RR
       I_cfgMask <= CFG_RR;
-      wait_cycles(clock, 1);
+      wait_cycles(clock, 2);
       assert_true(O_result=X"00000001", "LT RR");
       -- IR
       I_cfgMask <= CFG_RI;
-      wait_cycles(clock, 1);
+      wait_cycles(clock, 2);
       assert_true(O_result=X"00000001", "LT RI");
       -- RI
       I_cfgMask <= CFG_IR;
-      wait_cycles(clock, 1);
+      wait_cycles(clock, 2);
       assert_true(O_result=X"00000000", "LT IR");
       -- II
       I_cfgMask <= CFG_II;
-      wait_cycles(clock, 1);
+      wait_cycles(clock, 2);
       assert_true(O_result=X"00000001", "LT II");
 
       -- =============
@@ -248,19 +244,19 @@ architecture arch_alu_tb of alu_tb is
       I_immB  <= X"0000000F";
       -- RR
       I_cfgMask <= CFG_RR;
-      wait_cycles(clock, 1);
+      wait_cycles(clock, 2);
       assert_true(O_result=X"00000000", "GT RR");
       -- IR
       I_cfgMask <= CFG_RI;
-      wait_cycles(clock, 1);
+      wait_cycles(clock, 2);
       assert_true(O_result=X"00000000", "GT RI");
       -- RI
       I_cfgMask <= CFG_IR;
-      wait_cycles(clock, 1);
+      wait_cycles(clock, 2);
       assert_true(O_result=X"00000001", "GT IR");
       -- II
       I_cfgMask <= CFG_II;
-      wait_cycles(clock, 1);
+      wait_cycles(clock, 2);
       assert_true(O_result=X"00000000", "GT II");
 
       -- =============
@@ -272,30 +268,30 @@ architecture arch_alu_tb of alu_tb is
       I_immB  <= X"0000000C";
       -- RR
       I_cfgMask <= CFG_RR;
-      wait_cycles(clock, 1);
+      wait_cycles(clock, 2);
       assert_true(O_result=X"00000000", "EQ RR");
       -- IR
       I_cfgMask <= CFG_RI;
-      wait_cycles(clock, 1);
+      wait_cycles(clock, 2);
       assert_true(O_result=X"00000001", "EQ RI");
       -- RI
       I_cfgMask <= CFG_IR;
-      wait_cycles(clock, 1);
+      wait_cycles(clock, 2);
       assert_true(O_result=X"00000001", "EQ IR");
       -- II
       I_cfgMask <= CFG_II;
-      wait_cycles(clock, 1);
+      wait_cycles(clock, 2);
       assert_true(O_result=X"00000000", "EQ II");
 
       -- =============
       -- Test 8: NOT
       I_op_code <= OP_NOT;
       I_dataA <= X"0000000C";
-      wait_cycles(clock, 1);
+      wait_cycles(clock, 2);
       assert_true(O_result=X"00000000", "NOT from true");
 
       I_dataA <= X"00000000";
-      wait_cycles(clock, 1);
+      wait_cycles(clock, 2);
       assert_true(O_result=X"00000001", "NOT from false");
 
 
