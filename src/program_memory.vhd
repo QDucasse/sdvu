@@ -69,7 +69,7 @@ begin
           memory_bank <= (others => X"00000000");
         elsif I_enable = '1' then
           -- Read from the address to the output
-          O_data <= memory_bank(to_integer(unsigned(I_PC)));
+          O_data <= memory_bank(to_integer(unsigned(I_PC(7 downto 0))));
         end if;
     end if;
   end process;

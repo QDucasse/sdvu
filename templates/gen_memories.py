@@ -21,7 +21,7 @@ class TemplateHandler():
         # Find sizes
         cfg_mem_width, prg_mem_width = self.parse_widths()
         cfg_mem_size = 2**cfg_mem_width // 4
-        prg_mem_size = 2**prg_mem_width 
+        prg_mem_size = 2**prg_mem_width
         # Read program instructions
         self.instructions = []
         with open(prg_mem_file_name, "rb") as file:
@@ -81,7 +81,7 @@ class TemplateHandler():
 
 if __name__ == "__main__":
     th = TemplateHandler(
-        "templates/adding.6.cfg", "src/auto_config_memory.vhd",
-        "templates/adding.6.out", "src/auto_program_memory.vhd"
+        "cfg/adding.6.cfg", "src/auto_config_memory.vhd",
+        "cfg/adding.6.out", "src/auto_program_memory.vhd"
     )
     th.gen_memories()
