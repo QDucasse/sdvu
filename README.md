@@ -4,7 +4,47 @@ This project consists of a **minimal CPU** called (SDVU) that is able to process
 
 ### Installation
 
+The different memories of the project are filled and generated from a given file. They can be regenerated using the `gen_memories` script. This Python script uses **Jinja2** as its templating engine. The templates can be found in `templates/` and the generation can be run with :
+
+```bash
+$ python templates/gen_memories.py 
+```
+
+The default values for memories are `adding.6.cfg` and `adding.6.out` for the `CONFIG_MEMORY` and `PROGRAM_MEMORY` respectively.
+
+
+
+The `sim.sh` script utility analyses and run the corresponding testbench for each one of the entity. Running the script for the ALU can be done with:
+
+```bash
+$ ./sim.sh alu	
+```
+
+Running the script for `sdvu` or `sdvu_top` requires the analysis of the different entities used.
+
 ### Project Structure
+
+The **SDVU** project is a CPU composed of several elements:
+
+***Config Memory:*** Memory holding the values of the different *global variables* (see [SDVC](https://github.com/QDucasse/sdvc) for more info on the ISA and global variables).
+
+***Program Memory:*** Memory holding the compiled program, i.e. 32-bits instructions.
+
+***SDVU:*** Processing unit consisting of several sub-parts.
+
+- ***Control Unit:*** Finite State Machine that controls the state of the program and enables the entities corresponding to the current state.
+- ***Program Counter:*** Address of the next instruction in the program memory.
+- ***Decoder:*** Transforms a raw 32-bits instruction to the different elements (register selectors, immediate values, op code, etc.).
+- ***Arithmetic Logic Unit***: Processor of binary operations (without DIV/MOD).
+-  ***Registers:*** 16 registers to hold the result of the ALU and handles LOAD and STORE operations (see [SDVC](https://github.com/QDucasse/sdvc) for more info on the ISA and register usage).
+
+
+
+### Synthesis 
+
+The project is synthesized with Vivado 2019.2 (tested with Vivado 2018.3)
+
+
 
 
 

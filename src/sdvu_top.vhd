@@ -22,7 +22,9 @@ use work.sdvu_constants.all;
 -- Entity
 entity sdvu_top is
   port(I_clock : in STD_LOGIC;
-       I_reset : in STD_LOGIC);
+       I_reset : in STD_LOGIC;
+       O_CFG_MEM_data_write : out STD_LOGIC_VECTOR(TYPE_SIZE-1 downto 0)
+       );
 end sdvu_top;
 
 -- Architecture
@@ -86,5 +88,5 @@ begin
         O_data   => s_PRG_MEM_data
       );
 
-
+    O_CFG_MEM_data_write <= s_CFG_MEM_data_write;
 end architecture arch_sdvu_top;

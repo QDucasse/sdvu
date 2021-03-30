@@ -35,7 +35,7 @@ architecture arch_program_memory_tb of program_memory_tb is
     signal running       : boolean    := true; -- Running flag, Simulation continues while true
 
     -- Signals for entity
-    signal I_PC     : STD_LOGIC_VECTOR (PC_SIZE-1 downto 0) := X"0000";
+    signal I_PC     : STD_LOGIC_VECTOR (PC_SIZE-1 downto 0) := X"00000000";
     signal O_data   : STD_LOGIC_VECTOR (INSTR_SIZE-1 downto 0);
 
     -- Internal memory as an external
@@ -73,12 +73,12 @@ architecture arch_program_memory_tb of program_memory_tb is
       report "Program Memory: Running testbench";
 
       -- Test 1: Fetch first instruction
-      I_PC <= X"0000";
+      I_PC <= X"00000000";
       wait_cycles(clock, 1);
       assert_true(O_data=X"DBE00060", "Fetch first instruction");
 
       -- Test 1: Fetch second instruction
-      I_PC <= X"0001";
+      I_PC <= X"00000001";
       wait_cycles(clock, 1);
       assert_true(O_data=X"94007000", "Fetch second instruction");
 
@@ -86,7 +86,7 @@ architecture arch_program_memory_tb of program_memory_tb is
       reset <= '1';
       wait_cycles(clock, 1);
 
-      I_PC <= X"0002";
+      I_PC <= X"00000002";
       reset <= '0';
       wait_cycles(clock, 1);
       assert_true(O_data=X"00000000", "Reset");
