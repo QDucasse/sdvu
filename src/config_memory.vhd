@@ -50,28 +50,24 @@ begin
       if rising_edge(I_clock) then  -- If new cycle
         if I_reset = '1' then     -- Reset
           memory_bank <= (others => '0');
-        elsif (I_enable = '1') and (I_we = '1') then   -- If write-enable propagate the data
-          -- Choose the correct address
-          if I_RAA = '1' then
-            address <= I_address_RAA;
-          else
-            address <= I_address;
-          end if;
+        elsif (I_enable = '1') then   -- If write-enable propagate the data
           -- Write the input to RAM address
-          case I_type is
-            when TYPE_BOOL =>
-              memory_bank(to_integer(unsigned(address))+SIZE_BOOL-1  downto to_integer(unsigned(address))) <= I_data(SIZE_BOOL-1 downto 0);
-            when TYPE_BYTE =>
-              memory_bank(to_integer(unsigned(address))+SIZE_BYTE-1  downto to_integer(unsigned(address))) <= I_data(SIZE_BYTE-1 downto 0);
-            when TYPE_INT =>
-              memory_bank(to_integer(unsigned(address))+SIZE_INT-1   downto to_integer(unsigned(address))) <= I_data(SIZE_INT-1 downto 0);
-            when TYPE_STATE =>
-              memory_bank(to_integer(unsigned(address))+SIZE_STATE-1 downto to_integer(unsigned(address))) <= I_data(SIZE_STATE-1 downto 0);
-            when others =>
-              -- unreachable
-          end case;
-        elsif (I_enable = '1') then
-          -- Read from the address to the output
+          if I_we = '1' then
+            case I_type is
+              when TYPE_BOOL =>
+                memory_bank(to_integer(unsigned(address))+SIZE_BOOL-1  downto to_integer(unsigned(address))) <= I_data(SIZE_BOOL-1 downto 0);
+              when TYPE_BYTE =>
+                memory_bank(to_integer(unsigned(address))+SIZE_BYTE-1  downto to_integer(unsigned(address))) <= I_data(SIZE_BYTE-1 downto 0);
+              when TYPE_INT =>
+                memory_bank(to_integer(unsigned(address))+SIZE_INT-1   downto to_integer(unsigned(address))) <= I_data(SIZE_INT-1 downto 0);
+              when TYPE_STATE =>
+                memory_bank(to_integer(unsigned(address))+SIZE_STATE-1 downto to_integer(unsigned(address))) <= I_data(SIZE_STATE-1 downto 0);
+              when others =>
+                -- unreachable
+            end case;
+          end if;
+
+          -- Map the outputs
           case I_type is
             when TYPE_BOOL =>
               O_data <= X"000000" & memory_bank(to_integer(unsigned(address))+SIZE_BOOL-1 downto to_integer(unsigned(address)));
@@ -85,6 +81,13 @@ begin
               -- Unreachable
           end case;
         end if;
+    end if;
+
+    -- Choose the correct address
+    if I_RAA = '1' then
+      address <= I_address_RAA;
+    else
+      address <= I_address;
     end if;
   end process;
 end arch_config_memory;

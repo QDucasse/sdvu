@@ -88,7 +88,7 @@ architecture arch_config_memory_tb of config_memory_tb is
 
       -- Test 1: Write (Boolean)
       I_we <= '1'; -- Enable writing
-      I_address <= X"00000008"; -- 32-bit address (8)
+      I_address <= X"00000000"; -- 32-bit address (8)
       I_type <= TYPE_BOOL;      -- Boolean value, 8 bits
       I_data <= X"000000BA";    -- 32-bit data (depends on the type of the data) -> 8 bits here
       wait_cycles(clock, 1);
@@ -96,7 +96,7 @@ architecture arch_config_memory_tb of config_memory_tb is
 
       -- Test 2: Read (Boolean)
       I_we <= '0'; -- Disable writing => Reading
-      wait_cycles(clock, 1);
+      wait_cycles(clock, 2);
       assert_true(O_data=X"000000BA", "Read Boolean");
 
       -- Test 3: Write (Byte)
@@ -108,9 +108,9 @@ architecture arch_config_memory_tb of config_memory_tb is
 --      assert_true(mem_bank(23 downto 16)=X"BA", "Write Byte");
 --      assert_true(mem_bank(15 downto 8)=X"BA", "Write Byte - No side effect");
 
-      -- Test 4: Read (Boolean)
+      -- Test 4: Read (Byte)
       I_we <= '0'; -- Disable writing => Reading
-      wait_cycles(clock, 1);
+      wait_cycles(clock, 2);
       assert_true(O_data=X"000000BA", "Read Byte");
 
       -- Test 5: Write (Int)
@@ -124,7 +124,7 @@ architecture arch_config_memory_tb of config_memory_tb is
 
       -- Test 6: Read (Int)
       I_we <= '0'; -- Disable writing => Reading
-      wait_cycles(clock, 1);
+      wait_cycles(clock, 2);
       assert_true(O_data=X"ABCDEF98", "Read INT");
 
       -- Test 7: Write (State)
@@ -138,7 +138,7 @@ architecture arch_config_memory_tb of config_memory_tb is
 
       -- Test 8: Read (State)
       I_we <= '0'; -- Disable writing => Reading
-      wait_cycles(clock, 1);
+      wait_cycles(clock, 2);
       assert_true(O_data=X"0000ABCD", "Read State");
 
       running <= false;
