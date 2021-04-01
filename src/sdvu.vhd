@@ -78,9 +78,9 @@ architecture arch_sdvu of sdvu is
   -- Register related
   signal s_dataA       : STD_LOGIC_VECTOR (REG_SIZE-1 downto 0);
   signal s_dataB       : STD_LOGIC_VECTOR (REG_SIZE-1 downto 0);
+  signal s_dataD       : STD_LOGIC_VECTOR (REG_SIZE-1 downto 0);
   signal s_dataD_ALU   : STD_LOGIC_VECTOR (REG_SIZE-1 downto 0);
   signal s_dataD_LOAD  : STD_LOGIC_VECTOR (REG_SIZE-1 downto 0);
-  signal s_dataD_STORE : STD_LOGIC_VECTOR (REG_SIZE-1 downto 0);
   -- PC related
   signal s_PC         : STD_LOGIC_VECTOR (PC_SIZE-1 downto 0);
   signal s_PC_OPCode  : STD_LOGIC_VECTOR (PC_OP_SIZE-1 downto 0);
@@ -115,6 +115,7 @@ begin
       I_PC_OPCode      => s_PC_OPCode,
       I_CFG_MEM_RAA    => s_RAA,
       I_cfg_mask       => s_cfgMask,
+      I_JMP_condition  => s_dataD,
       -- Outputs
       O_reset          => s_reset,
       O_enable_ALU     => s_enable_ALU,
@@ -186,7 +187,7 @@ begin
       -- Outputs
       O_dataB   => s_dataB,
       O_dataA   => s_dataA,
-      O_dataD   => s_dataD_STORE
+      O_dataD   => s_dataD
     );
 
   -- Using memory results
@@ -200,7 +201,7 @@ begin
   O_CFG_MEM_type        <= s_type;
   O_CFG_MEM_address     <= s_address;
   O_CFG_MEM_address_RAA <= s_dataA;
-  O_CFG_MEM_data        <= s_dataD_STORE;   -- In case of store
+  O_CFG_MEM_data        <= s_dataD;   -- In case of store
 
   -- PRG MEM output signals
   O_enable_PRG_MEM  <= s_enable_PRG_MEM;
