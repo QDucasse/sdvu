@@ -37,8 +37,7 @@ architecture arch_control_unit_tb of control_unit_tb is
      -- Entity Signals
     signal I_op_code        : STD_LOGIC_VECTOR(OP_SIZE-1 downto 0);
     signal I_cfg_mask       : STD_LOGIC_VECTOR(1 downto 0);
-    signal I_PC_OPCode      : STD_LOGIC_VECTOR(PC_OP_SIZE-1 downto 0);
-    signal I_CFG_MEM_RAA    : STD_LOGIC;
+    signal I_JMP_condition  : STD_LOGIC_VECTOR(REG_SIZE-1 downto 0);
 
     signal O_reset          : STD_LOGIC;
     signal O_enable_ALU     : STD_LOGIC;
@@ -78,6 +77,7 @@ begin
         I_cfg_mask       => I_cfg_mask,
         I_PC_OPCode      => O_PC_OPCode,
         I_CFG_MEM_RAA    => O_CFG_MEM_RAA,
+        I_JMP_condition  => I_JMP_condition,
 
         O_reset          => O_reset,
         O_enable_ALU     => O_enable_ALU,
@@ -206,9 +206,44 @@ begin
       assert_true(O_REG_we_LOAD='0',        "DECODE2 - No we REG LOAD");
       assert_true(O_REG_we_MOVIMM='0',      "DECODE2 - No we REG MOVREG");
       assert_true(O_REG_we_MOVREG='0',      "DECODE2 - No we REG MOVIMM");
-      assert_true(O_PC_OPCode=PC_OP_ASSIGN, "DECODE2 - PC operation: ASSIGN");
+      assert_true(O_PC_OPCode=PC_OP_NOP,    "DECODE2 - PC operation: NOP");
 
-      -- Test 7: Fetch 1 from JMP
+      -- Test 7: JMP 1
+      wait_cycles(clock, 1);
+      assert_true(O_reset='0',              "JMP1 - Reset not set");
+      assert_true(O_enable_ALU='0',         "JMP1 - No enable ALU");
+      assert_true(O_enable_CFG_MEM='0',     "JMP1 - No enable CFG_MEM");
+      assert_true(O_enable_DECODER='0',     "JMP1 - No enable DECODER");
+      assert_true(O_enable_PC='0',          "JMP1 - No enable PC");
+      assert_true(O_enable_PRG_MEM='0',     "JMP1 - No enable PRG_MEM");
+      assert_true(O_enable_REG='1',         "JMP1 - Enable REG");
+      assert_true(O_CFG_MEM_we='0',         "JMP1 - No we CFG_MEM");
+      assert_true(O_CFG_MEM_RAA='0',        "JMP1 - RAA mode not enabled");
+      assert_true(O_REG_we_ALU='0',         "JMP1 - No we REG ALU");
+      assert_true(O_REG_we_LOAD='0',        "JMP1 - No we REG LOAD");
+      assert_true(O_REG_we_MOVIMM='0',      "JMP1 - No we REG MOVREG");
+      assert_true(O_REG_we_MOVREG='0',      "JMP1 - No we REG MOVIMM");
+      assert_true(O_PC_OPCode=PC_OP_NOP,    "JMP1 - PC operation: NOP");
+
+      -- Test 8: JMP 2
+      I_JMP_condition <= X"00000001";
+      wait_cycles(clock, 1);
+      assert_true(O_reset='0',              "JMP2 - Reset not set");
+      assert_true(O_enable_ALU='0',         "JMP2 - No enable ALU");
+      assert_true(O_enable_CFG_MEM='0',     "JMP2 - No enable CFG_MEM");
+      assert_true(O_enable_DECODER='0',     "JMP2 - No enable DECODER");
+      assert_true(O_enable_PC='0',          "JMP2 - No enable PC");
+      assert_true(O_enable_PRG_MEM='0',     "JMP2 - No enable PRG_MEM");
+      assert_true(O_enable_REG='0',         "JMP2 - No enable REG");
+      assert_true(O_CFG_MEM_we='0',         "JMP2 - No we CFG_MEM");
+      assert_true(O_CFG_MEM_RAA='0',        "JMP2 - RAA mode not enabled");
+      assert_true(O_REG_we_ALU='0',         "JMP2 - No we REG ALU");
+      assert_true(O_REG_we_LOAD='0',        "JMP2 - No we REG LOAD");
+      assert_true(O_REG_we_MOVIMM='0',      "JMP2 - No we REG MOVREG");
+      assert_true(O_REG_we_MOVREG='0',      "JMP2 - No we REG MOVIMM");
+      assert_true(O_PC_OPCode=PC_OP_ASSIGN, "JMP2 - PC operation: ASSIGN");
+
+      -- Test 9: Fetch 1 from JMP - ASSIGN
       wait_cycles(clock, 1);
       assert_true(O_reset='0',              "FETCH1 JMP - Reset not set");
       assert_true(O_enable_ALU='0',         "FETCH1 JMP - No enable ALU");
@@ -226,7 +261,46 @@ begin
       assert_true(O_PC_OPCode=PC_OP_ASSIGN, "FETCH1 JMP - PC operation: ASSIGN");
 
       -- (Re-fetch, wait until state decode2)
+      wait_cycles(clock, 4);
+
+      -- Test 8: JMP 2
+      I_JMP_condition <= X"00000000";
+      wait_cycles(clock, 1);
+      assert_true(O_reset='0',              "JMP2 - Reset not set");
+      assert_true(O_enable_ALU='0',         "JMP2 - No enable ALU");
+      assert_true(O_enable_CFG_MEM='0',     "JMP2 - No enable CFG_MEM");
+      assert_true(O_enable_DECODER='0',     "JMP2 - No enable DECODER");
+      assert_true(O_enable_PC='0',          "JMP2 - No enable PC");
+      assert_true(O_enable_PRG_MEM='0',     "JMP2 - No enable PRG_MEM");
+      assert_true(O_enable_REG='0',         "JMP2 - No enable REG");
+      assert_true(O_CFG_MEM_we='0',         "JMP2 - No we CFG_MEM");
+      assert_true(O_CFG_MEM_RAA='0',        "JMP2 - RAA mode not enabled");
+      assert_true(O_REG_we_ALU='0',         "JMP2 - No we REG ALU");
+      assert_true(O_REG_we_LOAD='0',        "JMP2 - No we REG LOAD");
+      assert_true(O_REG_we_MOVIMM='0',      "JMP2 - No we REG MOVREG");
+      assert_true(O_REG_we_MOVREG='0',      "JMP2 - No we REG MOVIMM");
+      assert_true(O_PC_OPCode=PC_OP_INC,    "JMP2 - PC operation: INC");
+
+      -- Test 9: Fetch 1 from JMP - INC
+      wait_cycles(clock, 1);
+      assert_true(O_reset='0',              "FETCH1 JMP - Reset not set");
+      assert_true(O_enable_ALU='0',         "FETCH1 JMP - No enable ALU");
+      assert_true(O_enable_CFG_MEM='0',     "FETCH1 JMP - No enable CFG_MEM");
+      assert_true(O_enable_DECODER='0',     "FETCH1 JMP - No enable DECODER");
+      assert_true(O_enable_PC='1',          "FETCH1 JMP - Enable PC");
+      assert_true(O_enable_PRG_MEM='0',     "FETCH1 JMP - No enable PRG_MEM");
+      assert_true(O_enable_REG='0',         "FETCH1 JMP - No enable REG");
+      assert_true(O_CFG_MEM_we='0',         "FETCH1 JMP - No we CFG_MEM");
+      assert_true(O_CFG_MEM_RAA='0',        "FETCH1 JMP - RAA mode not enabled");
+      assert_true(O_REG_we_ALU='0',         "FETCH1 JMP - No we REG ALU");
+      assert_true(O_REG_we_LOAD='0',        "FETCH1 JMP - No we REG LOAD");
+      assert_true(O_REG_we_MOVIMM='0',      "FETCH1 JMP - No we REG MOVREG");
+      assert_true(O_REG_we_MOVREG='0',      "FETCH1 JMP - No we REG MOVIMM");
+      assert_true(O_PC_OPCode=PC_OP_INC,    "JMP2 - PC operation: INC");
+
+      -- (Re-fetch, wait until state decode2)
       wait_cycles(clock, 2);
+
       -- Test 8: Store ADR
       I_op_code <= OP_STORE;
       I_cfg_mask <= STORE_ADR;

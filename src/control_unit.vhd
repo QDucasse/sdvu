@@ -23,10 +23,11 @@ entity control_unit is
     port (I_clock   : in  STD_LOGIC;                                 -- Clock signal
           I_reset   : in  STD_LOGIC;                                 -- Reset signal
           -- Inputs
-          I_op_code   : in STD_LOGIC_VECTOR(OP_SIZE-1 downto 0);    -- Instruction Op Code
-          I_cfg_mask  : in STD_LOGIC_VECTOR(1 downto 0);            -- Config mask
-          I_PC_OPCode : in STD_LOGIC_VECTOR(PC_OP_SIZE-1 downto 0); -- Carry over PC operation
-          I_CFG_MEM_RAA : in STD_LOGIC; -- Carry over RAA mode
+          I_op_code   : in STD_LOGIC_VECTOR(OP_SIZE-1 downto 0);      -- Instruction Op Code
+          I_cfg_mask  : in STD_LOGIC_VECTOR(1 downto 0);              -- Config mask
+          I_PC_OPCode : in STD_LOGIC_VECTOR(PC_OP_SIZE-1 downto 0);   -- Carry over PC operation
+          I_CFG_MEM_RAA : in STD_LOGIC;                               -- Carry over RAA mode
+          I_JMP_condition : in STD_LOGIC_VECTOR(REG_SIZE-1 downto 0); -- Condition to branch on
           -- Outputs
           -- Enable signals based on the state
           O_reset          : out STD_LOGIC;
@@ -61,6 +62,8 @@ architecture arch_control_unit of control_unit is
       STATE_FETCH2,   -- Use PC to get instruction
       STATE_DECODE1,  -- Decode instruction
       STATE_DECODE2,  -- Switch on the instruction
+      STATE_JMP1,     -- Get the condition from the registers
+      STATE_JMP2,     -- Switch on the condition result
       STATE_STORE1,   -- Process the regs to get the value to store
       STATE_STORERAA, -- Process Register as Address
       STATE_STORE2,   -- Store the value in memory
@@ -127,7 +130,7 @@ begin
                     end case;
                   -- JUMP
                   when OP_JMP =>
-                    current_state <= STATE_FETCH1;
+                    current_state <= STATE_JMP1;
                   -- BINARY
                   when others =>
                     current_state <= STATE_BIN1;
@@ -153,6 +156,12 @@ begin
               when STATE_MOVIMM =>
                 current_state <= STATE_FETCH1;
               when STATE_MOVREG =>
+                current_state <= STATE_FETCH1;
+
+              -- PROCESS JUMP TRANSITIONS
+              when STATE_JMP1 =>
+                current_state <= STATE_JMP2;
+              when STATE_JMP2 =>
                 current_state <= STATE_FETCH1;
 
               -- PROCESS BIN/NOT TRANSITIONS
@@ -191,6 +200,7 @@ begin
     O_enable_REG     <= '1' when (
                                current_state = STATE_BIN1     or
                                current_state = STATE_BIN3     or
+                               current_state = STATE_JMP1     or
                                current_state = STATE_STORE1   or
                                current_state = STATE_STORERAA or
                                current_state = STATE_LOADRAA  or
@@ -215,16 +225,17 @@ begin
     -- ASSIGN when JMP (in decode state) --> needs to be propagated with the first line
     -- INC when finishing a load, store or bin
     -- NOP otherwise
-    O_PC_OPCode  <= I_PC_OPCode when (current_state = STATE_FETCH1 and I_PC_OPCode /= PC_OP_RESET)
+    O_PC_OPCode  <= I_PC_OPCode when ((current_state = STATE_FETCH1) and (I_PC_OPCode /= PC_OP_RESET))
+                    else PC_OP_ASSIGN when ((current_state = STATE_JMP2) and (to_integer(unsigned(I_JMP_condition)) /= 0))
                     else PC_OP_INC when (
                                  current_state = STATE_LOAD2  or
                                  current_state = STATE_STORE2 or
                                  current_state = STATE_BIN3   or
                                  current_state = STATE_MOVIMM or
                                  current_state = STATE_MOVREG or
-                                 current_state = STATE_FETCH1
+                                 current_state = STATE_FETCH1 or
+                                 current_state = STATE_JMP2
                                 )
-                    else PC_OP_ASSIGN when current_state = STATE_DECODE2
                     else PC_OP_RESET when current_state = STATE_RESET1
                     else PC_OP_NOP;
 
