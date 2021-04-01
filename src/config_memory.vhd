@@ -41,7 +41,7 @@ end config_memory;
 architecture arch_config_memory of config_memory is
     -- Internal Objects
     signal memory_bank : STD_LOGIC_VECTOR(2**CFG_MEM_SIZE-1 downto 0) := (others => '0');
-    signal address : STD_LOGIC_VECTOR(REG_SIZE-1 downto 0) := (others => '0');
+    signal address : STD_LOGIC_VECTOR(REG_SIZE-1 downto 0);
 
 begin
   -- Processes
@@ -65,21 +65,21 @@ begin
               when others =>
                 -- unreachable
             end case;
+          else
+            -- Map the outputs
+            case I_type is
+              when TYPE_BOOL =>
+                O_data <= X"000000" & memory_bank(to_integer(unsigned(address))+SIZE_BOOL-1 downto to_integer(unsigned(address)));
+              when TYPE_BYTE =>
+                O_data <= X"000000" & memory_bank(to_integer(unsigned(address))+SIZE_BYTE-1 downto to_integer(unsigned(address)));
+              when TYPE_INT =>
+                O_data <= memory_bank(to_integer(unsigned(address))+SIZE_INT-1 downto to_integer(unsigned(address)));
+              when TYPE_STATE =>
+                O_data <= X"0000" & memory_bank(to_integer(unsigned(address))+SIZE_STATE-1 downto to_integer(unsigned(address)));
+              when others =>
+                -- Unreachable
+            end case;
           end if;
-
-          -- Map the outputs
-          case I_type is
-            when TYPE_BOOL =>
-              O_data <= X"000000" & memory_bank(to_integer(unsigned(address))+SIZE_BOOL-1 downto to_integer(unsigned(address)));
-            when TYPE_BYTE =>
-              O_data <= X"000000" & memory_bank(to_integer(unsigned(address))+SIZE_BYTE-1 downto to_integer(unsigned(address)));
-            when TYPE_INT =>
-              O_data <= memory_bank(to_integer(unsigned(address))+SIZE_INT-1 downto to_integer(unsigned(address)));
-            when TYPE_STATE =>
-              O_data <= X"0000" & memory_bank(to_integer(unsigned(address))+SIZE_STATE-1 downto to_integer(unsigned(address)));
-            when others =>
-              -- Unreachable
-          end case;
         end if;
     end if;
 

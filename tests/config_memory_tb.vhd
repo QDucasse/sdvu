@@ -88,7 +88,7 @@ architecture arch_config_memory_tb of config_memory_tb is
 
       -- Test 1: Write (Boolean)
       I_we <= '1'; -- Enable writing
-      I_address <= X"00000000"; -- 32-bit address (8)
+      I_address <= X"00000000"; -- 32-bit address (0)
       I_type <= TYPE_BOOL;      -- Boolean value, 8 bits
       I_data <= X"000000BA";    -- 32-bit data (depends on the type of the data) -> 8 bits here
       wait_cycles(clock, 1);
@@ -101,9 +101,9 @@ architecture arch_config_memory_tb of config_memory_tb is
 
       -- Test 3: Write (Byte)
       I_we <= '1'; -- Enable writing
-      I_address <= X"00000010"; -- 32-bit address (16)
+      I_address <= X"00000008"; -- 32-bit address (8)
       I_type <= TYPE_BYTE;      -- Byte value, 8 bits
-      I_data <= X"000000BA";    -- 32-bit data (depends on the type of the data) -> 8 bits here
+      I_data <= X"000000DC";    -- 32-bit data (depends on the type of the data) -> 8 bits here
       wait_cycles(clock, 1);
 --      assert_true(mem_bank(23 downto 16)=X"BA", "Write Byte");
 --      assert_true(mem_bank(15 downto 8)=X"BA", "Write Byte - No side effect");
@@ -111,11 +111,11 @@ architecture arch_config_memory_tb of config_memory_tb is
       -- Test 4: Read (Byte)
       I_we <= '0'; -- Disable writing => Reading
       wait_cycles(clock, 2);
-      assert_true(O_data=X"000000BA", "Read Byte");
+      assert_true(O_data=X"000000DC", "Read Byte");
 
       -- Test 5: Write (Int)
       I_we <= '1'; -- Enable writing
-      I_address <= X"00000018"; -- 32-bit address (24)
+      I_address <= X"00000010"; -- 32-bit address (16)
       I_type <= TYPE_INT;       -- Int value, 32 bits
       I_data <= X"ABCDEF98";    -- 32-bit data (depends on the type of the data) -> 32 bits here
       wait_cycles(clock, 1);
@@ -129,7 +129,7 @@ architecture arch_config_memory_tb of config_memory_tb is
 
       -- Test 7: Write (State)
       I_we <= '1'; -- Enable writing
-      I_address <= X"00000038"; -- 32-bit address (56)
+      I_address <= X"00000030"; -- 32-bit address (48)
       I_type <= TYPE_STATE;     -- State value, 16 bits
       I_data <= X"0000ABCD";    -- 32-bit data (depends on the type of the data) -> 16 bits here
       wait_cycles(clock, 1);
