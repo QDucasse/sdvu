@@ -19,20 +19,22 @@ use IEEE.numeric_std.all;
 package sdvu_constants is
 
   -- Opcodes
-  constant OP_ADD:   STD_LOGIC_VECTOR(3 downto 0) :=  "0000";
-  constant OP_SUB:   STD_LOGIC_VECTOR(3 downto 0) :=  "0001";
-  constant OP_MUL:   STD_LOGIC_VECTOR(3 downto 0) :=  "0010";
-  constant OP_DIV:   STD_LOGIC_VECTOR(3 downto 0) :=  "0011";
-  constant OP_MOD:   STD_LOGIC_VECTOR(3 downto 0) :=  "0100";
-  constant OP_AND:   STD_LOGIC_VECTOR(3 downto 0) :=  "0101";
-  constant OP_OR:    STD_LOGIC_VECTOR(3 downto 0) :=  "0110";
-  constant OP_LT:    STD_LOGIC_VECTOR(3 downto 0) :=  "0111";
-  constant OP_GT:    STD_LOGIC_VECTOR(3 downto 0) :=  "1000";
-  constant OP_EQ:    STD_LOGIC_VECTOR(3 downto 0) :=  "1001";
-  constant OP_NOT:   STD_LOGIC_VECTOR(3 downto 0) :=  "1010";
-  constant OP_JMP:   STD_LOGIC_VECTOR(3 downto 0) :=  "1011";
-  constant OP_STORE: STD_LOGIC_VECTOR(3 downto 0) :=  "1100";
-  constant OP_LOAD:  STD_LOGIC_VECTOR(3 downto 0) :=  "1101";
+  constant OP_NOP:   STD_LOGIC_VECTOR(3 downto 0) :=  "0000";
+  constant OP_ADD:   STD_LOGIC_VECTOR(3 downto 0) :=  "0001";
+  constant OP_SUB:   STD_LOGIC_VECTOR(3 downto 0) :=  "0010";
+  constant OP_MUL:   STD_LOGIC_VECTOR(3 downto 0) :=  "0011";
+  constant OP_DIV:   STD_LOGIC_VECTOR(3 downto 0) :=  "0100";
+  constant OP_MOD:   STD_LOGIC_VECTOR(3 downto 0) :=  "0101";
+  constant OP_AND:   STD_LOGIC_VECTOR(3 downto 0) :=  "0110";
+  constant OP_OR:    STD_LOGIC_VECTOR(3 downto 0) :=  "0111";
+  constant OP_LT:    STD_LOGIC_VECTOR(3 downto 0) :=  "1000";
+  constant OP_GT:    STD_LOGIC_VECTOR(3 downto 0) :=  "1001";
+  constant OP_EQ:    STD_LOGIC_VECTOR(3 downto 0) :=  "1010";
+  constant OP_NOT:   STD_LOGIC_VECTOR(3 downto 0) :=  "1011";
+  constant OP_JMP:   STD_LOGIC_VECTOR(3 downto 0) :=  "1100";
+  constant OP_STORE: STD_LOGIC_VECTOR(3 downto 0) :=  "1101";
+  constant OP_LOAD:  STD_LOGIC_VECTOR(3 downto 0) :=  "1110";
+  constant OP_ENDGA: STD_LOGIC_VECTOR(3 downto 0) :=  "1111";
 
   -- Config bitmasks for BINARY operations
   constant CFG_RR: STD_LOGIC_VECTOR(1 downto 0) := "00";

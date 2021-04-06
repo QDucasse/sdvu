@@ -273,6 +273,10 @@
         <ReportConfig DisplayName="synthesis_report" Name="synth_1_synth_synthesis_report_0" Spec="" RunStep="synth_design" ReportFile="sdvu_top.vds">
           <ReportConfigOption Name="dummy_option" Type="string"/>
         </ReportConfig>
+        <ReportConfig DisplayName="synth_1_synth_report_utilization_1" Name="synth_1_synth_report_utilization_1" Spec="report_utilization" RunStep="synth_design" ReportFile="sdvu_top_utilization_synth_1.rpt" Version="1" Minor="0">
+          <ReportConfigOption Name="hierarchical" Type="" Value="true"/>
+          <ReportConfigOutputOption Name="pb" Type="string" Value="sdvu_top_utilization_synth_1.pb"/>
+        </ReportConfig>
       </ReportStrategy>
       <Report Name="ROUTE_DESIGN.REPORT_METHODOLOGY" Enabled="1"/>
       <RQSFiles/>

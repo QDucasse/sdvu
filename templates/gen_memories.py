@@ -82,6 +82,6 @@ class TemplateHandler():
 if __name__ == "__main__":
     th = TemplateHandler(
         "cfg/adding.6.cfg", "src/auto_config_memory.vhd",
-        "cfg/adding.6.out", "src/auto_program_memory.vhd"
+        "cfg/adding.6.out.0", "src/auto_program_memory.vhd"
     )
     th.gen_memories()
