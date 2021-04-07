@@ -34,15 +34,22 @@ architecture arch_sdvu_tb of sdvu_tb is
   signal running       : boolean    := true; -- Running flag, Simulation continues while true
 
     -- Signals for entity
-    signal I_CFG_MEM_data    : STD_LOGIC_VECTOR(TYPE_SIZE-1 downto 0);
-    signal O_enable_CFG_MEM  : STD_LOGIC;
-    signal O_CFG_MEM_we      : STD_LOGIC;
-    signal O_CFG_MEM_type    : STD_LOGIC_VECTOR(1 downto 0);
-    signal O_CFG_MEM_address : STD_LOGIC_VECTOR(REG_SIZE-1 downto 0);
-    signal O_CFG_MEM_data    : STD_LOGIC_VECTOR(TYPE_SIZE-1 downto 0);
-    signal I_PRG_MEM_data    : STD_LOGIC_VECTOR(INSTR_SIZE-1 downto 0);
-    signal O_enable_PRG_MEM  : STD_LOGIC;
-    signal O_PRG_MEM_PC      : std_logic_vector(PC_SIZE-1 downto 0);
+    signal O_idle                : STD_LOGIC;
+    -- CFG MEM Related
+    signal I_CFG_MEM_data        : STD_LOGIC_VECTOR(TYPE_SIZE-1 downto 0);
+    signal O_enable_CFG_MEM      : STD_LOGIC;
+    signal O_return_config       : STD_LOGIC;
+    signal O_CFG_MEM_we          : STD_LOGIC;
+    signal O_CFG_MEM_RAA         : STD_LOGIC;
+    signal O_CFG_MEM_type        : STD_LOGIC_VECTOR(1 downto 0);
+    signal O_CFG_MEM_address     : STD_LOGIC_VECTOR(REG_SIZE-1 downto 0);
+    signal O_CFG_MEM_address_RAA : STD_LOGIC_VECTOR(REG_SIZE-1 downto 0);
+    signal O_CFG_MEM_data        : STD_LOGIC_VECTOR(TYPE_SIZE-1 downto 0);
+    -- PRG MEM Related
+    signal I_PRG_MEM_data        : STD_LOGIC_VECTOR(INSTR_SIZE-1 downto 0);
+    signal O_enable_PRG_MEM      : STD_LOGIC;
+    signal O_PRG_MEM_PC          : STD_LOGIC_VECTOR(PC_SIZE-1 downto 0);
+
 
     begin
       -- Clock, Reset and Enable generation
@@ -59,19 +66,21 @@ architecture arch_sdvu_tb of sdvu_tb is
       -- DUT
       dut: entity work.sdvu(arch_sdvu)
         port map (
-          I_clock           => clock,
-          I_reset           => reset,
-
-          I_CFG_MEM_data    => I_CFG_MEM_data,
-          O_enable_CFG_MEM  => O_enable_CFG_MEM,
-          O_CFG_MEM_we      => O_CFG_MEM_we,
-          O_CFG_MEM_type    => O_CFG_MEM_type,
-          O_CFG_MEM_address => O_CFG_MEM_address,
-          O_CFG_MEM_data    => O_CFG_MEM_data,
-
-          I_PRG_MEM_data    => I_PRG_MEM_data,
-          O_enable_PRG_MEM  => O_enable_PRG_MEM,
-          O_PRG_MEM_PC      => O_PRG_MEM_PC
+          I_clock               => clock,
+          I_reset               => reset,
+          O_idle                => O_idle,
+          I_CFG_MEM_data        => I_CFG_MEM_data,
+          O_enable_CFG_MEM      => O_enable_CFG_MEM,
+          O_return_config       => O_return_config,
+          O_CFG_MEM_we          => O_CFG_MEM_we,
+          O_CFG_MEM_RAA         => O_CFG_MEM_RAA,
+          O_CFG_MEM_type        => O_CFG_MEM_type,
+          O_CFG_MEM_address     => O_CFG_MEM_address,
+          O_CFG_MEM_address_RAA => O_CFG_MEM_address_RAA,
+          O_CFG_MEM_data        => O_CFG_MEM_data,
+          I_PRG_MEM_data        => I_PRG_MEM_data,
+          O_enable_PRG_MEM      => O_enable_PRG_MEM,
+          O_PRG_MEM_PC          => O_PRG_MEM_PC
         );
 
       -- Stimulus process

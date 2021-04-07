@@ -33,6 +33,11 @@ architecture arch_sdvu_top_tb of sdvu_top_tb is
   signal reset         : std_logic  := '0';  -- Reset signal
   signal running       : boolean    := true; -- Running flag, Simulation continues while true
 
+  signal I_new_config    : STD_LOGIC_VECTOR (2** CFG_MEM_SIZE-1 downto 0);
+  signal O_idle          : STD_LOGIC;
+  signal O_return_config : STD_LOGIC;
+  signal O_config        : STD_LOGIC_VECTOR (2**CFG_MEM_SIZE-1 downto 0);
+
     begin
       -- Clock, Reset and Enable generation
       ClockProcess : process
@@ -48,16 +53,27 @@ architecture arch_sdvu_top_tb of sdvu_top_tb is
       -- DUT
       dut: entity work.sdvu_top(arch_sdvu_top)
         port map (
-          I_clock           => clock,
-          I_reset           => reset
+          I_clock         => clock,
+          I_reset         => reset,
+          I_new_config    => I_new_config,
+          O_idle          => O_idle,
+          O_return_config => O_return_config,
+          O_config        => O_config
         );
+
 
       -- Stimulus process
       StimulusProcess: process
+        constant ZERO : STD_LOGIC_VECTOR(2**CFG_MEM_SIZE-1 downto 0) := (others => '0');
       begin
+
+        I_new_config <= X"0000000000000000000000000000000000010001000000050000000400000003";
         wait until reset = '0';
         report "SDVU TOP: Running testbench";
+
+
         wait_cycles(clock, 200);
+        -- wait until O_idle = '1';
         running <= false;
         report "SDVU: Testbench complete";
       end process;

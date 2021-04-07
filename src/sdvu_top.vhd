@@ -23,7 +23,12 @@ use work.sdvu_constants.all;
 entity sdvu_top is
   port(I_clock : in STD_LOGIC;
        I_reset : in STD_LOGIC;
-       O_config : out STD_LOGIC_VECTOR(2**CFG_MEM_SIZE-1 downto 0)
+       -- Inputs
+       I_new_config    : in STD_LOGIC_VECTOR (2** CFG_MEM_SIZE-1 downto 0);
+       -- Outputs
+       O_idle          : out STD_LOGIC;
+       O_return_config : out STD_LOGIC;
+       O_config        : out STD_LOGIC_VECTOR (2**CFG_MEM_SIZE-1 downto 0)
        );
 end sdvu_top;
 
@@ -42,7 +47,9 @@ architecture arch_sdvu_top of sdvu_top is
   signal s_CFG_MEM_address     : STD_LOGIC_VECTOR(REG_SIZE-1 downto 0);
   signal s_CFG_MEM_address_RAA : STD_LOGIC_VECTOR(REG_SIZE-1 downto 0);
   signal s_CFG_MEM_data_read   : STD_LOGIC_VECTOR(TYPE_SIZE-1 downto 0);
+  signal s_idle                : STD_LOGIC;
   signal s_output_config       : STD_LOGIC_VECTOR(2**CFG_MEM_SIZE-1 downto 0);
+  signal s_input_config        : STD_LOGIC_VECTOR(2**CFG_MEM_SIZE-1 downto 0);
   -- PRG MEM related
   signal s_enable_PRG_MEM : STD_LOGIC;
   signal s_PRG_MEM_data   : STD_LOGIC_VECTOR(INSTR_SIZE-1 downto 0);
@@ -54,6 +61,8 @@ begin
     port map (
       I_clock               => I_clock,
       I_reset               => I_reset,
+      -- CFG Memory related
+      O_idle                => s_idle,
       I_CFG_MEM_data        => s_CFG_MEM_data_read,
       O_enable_CFG_MEM      => s_enable_CFG_MEM,
       O_return_config       => s_return_config,
@@ -63,6 +72,7 @@ begin
       O_CFG_MEM_address     => s_CFG_MEM_address,
       O_CFG_MEM_address_RAA => s_CFG_MEM_address_RAA,
       O_CFG_MEM_data        => s_CFG_MEM_data_write,
+      -- PRG Memory related
       I_PRG_MEM_data        => s_PRG_MEM_data,
       O_enable_PRG_MEM      => s_enable_PRG_MEM,
       O_PRG_MEM_PC          => s_PRG_MEM_PC
@@ -72,7 +82,7 @@ begin
     port map (
       I_clock         => I_clock,
       I_enable        => s_enable_CFG_MEM,
-      I_return_config => s_return_config,
+
       I_reset         => I_reset,
       I_we            => s_CFG_MEM_we,
       I_RAA           => s_CFG_MEM_RAA,
@@ -80,7 +90,11 @@ begin
       I_address       => s_CFG_MEM_address,
       I_address_RAA   => s_CFG_MEM_address_RAA,
       I_data          => s_CFG_MEM_data_write,
+
       O_data          => s_CFG_MEM_data_read,
+
+      I_return_config => s_return_config,
+      I_new_config    => I_new_config,
       O_config        => s_output_config
     );
 
@@ -93,5 +107,7 @@ begin
         O_data   => s_PRG_MEM_data
       );
 
-    O_config <= s_output_config;
+    O_idle          <= s_idle;
+    O_return_config <= s_return_config;
+    O_config        <= s_output_config;
 end architecture arch_sdvu_top;

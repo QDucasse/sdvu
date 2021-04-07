@@ -29,6 +29,7 @@ entity control_unit is
           I_CFG_MEM_RAA : in STD_LOGIC;                               -- Carry over RAA mode
           I_JMP_condition : in STD_LOGIC_VECTOR(REG_SIZE-1 downto 0); -- Condition to branch on
           -- Outputs
+          O_idle           : out STD_LOGIC;
           -- Enable signals based on the state
           O_reset          : out STD_LOGIC;
           O_enable_ALU     : out STD_LOGIC;
@@ -196,7 +197,7 @@ begin
 
               -- unreachable
               when others =>
-                current_state <= STATE_RESET1;
+                current_state <= STATE_NOP;
             end case;
           end if;
         end if;
@@ -252,16 +253,19 @@ begin
     O_PC_OPCode  <= I_PC_OPCode when ((current_state = STATE_FETCH1) and (I_PC_OPCode /= PC_OP_RESET))
   else PC_OP_ASSIGN when ((current_state = STATE_JMP2) and (to_integer(unsigned(I_JMP_condition)) /= 0))
                     else PC_OP_INC when (
-                                 current_state = STATE_LOAD2  or
-                                 current_state = STATE_STORE2 or
-                                 current_state = STATE_BIN3   or
-                                 current_state = STATE_MOVIMM or
-                                 current_state = STATE_MOVREG or
-                                 current_state = STATE_JMP2   or
-                                 current_state = STATE_ENDGA  or
-                                 current_state = STATE_FETCH1
-                                )
-                    else PC_OP_RESET when current_state = STATE_RESET1
+                       current_state = STATE_LOAD2  or
+                       current_state = STATE_STORE2 or
+                       current_state = STATE_BIN3   or
+                       current_state = STATE_MOVIMM or
+                       current_state = STATE_MOVREG or
+                       current_state = STATE_JMP2   or
+                       current_state = STATE_ENDGA  or
+                       current_state = STATE_FETCH1
+                      )
+                    else PC_OP_RESET when (
+                      current_state = STATE_RESET1 or
+                      current_state = STATE_END
+                      )
                     else PC_OP_NOP;
 
     O_CFG_MEM_RAA <= I_CFG_MEM_RAA when (current_state = STATE_LOAD1 or current_state = STATE_STORE2)
@@ -270,5 +274,7 @@ begin
 
     -- Let the CPU return the config when finishing a guard action
     O_return_config <= '1' when (current_state = STATE_ENDGA) else '0';
+
+    O_idle <= '1' when (current_state = STATE_END) else '0';
 
 end arch_control_unit;

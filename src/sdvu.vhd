@@ -25,6 +25,7 @@ entity sdvu is
   port(I_clock : in STD_LOGIC;
        I_reset : in STD_LOGIC;
 
+       O_idle : out STD_LOGIC;
        -- Config memory
        I_CFG_MEM_data        : in STD_LOGIC_VECTOR(TYPE_SIZE-1 downto 0);
        O_enable_CFG_MEM      : out STD_LOGIC;
@@ -59,6 +60,7 @@ architecture arch_sdvu of sdvu is
   signal s_enable_PRG_MEM : STD_LOGIC;
   signal s_enable_REG     : STD_LOGIC;
 
+  signal s_idle           : STD_LOGIC;
   signal s_return_config  : STD_LOGIC;
   signal s_CFG_MEM_we     : STD_LOGIC;
   signal s_RAA            : STD_LOGIC;
@@ -119,6 +121,7 @@ begin
       I_cfg_mask       => s_cfgMask,
       I_JMP_condition  => s_dataD,
       -- Outputs
+      O_idle           => s_idle,
       O_reset          => s_reset,
       O_enable_ALU     => s_enable_ALU,
       O_enable_CFG_MEM => s_enable_CFG_MEM,
@@ -197,6 +200,8 @@ begin
   s_instruction <= I_PRG_MEM_data;
   s_dataD_LOAD  <= I_CFG_MEM_data;
 
+  -- Outputs
+  O_idle <= s_idle;
   -- CFG MEM output signals
   O_enable_CFG_MEM      <= s_enable_CFG_MEM;
   O_return_config       <= s_return_config;
