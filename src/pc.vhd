@@ -61,7 +61,7 @@ begin
           when PC_OP_INC =>    -- INC | Increment the PC
             current_pc <= std_logic_vector(unsigned(current_pc) + 1);
           when PC_OP_ASSIGN => -- ASSIGN | Set the PC from an external input
-            current_pc <= STD_LOGIC_VECTOR(shift_right(unsigned(I_newPC), 2)); -- Input PC to assign
+            current_pc <= I_newPC; -- Input PC to assign
           when PC_OP_RESET =>  -- RESET | Set the PC to X"0000"
             current_pc <= (others => '0');
           when others =>

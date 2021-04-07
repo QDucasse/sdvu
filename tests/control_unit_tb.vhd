@@ -47,6 +47,7 @@ architecture arch_control_unit_tb of control_unit_tb is
     signal O_enable_PRG_MEM : STD_LOGIC;
     signal O_enable_REG     : STD_LOGIC;
 
+    signal O_return_config  : STD_LOGIC;
     signal O_CFG_MEM_we     : STD_LOGIC;
     signal O_CFG_MEM_RAA    : STD_LOGIC;
     signal O_REG_we_ALU     : STD_LOGIC;
@@ -87,6 +88,7 @@ begin
         O_enable_PRG_MEM => O_enable_PRG_MEM,
         O_enable_REG     => O_enable_REG,
 
+        O_return_config  => O_return_config,
         O_CFG_MEM_we     => O_CFG_MEM_we,
         O_CFG_MEM_RAA    => O_CFG_MEM_RAA,
         O_REG_we_ALU     => O_REG_we_ALU,
@@ -120,6 +122,7 @@ begin
       assert_true(O_REG_we_MOVREG='0',     "RESET1 - No we REG MOVIMM");
       assert_true(O_PC_OPCode=PC_OP_RESET, "RESET1 - PC operation: RESET");
       assert_true(O_CFG_MEM_RAA='0',       "RESET1 - RAA mode not enabled");
+      assert_true(O_return_config='0',     "RESET1 - No config return");
 
       -- Test 2: Reset 2
       wait_cycles(clock, 1);
@@ -137,6 +140,7 @@ begin
       assert_true(O_REG_we_MOVIMM='0',     "RESET2 - No we REG MOVREG");
       assert_true(O_REG_we_MOVREG='0',     "RESET2 - No we REG MOVIMM");
       assert_true(O_PC_OPCode=PC_OP_NOP,   "RESET2 - PC operation: NOP");
+      assert_true(O_return_config='0',     "RESET2 - No config return");
 
       -- Test 3: Fetch1
       wait_cycles(clock, 1);
@@ -154,6 +158,7 @@ begin
       assert_true(O_REG_we_MOVIMM='0',     "FETCH1 - No we REG MOVREG");
       assert_true(O_REG_we_MOVREG='0',     "FETCH1 - No we REG MOVIMM");
       assert_true(O_PC_OPCode=PC_OP_NOP,   "FETCH1 - PC operation: NOP");
+      assert_true(O_return_config='0',     "FETCH1 - No config return");
 
 
       -- Test 4: Fetch 2
@@ -172,6 +177,7 @@ begin
       assert_true(O_REG_we_MOVIMM='0',   "FETCH2 - No we REG MOVREG");
       assert_true(O_REG_we_MOVREG='0',   "FETCH2 - No we REG MOVIMM");
       assert_true(O_PC_OPCode=PC_OP_NOP, "FETCH2 - PC operation: NOP");
+      assert_true(O_return_config='0',   "FETCH2 - No config return");
 
       -- Test 5: Decode 1
       I_op_code <= OP_JMP;
@@ -190,6 +196,7 @@ begin
       assert_true(O_REG_we_MOVIMM='0',   "DECODE1 - No we REG MOVREG");
       assert_true(O_REG_we_MOVREG='0',   "DECODE1 - No we REG MOVIMM");
       assert_true(O_PC_OPCode=PC_OP_NOP, "DECODE1 - PC operation: NOP");
+      assert_true(O_return_config='0',   "DECODE1 - No config return");
 
       -- Test 6: Decode 2
       wait_cycles(clock, 1);
@@ -207,6 +214,7 @@ begin
       assert_true(O_REG_we_MOVIMM='0',      "DECODE2 - No we REG MOVREG");
       assert_true(O_REG_we_MOVREG='0',      "DECODE2 - No we REG MOVIMM");
       assert_true(O_PC_OPCode=PC_OP_NOP,    "DECODE2 - PC operation: NOP");
+      assert_true(O_return_config='0',      "DECODE2 - No config return");
 
       -- Test 7: JMP 1
       wait_cycles(clock, 1);
@@ -224,6 +232,7 @@ begin
       assert_true(O_REG_we_MOVIMM='0',      "JMP1 - No we REG MOVREG");
       assert_true(O_REG_we_MOVREG='0',      "JMP1 - No we REG MOVIMM");
       assert_true(O_PC_OPCode=PC_OP_NOP,    "JMP1 - PC operation: NOP");
+      assert_true(O_return_config='0',      "JMP1 - No config return");
 
       -- Test 8: JMP 2
       I_JMP_condition <= X"00000001";
@@ -242,28 +251,30 @@ begin
       assert_true(O_REG_we_MOVIMM='0',      "JMP2 - No we REG MOVREG");
       assert_true(O_REG_we_MOVREG='0',      "JMP2 - No we REG MOVIMM");
       assert_true(O_PC_OPCode=PC_OP_ASSIGN, "JMP2 - PC operation: ASSIGN");
+      assert_true(O_return_config='0',      "JMP2 - No config return");
 
       -- Test 9: Fetch 1 from JMP - ASSIGN
       wait_cycles(clock, 1);
-      assert_true(O_reset='0',              "FETCH1 JMP - Reset not set");
-      assert_true(O_enable_ALU='0',         "FETCH1 JMP - No enable ALU");
-      assert_true(O_enable_CFG_MEM='0',     "FETCH1 JMP - No enable CFG_MEM");
-      assert_true(O_enable_DECODER='0',     "FETCH1 JMP - No enable DECODER");
-      assert_true(O_enable_PC='1',          "FETCH1 JMP - Enable PC");
-      assert_true(O_enable_PRG_MEM='0',     "FETCH1 JMP - No enable PRG_MEM");
-      assert_true(O_enable_REG='0',         "FETCH1 JMP - No enable REG");
-      assert_true(O_CFG_MEM_we='0',         "FETCH1 JMP - No we CFG_MEM");
-      assert_true(O_CFG_MEM_RAA='0',        "FETCH1 JMP - RAA mode not enabled");
-      assert_true(O_REG_we_ALU='0',         "FETCH1 JMP - No we REG ALU");
-      assert_true(O_REG_we_LOAD='0',        "FETCH1 JMP - No we REG LOAD");
-      assert_true(O_REG_we_MOVIMM='0',      "FETCH1 JMP - No we REG MOVREG");
-      assert_true(O_REG_we_MOVREG='0',      "FETCH1 JMP - No we REG MOVIMM");
-      assert_true(O_PC_OPCode=PC_OP_ASSIGN, "FETCH1 JMP - PC operation: ASSIGN");
+      assert_true(O_reset='0',              "FETCH1 JMP ASSIGN - Reset not set");
+      assert_true(O_enable_ALU='0',         "FETCH1 JMP ASSIGN - No enable ALU");
+      assert_true(O_enable_CFG_MEM='0',     "FETCH1 JMP ASSIGN - No enable CFG_MEM");
+      assert_true(O_enable_DECODER='0',     "FETCH1 JMP ASSIGN - No enable DECODER");
+      assert_true(O_enable_PC='1',          "FETCH1 JMP ASSIGN - Enable PC");
+      assert_true(O_enable_PRG_MEM='0',     "FETCH1 JMP ASSIGN - No enable PRG_MEM");
+      assert_true(O_enable_REG='0',         "FETCH1 JMP ASSIGN - No enable REG");
+      assert_true(O_CFG_MEM_we='0',         "FETCH1 JMP ASSIGN - No we CFG_MEM");
+      assert_true(O_CFG_MEM_RAA='0',        "FETCH1 JMP ASSIGN - RAA mode not enabled");
+      assert_true(O_REG_we_ALU='0',         "FETCH1 JMP ASSIGN - No we REG ALU");
+      assert_true(O_REG_we_LOAD='0',        "FETCH1 JMP ASSIGN - No we REG LOAD");
+      assert_true(O_REG_we_MOVIMM='0',      "FETCH1 JMP ASSIGN - No we REG MOVREG");
+      assert_true(O_REG_we_MOVREG='0',      "FETCH1 JMP ASSIGN - No we REG MOVIMM");
+      assert_true(O_PC_OPCode=PC_OP_ASSIGN, "FETCH1 JMP ASSIGN - PC operation: ASSIGN");
+      assert_true(O_return_config='0',      "FETCH1 JMP ASSIGN - No config return");
 
       -- (Re-fetch, wait until state decode2)
       wait_cycles(clock, 4);
 
-      -- Test 8: JMP 2
+      -- Test 10: JMP 2
       I_JMP_condition <= X"00000000";
       wait_cycles(clock, 1);
       assert_true(O_reset='0',              "JMP2 - Reset not set");
@@ -280,28 +291,30 @@ begin
       assert_true(O_REG_we_MOVIMM='0',      "JMP2 - No we REG MOVREG");
       assert_true(O_REG_we_MOVREG='0',      "JMP2 - No we REG MOVIMM");
       assert_true(O_PC_OPCode=PC_OP_INC,    "JMP2 - PC operation: INC");
+      assert_true(O_return_config='0',      "JMP2 - No config return");
 
-      -- Test 9: Fetch 1 from JMP - INC
+      -- Test 11: Fetch 1 from JMP - INC
       wait_cycles(clock, 1);
-      assert_true(O_reset='0',              "FETCH1 JMP - Reset not set");
-      assert_true(O_enable_ALU='0',         "FETCH1 JMP - No enable ALU");
-      assert_true(O_enable_CFG_MEM='0',     "FETCH1 JMP - No enable CFG_MEM");
-      assert_true(O_enable_DECODER='0',     "FETCH1 JMP - No enable DECODER");
-      assert_true(O_enable_PC='1',          "FETCH1 JMP - Enable PC");
-      assert_true(O_enable_PRG_MEM='0',     "FETCH1 JMP - No enable PRG_MEM");
-      assert_true(O_enable_REG='0',         "FETCH1 JMP - No enable REG");
-      assert_true(O_CFG_MEM_we='0',         "FETCH1 JMP - No we CFG_MEM");
-      assert_true(O_CFG_MEM_RAA='0',        "FETCH1 JMP - RAA mode not enabled");
-      assert_true(O_REG_we_ALU='0',         "FETCH1 JMP - No we REG ALU");
-      assert_true(O_REG_we_LOAD='0',        "FETCH1 JMP - No we REG LOAD");
-      assert_true(O_REG_we_MOVIMM='0',      "FETCH1 JMP - No we REG MOVREG");
-      assert_true(O_REG_we_MOVREG='0',      "FETCH1 JMP - No we REG MOVIMM");
-      assert_true(O_PC_OPCode=PC_OP_INC,    "JMP2 - PC operation: INC");
+      assert_true(O_reset='0',              "FETCH1 JMP INC - Reset not set");
+      assert_true(O_enable_ALU='0',         "FETCH1 JMP INC - No enable ALU");
+      assert_true(O_enable_CFG_MEM='0',     "FETCH1 JMP INC - No enable CFG_MEM");
+      assert_true(O_enable_DECODER='0',     "FETCH1 JMP INC - No enable DECODER");
+      assert_true(O_enable_PC='1',          "FETCH1 JMP INC - Enable PC");
+      assert_true(O_enable_PRG_MEM='0',     "FETCH1 JMP INC - No enable PRG_MEM");
+      assert_true(O_enable_REG='0',         "FETCH1 JMP INC - No enable REG");
+      assert_true(O_CFG_MEM_we='0',         "FETCH1 JMP INC - No we CFG_MEM");
+      assert_true(O_CFG_MEM_RAA='0',        "FETCH1 JMP INC - RAA mode not enabled");
+      assert_true(O_REG_we_ALU='0',         "FETCH1 JMP INC - No we REG ALU");
+      assert_true(O_REG_we_LOAD='0',        "FETCH1 JMP INC - No we REG LOAD");
+      assert_true(O_REG_we_MOVIMM='0',      "FETCH1 JMP INC - No we REG MOVREG");
+      assert_true(O_REG_we_MOVREG='0',      "FETCH1 JMP INC - No we REG MOVIMM");
+      assert_true(O_PC_OPCode=PC_OP_INC,    "FETCH1 JMP INC - PC operation: INC");
+      assert_true(O_return_config='0',      "FETCH1 JMP INC - No config return");
 
       -- (Re-fetch, wait until state decode2)
       wait_cycles(clock, 2);
 
-      -- Test 8: Store ADR
+      -- Test 12: Store ADR
       I_op_code <= OP_STORE;
       I_cfg_mask <= STORE_ADR;
       wait_cycles(clock, 2);
@@ -319,8 +332,9 @@ begin
       assert_true(O_REG_we_MOVIMM='0',   "STORE1 - No we REG MOVREG");
       assert_true(O_REG_we_MOVREG='0',   "STORE1 - No we REG MOVIMM");
       assert_true(O_PC_OPCode=PC_OP_NOP, "STORE1 - PC operation: NOP");
+      assert_true(O_return_config='0',   "STORE1 - No config return");
 
-      -- Test 9: Store 2 from STORE ADR
+      -- Test 13: Store 2 from STORE ADR
       wait_cycles(clock, 1);
       assert_true(O_reset='0',           "STORE2 - Reset not set");
       assert_true(O_enable_ALU='0',      "STORE2 - No enable ALU");
@@ -336,8 +350,9 @@ begin
       assert_true(O_REG_we_MOVIMM='0',   "STORE2 - No we REG MOVREG");
       assert_true(O_REG_we_MOVREG='0',   "STORE2 - No we REG MOVIMM");
       assert_true(O_PC_OPCode=PC_OP_INC, "STORE2 - PC operation: INC");
+      assert_true(O_return_config='0',   "STORE2 - No config return");
 
-      -- Test 10: Fetch 1 from STORE ADR
+      -- Test 14: Fetch 1 from STORE ADR
       wait_cycles(clock, 1);
       assert_true(O_reset='0',           "FETCH1 STORE - Reset not set");
       assert_true(O_enable_ALU='0',      "FETCH1 STORE - No enable ALU");
@@ -353,10 +368,11 @@ begin
       assert_true(O_REG_we_MOVIMM='0',   "FETCH1 STORE - No we REG MOVREG");
       assert_true(O_REG_we_MOVREG='0',   "FETCH1 STORE - No we REG MOVIMM");
       assert_true(O_PC_OPCode=PC_OP_INC, "FETCH1 STORE - PC operation: INC");
+      assert_true(O_return_config='0',   "FETCH1 STORE - No config return");
 
       -- (Re-fetch, wait until state decode2)
       wait_cycles(clock, 2);
-      -- Test 8: Store RAA
+      -- Test 15: Store RAA
       I_op_code <= OP_STORE;
       I_cfg_mask <= STORE_RAA;
       wait_cycles(clock, 2);
@@ -375,8 +391,9 @@ begin
       assert_true(O_REG_we_MOVREG='0',   "STORERAA - No we REG MOVIMM");
       assert_true(O_PC_OPCode=PC_OP_NOP, "STORERAA - PC operation: NOP");
       assert_true(O_CFG_MEM_RAA='1',     "STORERAA - RAA mode enabled");
+      assert_true(O_return_config='0',   "STORERAA - No config return");
 
-      -- Test 9: Store 2 from STORE ADR
+      -- Test 16: Store 2 from STORE ADR
       wait_cycles(clock, 1);
       assert_true(O_reset='0',           "STORE2 RAA - Reset not set");
       assert_true(O_enable_ALU='0',      "STORE2 RAA - No enable ALU");
@@ -392,10 +409,11 @@ begin
       assert_true(O_REG_we_MOVIMM='0',   "STORE2 RAA - No we REG MOVREG");
       assert_true(O_REG_we_MOVREG='0',   "STORE2 RAA - No we REG MOVIMM");
       assert_true(O_PC_OPCode=PC_OP_INC, "STORE2 RAA - PC operation: INC");
+      assert_true(O_return_config='0',   "STORE2 RAA - No config return");
 
       -- (Re-fetch, wait until state decode2)
       wait_cycles(clock, 3);
-      -- Test 10: Load 1
+      -- Test 17: Load 1
       I_op_code <= OP_LOAD;
       I_cfg_mask <= LOAD_ADR;
 
@@ -414,8 +432,9 @@ begin
       assert_true(O_REG_we_MOVREG='0',   "LOAD1 - No we REG MOVIMM");
       assert_true(O_PC_OPCode=PC_OP_NOP, "LOAD1 - PC operation: NOP");
       assert_true(O_CFG_MEM_RAA='0',     "LOAD1 - RAA mode not enabled");
+      assert_true(O_return_config='0',   "LOAD1 - No config return");
 
-      -- -- Test 11: Load 2
+      -- Test 18: Load 2
       wait_cycles(clock, 1);
       assert_true(O_reset='0',           "LOAD2 - Reset not set");
       assert_true(O_enable_ALU='0',      "LOAD2 - No enable ALU");
@@ -430,8 +449,9 @@ begin
       assert_true(O_REG_we_MOVIMM='0',   "LOAD2 - No we REG MOVREG");
       assert_true(O_REG_we_MOVREG='0',   "LOAD2 - No we REG MOVIMM");
       assert_true(O_PC_OPCode=PC_OP_INC, "LOAD2 - PC operation: INC");
+      assert_true(O_return_config='0',   "LOAD2 - No config return");
 
-      -- Test 12: Fetch 1 from Load
+      -- Test 19: Fetch 1 from Load
       wait_cycles(clock, 1);
       assert_true(O_reset='0',           "FETCH1 LOAD - Reset not set");
       assert_true(O_enable_ALU='0',      "FETCH1 LOAD - No enable ALU");
@@ -446,10 +466,11 @@ begin
       assert_true(O_REG_we_MOVIMM='0',   "FETCH1 LOAD - No we REG MOVREG");
       assert_true(O_REG_we_MOVREG='0',   "FETCH1 LOAD - No we REG MOVIMM");
       assert_true(O_PC_OPCode=PC_OP_INC, "FETCH1 LOAD - PC operation: INC");
+      assert_true(O_return_config='0',   "FETCH1 LOAD - No config return");
 
       -- (Re-fetch, wait until state decode2)
       wait_cycles(clock, 2);
-      -- Test 10: Load 1
+      -- Test 20: Load RAA
       I_op_code <= OP_LOAD;
       I_cfg_mask <= LOAD_RAA;
 
@@ -468,8 +489,9 @@ begin
       assert_true(O_REG_we_MOVIMM='0',   "LOAD RAA - No we REG MOVREG");
       assert_true(O_REG_we_MOVREG='0',   "LOAD RAA - No we REG MOVIMM");
       assert_true(O_PC_OPCode=PC_OP_NOP, "LOAD RAA - PC operation: NOP");
+      assert_true(O_return_config='0',   "LOAD RAA - No config return");
 
-      -- -- Test 11: Load 1 from RAA
+      -- Test 21: Load 1 from RAA
       wait_cycles(clock, 1);
       assert_true(O_reset='0',           "LOAD1 from RAA - Reset not set");
       assert_true(O_enable_ALU='0',      "LOAD1 from RAA - No enable ALU");
@@ -485,10 +507,11 @@ begin
       assert_true(O_REG_we_MOVIMM='0',   "LOAD1 from RAA - No we REG MOVREG");
       assert_true(O_REG_we_MOVREG='0',   "LOAD1 from RAA - No we REG MOVIMM");
       assert_true(O_PC_OPCode=PC_OP_NOP, "LOAD1 from RAA - PC operation: NOP");
+      assert_true(O_return_config='0',   "LOAD1 from RAA - No config return");
 
       -- (Re-fetch, wait until state decode2)
       wait_cycles(clock, 4);
-      -- Test 10: Load 1
+      -- Test 22: MOV IMM
       I_op_code <= OP_LOAD;
       I_cfg_mask <= LOAD_IMM;
 
@@ -507,8 +530,9 @@ begin
       assert_true(O_REG_we_MOVIMM='1',   "MOV IMM - WE REG MOVREG");
       assert_true(O_REG_we_MOVREG='0',   "MOV IMM - No we REG MOVIMM");
       assert_true(O_PC_OPCode=PC_OP_INC, "MOV IMM - PC operation: INC");
+      assert_true(O_return_config='0',   "MOV IMM - No config return");
 
-      -- Test 12: Fetch 1 from MOV IMM
+      -- Test 23: Fetch 1 from MOV IMM
       wait_cycles(clock, 1);
       assert_true(O_reset='0',           "FETCH1 MOVIMM - Reset not set");
       assert_true(O_enable_ALU='0',      "FETCH1 MOVIMM - No enable ALU");
@@ -524,11 +548,11 @@ begin
       assert_true(O_REG_we_MOVIMM='0',   "FETCH1 MOVIMM - No we REG MOVREG");
       assert_true(O_REG_we_MOVREG='0',   "FETCH1 MOVIMM - No we REG MOVIMM");
       assert_true(O_PC_OPCode=PC_OP_INC, "FETCH1 MOVIMM - PC operation: INC");
-
+      assert_true(O_return_config='0',   "FETCH1 MOVIMM - No config return");
 
       -- (Re-fetch, wait until state decode2)
       wait_cycles(clock, 2);
-      -- Test 10: Load 1
+      -- Test 24: MOVREG
       I_op_code <= OP_LOAD;
       I_cfg_mask <= LOAD_REG;
 
@@ -547,8 +571,9 @@ begin
       assert_true(O_REG_we_MOVIMM='0',   "MOV REG - WE REG MOVREG");
       assert_true(O_REG_we_MOVREG='1',   "MOV REG - No we REG MOVIMM");
       assert_true(O_PC_OPCode=PC_OP_INC, "MOV REG - PC operation: INC");
+      assert_true(O_return_config='0',   "MOV REG - No config return");
 
-      -- Test 12: Fetch 1 from MOV IMM
+      -- Test 25: Fetch 1 from MOV REG
       wait_cycles(clock, 1);
       assert_true(O_reset='0',           "FETCH1 MOVREG - Reset not set");
       assert_true(O_enable_ALU='0',      "FETCH1 MOVREG - No enable ALU");
@@ -564,11 +589,12 @@ begin
       assert_true(O_REG_we_MOVIMM='0',   "FETCH1 MOVREG - No we REG MOVIMM");
       assert_true(O_REG_we_MOVREG='0',   "FETCH1 MOVREG - No we REG MOVREG");
       assert_true(O_PC_OPCode=PC_OP_INC, "FETCH1 MOVREG - PC operation: INC");
+      assert_true(O_return_config='0',   "FETCH1 MOVREG - No config return");
 
 
       -- (Reset wait until state decode2)
       wait_cycles(clock, 2);
-      -- Test 13: Bin 1
+      -- Test 26: Bin 1
       I_op_code <= OP_ADD;
       wait_cycles(clock, 2);
       assert_true(O_reset='0',           "BIN1 - Reset not set");
@@ -585,8 +611,9 @@ begin
       assert_true(O_REG_we_MOVIMM='0',   "BIN1 - No we REG MOVIMM");
       assert_true(O_REG_we_MOVREG='0',   "BIN1 - No we REG MOVREG");
       assert_true(O_PC_OPCode=PC_OP_NOP, "BIN1 - PC operation: NOP");
+      assert_true(O_return_config='0',   "BIN1 - No config return");
 
-      -- Test 14: Bin 2
+      -- Test 27: Bin 2
       wait_cycles(clock, 1);
       assert_true(O_reset='0',           "BIN2 - Reset not set");
       assert_true(O_enable_ALU='1',      "BIN2 - Enable ALU");
@@ -602,8 +629,9 @@ begin
       assert_true(O_REG_we_MOVIMM='0',   "BIN2 - No we REG MOVIMM");
       assert_true(O_REG_we_MOVREG='0',   "BIN2 - No we REG MOVREG");
       assert_true(O_PC_OPCode=PC_OP_NOP, "BIN2 - PC operation: NOP");
+      assert_true(O_return_config='0',   "BIN2 - No config return");
 
-      -- Test 15: Bin 3
+      -- Test 28: Bin 3
       wait_cycles(clock, 1);
       assert_true(O_reset='0',           "BIN3 - Reset not set");
       assert_true(O_enable_ALU='0',      "BIN3 - No enable ALU");
@@ -619,8 +647,9 @@ begin
       assert_true(O_REG_we_MOVIMM='0',   "BIN2 - No we REG MOVIMM");
       assert_true(O_REG_we_MOVREG='0',   "BIN2 - No we REG MOVREG");
       assert_true(O_PC_OPCode=PC_OP_INC, "BIN3 - PC operation: INC");
+      assert_true(O_return_config='0',   "BIN3 - No config return");
 
-      -- Test 16: Fetch 1 from Bin
+      -- Test 29: Fetch 1 from Bin
       wait_cycles(clock, 1);
       assert_true(O_reset='0',           "FETCH1 BIN - Reset not set");
       assert_true(O_enable_ALU='0',      "FETCH1 BIN - No enable ALU");
@@ -636,6 +665,103 @@ begin
       assert_true(O_REG_we_MOVIMM='0',   "FETCH1 BIN - No we REG MOVIMM");
       assert_true(O_REG_we_MOVREG='0',   "FETCH1 BIN - No we REG MOVREG");
       assert_true(O_PC_OPCode=PC_OP_INC, "FETCH1 BIN - PC operation: INC");
+      assert_true(O_return_config='0',   "FETCH1 BIN - No config return");
+
+      -- (Reset wait until state decode2)
+      wait_cycles(clock, 2);
+      -- Test 30: ENDGA
+      I_op_code <= OP_ENDGA;
+      wait_cycles(clock, 2);
+      assert_true(O_reset='0',           "ENDGA - Reset not set");
+      assert_true(O_enable_ALU='0',      "ENDGA - No enable ALU");
+      assert_true(O_enable_CFG_MEM='0',  "ENDGA - No enable CFG_MEM");
+      assert_true(O_enable_DECODER='0',  "ENDGA - No enable DECODER");
+      assert_true(O_enable_PC='0',       "ENDGA - No enable PC");
+      assert_true(O_enable_PRG_MEM='0',  "ENDGA - No enable PRG_MEM");
+      assert_true(O_enable_REG='0',      "ENDGA - No enable REG");
+      assert_true(O_CFG_MEM_we='0',      "ENDGA - No we CFG_MEM");
+      assert_true(O_CFG_MEM_RAA='0',     "ENDGA - No RAA mode");
+      assert_true(O_REG_we_ALU='0',      "ENDGA - No we REG ALU");
+      assert_true(O_REG_we_LOAD='0',     "ENDGA - No we REG LOAD");
+      assert_true(O_REG_we_MOVIMM='0',   "ENDGA - No we REG MOVIMM");
+      assert_true(O_REG_we_MOVREG='0',   "ENDGA - No we REG MOVREG");
+      assert_true(O_PC_OPCode=PC_OP_INC, "ENDGA - PC operation: INC");
+      assert_true(O_return_config='1',   "ENDGA - Config return enabled");
+
+      -- Test 31: Fetch 1 from ENDGA
+      wait_cycles(clock, 1);
+      assert_true(O_reset='0',           "FETCH1 ENDGA - Reset not set");
+      assert_true(O_enable_ALU='0',      "FETCH1 ENDGA - No enable ALU");
+      assert_true(O_enable_CFG_MEM='0',  "FETCH1 ENDGA - No enable CFG_MEM");
+      assert_true(O_enable_DECODER='0',  "FETCH1 ENDGA - No enable DECODER");
+      assert_true(O_enable_PC='1',       "FETCH1 ENDGA - Enable PC");
+      assert_true(O_enable_PRG_MEM='0',  "FETCH1 ENDGA - No enable PRG_MEM");
+      assert_true(O_enable_REG='0',      "FETCH1 ENDGA - No enable REG");
+      assert_true(O_CFG_MEM_we='0',      "FETCH1 ENDGA - No we CFG_MEM");
+      assert_true(O_CFG_MEM_RAA='0',     "FETCH1 ENDGA - No RAA mode");
+      assert_true(O_REG_we_ALU='0',      "FETCH1 ENDGA - No we REG ALU");
+      assert_true(O_REG_we_LOAD='0',     "FETCH1 ENDGA - No we REG LOAD");
+      assert_true(O_REG_we_MOVIMM='0',   "FETCH1 ENDGA - No we REG MOVIMM");
+      assert_true(O_REG_we_MOVREG='0',   "FETCH1 ENDGA - No we REG MOVREG");
+      assert_true(O_PC_OPCode=PC_OP_INC, "FETCH1 ENDGA - PC operation: INC");
+      assert_true(O_return_config='0',   "FETCH1 ENDGA - No config return");
+
+      -- (Reset wait until state decode2)
+      wait_cycles(clock, 2);
+      -- Test 33: NOP
+      I_op_code <= OP_NOP;
+      wait_cycles(clock, 2);
+      assert_true(O_reset='0',           "NOP - Reset not set");
+      assert_true(O_enable_ALU='0',      "NOP - No enable ALU");
+      assert_true(O_enable_CFG_MEM='0',  "NOP - No enable CFG_MEM");
+      assert_true(O_enable_DECODER='0',  "NOP - No enable DECODER");
+      assert_true(O_enable_PC='0',       "NOP - No enable PC");
+      assert_true(O_enable_PRG_MEM='0',  "NOP - No enable PRG_MEM");
+      assert_true(O_enable_REG='0',      "NOP - No enable REG");
+      assert_true(O_CFG_MEM_we='0',      "NOP - No we CFG_MEM");
+      assert_true(O_CFG_MEM_RAA='0',     "NOP - No RAA mode");
+      assert_true(O_REG_we_ALU='0',      "NOP - No we REG ALU");
+      assert_true(O_REG_we_LOAD='0',     "NOP - No we REG LOAD");
+      assert_true(O_REG_we_MOVIMM='0',   "NOP - No we REG MOVIMM");
+      assert_true(O_REG_we_MOVREG='0',   "NOP - No we REG MOVREG");
+      assert_true(O_PC_OPCode=PC_OP_NOP, "NOP - PC operation: NOP");
+      assert_true(O_return_config='0',   "NOP - No config return");
+
+      -- Test 34: END
+      wait_cycles(clock, 1);
+      assert_true(O_reset='0',           "END - Reset not set");
+      assert_true(O_enable_ALU='0',      "END - No enable ALU");
+      assert_true(O_enable_CFG_MEM='0',  "END - No enable CFG_MEM");
+      assert_true(O_enable_DECODER='0',  "END - No enable DECODER");
+      assert_true(O_enable_PC='0',       "END - No enable PC");
+      assert_true(O_enable_PRG_MEM='0',  "END - No enable PRG_MEM");
+      assert_true(O_enable_REG='0',      "END - No enable REG");
+      assert_true(O_CFG_MEM_we='0',      "END - No we CFG_MEM");
+      assert_true(O_CFG_MEM_RAA='0',     "END - No RAA mode");
+      assert_true(O_REG_we_ALU='0',      "END - No we REG ALU");
+      assert_true(O_REG_we_LOAD='0',     "END - No we REG LOAD");
+      assert_true(O_REG_we_MOVIMM='0',   "END - No we REG MOVIMM");
+      assert_true(O_REG_we_MOVREG='0',   "END - No we REG MOVREG");
+      assert_true(O_PC_OPCode=PC_OP_NOP, "NOP - PC operation: NOP");
+      assert_true(O_return_config='0',   "END - No config return");
+
+      -- Test 35: Another END
+      wait_cycles(clock, 1);
+      assert_true(O_reset='0',           "END END - Reset not set");
+      assert_true(O_enable_ALU='0',      "END END - No enable ALU");
+      assert_true(O_enable_CFG_MEM='0',  "END END - No enable CFG_MEM");
+      assert_true(O_enable_DECODER='0',  "END END - No enable DECODER");
+      assert_true(O_enable_PC='0',       "END END - No enable PC");
+      assert_true(O_enable_PRG_MEM='0',  "END END - No enable PRG_MEM");
+      assert_true(O_enable_REG='0',      "END END - No enable REG");
+      assert_true(O_CFG_MEM_we='0',      "END END - No we CFG_MEM");
+      assert_true(O_CFG_MEM_RAA='0',     "END END - No RAA mode");
+      assert_true(O_REG_we_ALU='0',      "END END - No we REG ALU");
+      assert_true(O_REG_we_LOAD='0',     "END END - No we REG LOAD");
+      assert_true(O_REG_we_MOVIMM='0',   "END END - No we REG MOVIMM");
+      assert_true(O_REG_we_MOVREG='0',   "END END - No we REG MOVREG");
+      assert_true(O_PC_OPCode=PC_OP_NOP, "NOP - PC operation: NOP");
+      assert_true(O_return_config='0',   "END END - No config return");
 
       running <= false;
       report "Control Unit: Testbench complete";

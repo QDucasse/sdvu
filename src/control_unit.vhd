@@ -39,6 +39,7 @@ entity control_unit is
           O_enable_REG     : out STD_LOGIC;
 
           -- Other signals
+          O_return_config : out STD_LOGIC;
           O_CFG_MEM_we    : out STD_LOGIC;
           O_CFG_MEM_RAA   : out STD_LOGIC;
           O_REG_we_ALU    : out STD_LOGIC;
@@ -72,9 +73,12 @@ architecture arch_control_unit of control_unit is
       STATE_LOAD2,    -- Store it in registers
       STATE_MOVREG,   -- Get the value if from a register
       STATE_MOVIMM,   -- Store it in the new register
+      STATE_ENDGA,    -- End of guard action -> send out
+      STATE_NOP,      -- No operation, next state is end, waiting for reset
       STATE_BIN1,     -- Get the values behind registers
       STATE_BIN2,     -- Do the actual calculation
-      STATE_BIN3      -- Store the result in a register
+      STATE_BIN3,     -- Store the result in a register
+      STATE_END       -- Final state, waiting for reset
     );
     signal current_state : state := STATE_RESET1;
 begin
@@ -131,6 +135,12 @@ begin
                   -- JUMP
                   when OP_JMP =>
                     current_state <= STATE_JMP1;
+                  -- END GUARD ACTION
+                  when OP_ENDGA =>
+                    current_state <= STATE_ENDGA;
+                  -- NOP
+                  when OP_NOP =>
+                    current_state <= STATE_NOP;
                   -- BINARY
                   when others =>
                     current_state <= STATE_BIN1;
@@ -164,6 +174,14 @@ begin
               when STATE_JMP2 =>
                 current_state <= STATE_FETCH1;
 
+              -- PROCESS ENDGA TRANSITIONS
+              when STATE_ENDGA =>
+                current_state <= STATE_FETCH1;
+
+              -- PROCESS NOP TRANSITIONS
+              when STATE_NOP =>
+                current_state <= STATE_END;
+
               -- PROCESS BIN/NOT TRANSITIONS
               when STATE_BIN1 =>
                 current_state <= STATE_BIN2;
@@ -172,6 +190,11 @@ begin
               when STATE_BIN3 =>
                 current_state <= STATE_FETCH1;
 
+              -- PROCESS END TRANSITIONS
+              when STATE_END =>
+                current_state <= STATE_END;
+
+              -- unreachable
               when others =>
                 current_state <= STATE_RESET1;
             end case;
@@ -233,8 +256,9 @@ begin
                                  current_state = STATE_BIN3   or
                                  current_state = STATE_MOVIMM or
                                  current_state = STATE_MOVREG or
-                                 current_state = STATE_FETCH1 or
-                                 current_state = STATE_JMP2
+                                 current_state = STATE_JMP2   or
+                                 current_state = STATE_ENDGA  or
+                                 current_state = STATE_FETCH1
                                 )
                     else PC_OP_RESET when current_state = STATE_RESET1
                     else PC_OP_NOP;
@@ -242,5 +266,8 @@ begin
     O_CFG_MEM_RAA <= I_CFG_MEM_RAA when (current_state = STATE_LOAD1 or current_state = STATE_STORE2)
                      else '1' when (current_state = STATE_LOADRAA or current_state = STATE_STORERAA)
                      else '0';
+
+    -- Let the CPU return the config when finishing a guard action
+    O_return_config <= '1' when (current_state = STATE_ENDGA) else '0';
 
 end arch_control_unit;
