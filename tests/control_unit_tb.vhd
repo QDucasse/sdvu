@@ -760,7 +760,7 @@ begin
       assert_true(O_REG_we_LOAD='0',     "END END - No we REG LOAD");
       assert_true(O_REG_we_MOVIMM='0',   "END END - No we REG MOVIMM");
       assert_true(O_REG_we_MOVREG='0',   "END END - No we REG MOVREG");
-      assert_true(O_PC_OPCode=PC_OP_NOP, "NOP - PC operation: NOP");
+      assert_true(O_PC_OPCode=PC_OP_NOP, "END END - PC operation: NOP");
       assert_true(O_return_config='0',   "END END - No config return");
 
       running <= false;
