@@ -28,6 +28,7 @@ entity sdvu is
        -- Config memory
        I_CFG_MEM_data        : in STD_LOGIC_VECTOR(TYPE_SIZE-1 downto 0);
        O_enable_CFG_MEM      : out STD_LOGIC;
+       O_return_config       : out STD_LOGIC;
        O_CFG_MEM_we          : out STD_LOGIC;
        O_CFG_MEM_RAA         : out STD_LOGIC;
        O_CFG_MEM_type        : out STD_LOGIC_VECTOR(1 downto 0);
@@ -58,6 +59,7 @@ architecture arch_sdvu of sdvu is
   signal s_enable_PRG_MEM : STD_LOGIC;
   signal s_enable_REG     : STD_LOGIC;
 
+  signal s_return_config  : STD_LOGIC;
   signal s_CFG_MEM_we     : STD_LOGIC;
   signal s_RAA            : STD_LOGIC;
   signal s_REG_we_ALU     : STD_LOGIC;
@@ -125,6 +127,7 @@ begin
       O_enable_PRG_MEM => s_enable_PRG_MEM,
       O_enable_REG     => s_enable_REG,
       O_CFG_MEM_we     => s_CFG_MEM_we,
+      O_return_config  => s_return_config,
       O_CFG_MEM_RAA    => s_RAA,
       O_REG_we_ALU     => s_REG_we_ALU,
       O_REG_we_LOAD    => s_REG_we_LOAD,
@@ -196,6 +199,7 @@ begin
 
   -- CFG MEM output signals
   O_enable_CFG_MEM      <= s_enable_CFG_MEM;
+  O_return_config       <= s_return_config;
   O_CFG_MEM_we          <= s_CFG_MEM_we;
   O_CFG_MEM_RAA         <= s_RAA;
   O_CFG_MEM_type        <= s_type;

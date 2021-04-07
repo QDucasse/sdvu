@@ -674,7 +674,7 @@ begin
       wait_cycles(clock, 2);
       assert_true(O_reset='0',           "ENDGA - Reset not set");
       assert_true(O_enable_ALU='0',      "ENDGA - No enable ALU");
-      assert_true(O_enable_CFG_MEM='0',  "ENDGA - No enable CFG_MEM");
+      assert_true(O_enable_CFG_MEM='1',  "ENDGA - No enable CFG_MEM");
       assert_true(O_enable_DECODER='0',  "ENDGA - No enable DECODER");
       assert_true(O_enable_PC='0',       "ENDGA - No enable PC");
       assert_true(O_enable_PRG_MEM='0',  "ENDGA - No enable PRG_MEM");

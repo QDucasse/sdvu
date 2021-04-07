@@ -24,13 +24,15 @@ entity config_memory is
     port (I_clock       : in STD_LOGIC;   -- Clock signal
           I_enable      : in STD_LOGIC;   -- Unit enable
           I_reset       : in STD_LOGIC;   -- Reset signal
+          I_return_config : in STD_LOGIC; -- The config should be returned
           I_we          : in STD_LOGIC;   -- Write Enable
           I_RAA         : in STD_LOGIC;   -- Address from register
           I_type        : in STD_LOGIC_VECTOR(1 downto 0);               -- Indication on the type of the value
           I_address     : in STD_LOGIC_VECTOR (REG_SIZE-1 downto 0);     -- Address in the RAM
-          I_address_RAA : in STD_LOGIC_VECTOR (REG_SIZE-1 downto 0);  -- Address from register
+          I_address_RAA : in STD_LOGIC_VECTOR (REG_SIZE-1 downto 0);     -- Address from register
           I_data        : in STD_LOGIC_VECTOR (TYPE_SIZE-1 downto 0);    -- Data to write to address in memory
-          O_data        : out STD_LOGIC_VECTOR (TYPE_SIZE-1 downto 0)    -- Read address from memory
+          O_data        : out STD_LOGIC_VECTOR (TYPE_SIZE-1 downto 0);   -- Read address from memory
+          O_config      : out STD_LOGIC_VECTOR (2**CFG_MEM_SIZE-1 downto 0) -- Output configuration
           );
 end config_memory;
 
@@ -88,6 +90,11 @@ begin
       address <= I_address_RAA;
     else
       address <= I_address;
+    end if;
+
+    -- Map the mem to the output
+    if I_return_config then
+      O_config <= memory_bank;
     end if;
   end process;
 end arch_config_memory;

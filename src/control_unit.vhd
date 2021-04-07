@@ -209,8 +209,9 @@ begin
 
     -- CFG memory needed when loading or storing a value
     O_enable_CFG_MEM <= '1' when (
-                               current_state = STATE_LOAD1 or
-                               current_state = STATE_STORE2
+                               current_state = STATE_LOAD1  or
+                               current_state = STATE_STORE2 or
+                               current_state = STATE_ENDGA
                                )
                             else '0';
     O_enable_DECODER <= '1' when current_state = STATE_DECODE1 else '0';
