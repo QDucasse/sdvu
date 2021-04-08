@@ -36,13 +36,12 @@ end program_memory;
 -- =================
 
 architecture arch_program_memory of program_memory is
-    type memory_file is array (0 to 2**PROG_MEM_SIZE-1) of STD_LOGIC_VECTOR(INSTR_SIZE-1 downto 0);  -- 128 32-bit addresses
 
     -- Functions
-    impure function init_prg_mem return memory_file is
+    impure function init_prg_mem return prog_memory is
       file text_file : text open read_mode is "cfg/prg_mem.ini";
       variable text_line : line;
-      variable memory_content : memory_file;
+      variable memory_content : prog_memory;
       variable file_ended : boolean := false;
     begin
       for i in 0 to 2**PROG_MEM_SIZE-1 loop
@@ -57,7 +56,7 @@ architecture arch_program_memory of program_memory is
     end function;
 
     -- Internal objects
-    signal memory_bank: memory_file := init_prg_mem; -- Affectation of the array and initialization at 0
+    signal memory_content: prog_memory := init_prg_mem; -- Affectation of the array and initialization at 0
 
 begin
   -- Processes
@@ -66,10 +65,10 @@ begin
 
       if rising_edge(I_clock) then  -- If new cycle
         if I_reset = '1' then     -- Reset
-          memory_bank <= (others => X"00000000");
+          memory_content <= (others => X"00000000");
         elsif I_enable = '1' then
           -- Read from the address to the output
-          O_data <= memory_bank(to_integer(unsigned(I_PC(7 downto 0))));
+          O_data <= memory_content(to_integer(unsigned(I_PC(7 downto 0))));
         end if;
     end if;
   end process;

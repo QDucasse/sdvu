@@ -47,9 +47,9 @@ class TemplateHandler():
         prg_mem_width = 0
         with open("src/sdvu_constants.vhd", "r") as file:
             for line in file.readlines():
-                if "PROG_MEM_SIZE" in line:
+                if "constant PROG_MEM_SIZE" in line:
                     prg_mem_width = int(line.split("=")[1][:-2].strip())
-                elif "CFG_MEM_SIZE" in line:
+                elif "constant CFG_MEM_SIZE" in line:
                     cfg_mem_width = int(line.split("=")[1][:-2].strip())
         return cfg_mem_width, prg_mem_width
 
