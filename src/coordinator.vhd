@@ -87,9 +87,9 @@ begin
           -- Map an input of the initial program memory
         end loop;
       elsif is_all(s_idle_status, '1') then
-        s_resets <= (others => '0');
-      else
         s_resets <= (others => '1');
+      else
+        s_resets <= (others => '0');
       end if;
     end if;
 

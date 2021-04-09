@@ -25,6 +25,8 @@ entity sdvu_top is
        I_reset : in STD_LOGIC;
        -- Inputs
        I_new_config    : in STD_LOGIC_VECTOR (2** CFG_MEM_SIZE-1 downto 0);
+       I_init_bin      : in STD_LOGIC;    -- Binaries need to be loaded
+       I_binary        : in prog_memory;  -- Binary to load
        -- Outputs
        O_idle          : out STD_LOGIC;
        O_return_config : out STD_LOGIC;
@@ -78,7 +80,7 @@ begin
       O_PRG_MEM_PC          => s_PRG_MEM_PC
     );
 
-  cfg_mem : entity work.auto_config_memory(arch_auto_config_memory)
+  cfg_mem : entity work.config_memory(arch_config_memory)
     port map (
       I_clock         => I_clock,
       I_enable        => s_enable_CFG_MEM,
@@ -98,14 +100,17 @@ begin
       O_config        => s_output_config
     );
 
-    prg_mem : entity work.auto_program_memory(arch_auto_program_memory)
+    prg_mem : entity work.program_memory(arch_program_memory)
       port map (
-        I_clock  => I_clock,
-        I_reset  => I_reset,
+        I_clock    => I_clock,
+        I_init_bin => I_init_bin,
+        I_binary   => I_binary,
+
         I_enable => s_enable_PRG_MEM,
         I_PC     => s_PRG_MEM_PC,
         O_data   => s_PRG_MEM_data
       );
+
 
     O_idle          <= s_idle;
     O_return_config <= s_return_config;

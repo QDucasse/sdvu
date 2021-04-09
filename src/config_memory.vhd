@@ -33,7 +33,7 @@ entity config_memory is
           I_data        : in STD_LOGIC_VECTOR (TYPE_SIZE-1 downto 0);    -- Data to write to address in memory
           O_data        : out STD_LOGIC_VECTOR (TYPE_SIZE-1 downto 0);   -- Read address from memory
 
-          I_new_config    : in STD_LOGIC_VECTOR (2**CFG_MEM_SIZE-1 downto 0) -- New configuration to use
+          I_new_config    : in STD_LOGIC_VECTOR (2**CFG_MEM_SIZE-1 downto 0); -- New configuration to use
           I_return_config : in STD_LOGIC; -- The config should be returned
           O_config        : out STD_LOGIC_VECTOR (2**CFG_MEM_SIZE-1 downto 0) -- Output configuration
           );
@@ -96,7 +96,7 @@ begin
     end if;
 
     -- Map the mem to the output
-    if I_return_config then
+    if I_return_config = '1' then
       O_config <= memory_bank;
     end if;
   end process;
