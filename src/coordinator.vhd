@@ -43,13 +43,16 @@ architecture arch_coordinator of coordinator is
   signal s_new_configs     : config_memory_array;
   signal s_changed_configs : STD_LOGIC_VECTOR(CORE_NUMBER-1 downto 0);
   signal s_idle_status     : STD_LOGIC_VECTOR(CORE_NUMBER-1 downto 0);
-  signal s_resets          : STD_LOGIC_VECTOR(CORE_NUMBER-1 downto 0);
+  signal s_reset_cfg       : STD_LOGIC;
+  signal s_reset_prg       : STD_LOGIC;
   -- Components
   component sdvu_top
   port (
     I_clock         : in  STD_LOGIC;
     I_reset         : in  STD_LOGIC;
     I_new_config    : in  STD_LOGIC_VECTOR (2** CFG_MEM_SIZE-1 downto 0);
+    I_init_bin      : in  STD_LOGIC;
+    I_binary        : in  prog_memory;
     O_idle          : out STD_LOGIC;
     O_return_config : out STD_LOGIC;
     O_config        : out STD_LOGIC_VECTOR (2**CFG_MEM_SIZE-1 downto 0)
@@ -68,28 +71,35 @@ begin
   GenerateCores:
   for i in 0 to CORE_NUMBER-1 generate
      sdvu_core : sdvu_top
-       port map (
-         I_clock         => I_clock,
-         I_reset         => s_resets(i),
-         I_new_config    => I_new_config,
-         O_idle          => s_idle_status(i),
-         O_return_config => s_changed_configs(i),
-         O_config        => s_new_configs(i)
-       );
+        port map (
+          I_clock         => I_clock,
+          I_reset         => s_reset_cfg,
+          I_new_config    => I_new_config,
+          I_init_bin      => s_reset_prg,
+          I_binary        => I_binaries(i),
+          O_idle          => s_idle_status(i),
+          O_return_config => s_changed_configs(i),
+          O_config        => s_new_configs(i)
+        );
+
+
   end generate;
 
   -- Processes
   Coordinate: process(I_clock)-- I_clock added to the sensitivity list of the process
   begin
     if rising_edge(I_clock) then -- if new_cycle
+      -- RESET handles
       if I_reset = '1' then      -- Reset procedure (send reset and set the initial program)
-        for i in 0 to CORE_NUMBER-1 loop
-          -- Map an input of the initial program memory
-        end loop;
-      elsif is_all(s_idle_status, '1') then
-        s_resets <= (others => '1');
+        s_reset_prg <= '1';
+        s_reset_cfg <= '1';
       else
-        s_resets <= (others => '0');
+        s_reset_prg <= '0';
+        if is_all(s_idle_status, '1') then
+          s_reset_prg <= '1';
+        else
+          s_reset_prg <= '0';
+        end if;
       end if;
     end if;
 

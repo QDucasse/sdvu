@@ -84,8 +84,8 @@ begin
     port map (
       I_clock         => I_clock,
       I_enable        => s_enable_CFG_MEM,
-
       I_reset         => I_reset,
+      
       I_we            => s_CFG_MEM_we,
       I_RAA           => s_CFG_MEM_RAA,
       I_type          => s_CFG_MEM_type,
