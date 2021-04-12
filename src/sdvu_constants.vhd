@@ -84,11 +84,11 @@ package sdvu_constants is
   constant PC_SIZE       : natural := 32;
   constant PC_OP_SIZE    : natural := 2;
   -- Memory related
-  constant PROG_MEM_SIZE : natural := 8;
+  constant PROG_MEM_SIZE : natural := 5;
   constant CFG_MEM_SIZE  : natural := 8;
   constant TYPE_SIZE     : natural := 32;
   -- Coordinator
-  constant CORE_NUMBER   : natural := 2;
+  constant CORE_NUMBER   : natural := 3;
 
   -- Program Memory types
   type prog_memory is array (0 to 2**PROG_MEM_SIZE-1) of STD_LOGIC_VECTOR(INSTR_SIZE-1 downto 0);
