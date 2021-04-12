@@ -92,11 +92,11 @@ begin
         s_reset_prg <= '1';
         s_reset_cfg <= '1';
       else
-        s_reset_cfg <= '0';
+        s_reset_prg <= '0';
         if is_all(s_idle_status, '1') then
-          s_reset_prg <= '1';
+          s_reset_cfg <= '1';
         else
-          s_reset_prg <= '0';
+          s_reset_cfg <= '0';
         end if;
       end if;
     end if;

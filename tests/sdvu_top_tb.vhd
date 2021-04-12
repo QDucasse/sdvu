@@ -70,8 +70,8 @@ architecture arch_sdvu_top_tb of sdvu_top_tb is
         I_new_config <= X"0000000000000000000000000000000000010001000000050000000400000003";
         wait until reset = '0';
         report "SDVU TOP: Running testbench";
-
-
+        wait_cycles(clock, 10);
+        I_new_config <= X"0000000000000000000000000000000000010001000000050000000500000005";
         wait_cycles(clock, 200);
         -- wait until O_idle = '1';
         running <= false;
