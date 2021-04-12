@@ -34,6 +34,8 @@ architecture arch_sdvu_top_tb of sdvu_top_tb is
   signal running       : boolean    := true; -- Running flag, Simulation continues while true
 
   signal I_new_config    : STD_LOGIC_VECTOR (2** CFG_MEM_SIZE-1 downto 0);
+  signal I_init_bin      : STD_LOGIC;
+  signal I_binary        : prog_memory;
   signal O_idle          : STD_LOGIC;
   signal O_return_config : STD_LOGIC;
   signal O_config        : STD_LOGIC_VECTOR (2**CFG_MEM_SIZE-1 downto 0);
@@ -55,6 +57,8 @@ architecture arch_sdvu_top_tb of sdvu_top_tb is
         port map (
           I_clock         => clock,
           I_reset         => reset,
+          I_init_bin      => I_init_bin,
+          I_binary        => I_binary,
           I_new_config    => I_new_config,
           O_idle          => O_idle,
           O_return_config => O_return_config,

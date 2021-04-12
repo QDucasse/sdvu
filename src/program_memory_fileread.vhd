@@ -21,7 +21,7 @@ use work.sdvu_constants.all;
 --      Entity
 -- =================
 
-entity program_memory is
+entity program_memory_fileread is
     port (I_clock   : in STD_LOGIC; -- Clock
           I_reset   : in STD_LOGIC; -- Reset
           I_enable  : in STD_LOGIC; -- Enable
@@ -29,13 +29,13 @@ entity program_memory is
           I_PC    : in STD_LOGIC_VECTOR (PC_SIZE-1 downto 0)     := (others => '0'); -- Address of the new instruction
           O_data  : out STD_LOGIC_VECTOR (INSTR_SIZE-1 downto 0) := (others => '0')  -- Data at address
           );
-end program_memory;
+end program_memory_fileread;
 
 -- =================
 --   Architecture
 -- =================
 
-architecture arch_program_memory of program_memory is
+architecture arch_program_memory_fileread of program_memory_fileread is
 
     -- Functions
     impure function init_prg_mem return prog_memory is
@@ -72,4 +72,4 @@ begin
         end if;
     end if;
   end process;
-end arch_program_memory;
+end arch_program_memory_fileread;
