@@ -75,11 +75,10 @@ architecture arch_control_unit of control_unit is
       STATE_MOVREG,   -- Get the value if from a register
       STATE_MOVIMM,   -- Store it in the new register
       STATE_ENDGA,    -- End of guard action -> send out
-      STATE_NOP,      -- No operation, next state is end, waiting for reset
+      STATE_NOP,      -- No operation waiting for reset
       STATE_BIN1,     -- Get the values behind registers
       STATE_BIN2,     -- Do the actual calculation
-      STATE_BIN3,     -- Store the result in a register
-      STATE_END       -- Final state, waiting for reset
+      STATE_BIN3      -- Store the result in a register
     );
     signal current_state : state := STATE_RESET1;
 begin
@@ -181,7 +180,7 @@ begin
 
               -- PROCESS NOP TRANSITIONS
               when STATE_NOP =>
-                current_state <= STATE_END;
+                current_state <= STATE_NOP;
 
               -- PROCESS BIN/NOT TRANSITIONS
               when STATE_BIN1 =>
@@ -190,10 +189,6 @@ begin
                 current_state <= STATE_BIN3;
               when STATE_BIN3 =>
                 current_state <= STATE_FETCH1;
-
-              -- PROCESS END TRANSITIONS
-              when STATE_END =>
-                current_state <= STATE_END;
 
               -- unreachable
               when others =>
@@ -264,7 +259,7 @@ begin
                       )
                     else PC_OP_RESET when (
                       current_state = STATE_RESET1 or
-                      current_state = STATE_END
+                      current_state = STATE_NOP
                       )
                     else PC_OP_NOP;
 
@@ -275,6 +270,6 @@ begin
     -- Let the CPU return the config when finishing a guard action
     O_return_config <= '1' when (current_state = STATE_ENDGA) else '0';
 
-    O_idle <= '1' when (current_state = STATE_END) else '0';
+    O_idle <= '1' when (current_state = STATE_NOP) else '0';
 
 end arch_control_unit;
