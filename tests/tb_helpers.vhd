@@ -38,14 +38,7 @@ package body tb_helpers is
                      signal running : in boolean;
                      half_period    : time) is
     begin
-      if running then
-        clock <= '1';
-        wait for half_period;
-        clock <= '0';
-        wait for half_period;
-      else
-        wait;
-      end if;
+      clock <= not(clock) after half_period when running else clk;
     end procedure;
 
     -- Generate a pulse signal after a given time
