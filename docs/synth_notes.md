@@ -1,5 +1,7 @@
 # Synthesis notes related to SDVU
 > Vivado 2018.2 - Default settings
+>
+> Synthesis results are given for SDVU core + both program/config memories!
 
 ## 1 SDVU core
 

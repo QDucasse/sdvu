@@ -1,8 +1,8 @@
 # Synthesis notes related to SDVU
 
-## Synthesis results for a single SDVU core - Vivado 2018.2 - Default settings
+## Synthesis results for a single SDVU core with its two memories - Vivado 2018.2 - Default settings
 
-![single_sdvu](./sdvu_schematic.png)
+![single_sdvu](./sdvu_mem.png)
 
 |        Site Type        | Used | Fixed | Available | Util% |
 |-------------------------|------|--------|-----------|-------|
@@ -19,3 +19,15 @@
 
 ![sdvu_synth](./gnuplot/sdvu_synth.png)
 
+## Synthesis results for the SDVU CPU only
+
+| Site Type | Used | Fixed | Available | Util% |
+| --------- | ---- | ----- | --------- | ----- |
+| Slice LUTs*             |  900 |     0 |     53200 |  1.69 |
+|   LUT as Logic          |  900 |     0 |     53200 |  1.69 |
+|   LUT as Memory         |    0 |     0 |     17400 |  0.00 |
+| Slice Registers         |  755 |     0 |    106400 |  0.71 |
+|   Register as Flip Flop |  755 |     0 |    106400 |  0.71 |
+|   Register as Latch     |    0 |     0 |    106400 |  0.00 |
+| F7 Muxes                |  192 |     0 |     26600 |  0.72 |
+| F8 Muxes                |   96 |     0 |     13300 |  0.72 |
