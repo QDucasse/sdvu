@@ -1,6 +1,6 @@
 # Synthesis notes related to SDVU
 
-## Synthesis results for a single SDVU core - Vivado 2018.2 - Default settings
+## Synthesis results for a single SDVU core - Vivado 2018.2 - Default settings
 
 ![single_sdvu](./sdvu_schematic.png)
 
