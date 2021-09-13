@@ -88,7 +88,8 @@ architecture arch_alu_tb of alu_tb is
       -- TESTING OPERATIONS
       -- Test 1 - Default output
       wait_cycles(clock, 1);
-      assert_true(O_result=X"FFFFFFFF", "Default output");
+      I_op_code <= OP_NOP;
+      assert_true(O_result=X"00000000", "Default output");
 
       -- =============
       -- Test 2: ADD
